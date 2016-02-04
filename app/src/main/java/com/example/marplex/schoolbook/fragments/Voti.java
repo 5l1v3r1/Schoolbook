@@ -13,48 +13,50 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.marplex.schoolbook.R;
-import com.example.marplex.schoolbook.fragments.tabs.Home;
+import com.example.marplex.schoolbook.fragments.tabs.FirstPeriod;
 import com.example.marplex.schoolbook.fragments.tabs.Reminds;
 
 import java.util.Locale;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Dashboard extends Fragment {
+public class Voti extends Fragment {
 
     private ViewPager pager;
-    public Dashboard() {
+    public Voti() {
         // Required empty public constructor
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_voti, container, false);
 
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
-        pager = (ViewPager)rootView.findViewById(R.id.pager);
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.sliding_tabs);
+        pager = (ViewPager)rootView.findViewById(R.id.viewpager);
+        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
 
         pager.setAdapter(adapter);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Home"));
-        tabLayout.addTab(tabLayout.newTab().setText("Reminds"));
+        tabLayout.addTab(tabLayout.newTab().setText("1° PERIODO"));
+        tabLayout.addTab(tabLayout.newTab().setText("2° PERIODO"));
         tabLayout.setupWithViewPager(pager);
+
         return rootView;
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
+        SparseArray<android.support.v4.app.Fragment> registeredFragments = new SparseArray<android.support.v4.app.Fragment>();
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
-        public Fragment getItem(int position) {
-            Fragment fg = null;
-            if(position==0) fg = new Home();
+        public android.support.v4.app.Fragment getItem(int position) {
+            android.support.v4.app.Fragment fg = null;
+            if(position==0) fg = new FirstPeriod();
             else if(position==1) fg = new Reminds();
             return fg;
         }
@@ -66,7 +68,7 @@ public class Dashboard extends Fragment {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            android.support.v4.app.Fragment fragment = (android.support.v4.app.Fragment) super.instantiateItem(container, position);
             registeredFragments.put(position, fragment);
             return fragment;
         }
@@ -76,15 +78,16 @@ public class Dashboard extends Fragment {
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return "Home";
+                    return "1° PERIODO";
                 case 1:
-                    return "Reminds";
+                    return "2° PERIODO";
             }
             return null;
         }
 
-        public Fragment getRegisteredFragment(int position) {
+        public android.support.v4.app.Fragment getRegisteredFragment(int position) {
             return registeredFragments.get(position);
         }
     }
+
 }

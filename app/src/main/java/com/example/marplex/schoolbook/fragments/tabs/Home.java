@@ -1,4 +1,4 @@
-package com.example.marplex.schoolbook.fragments;
+package com.example.marplex.schoolbook.fragments.tabs;
 
 
 import android.os.Bundle;

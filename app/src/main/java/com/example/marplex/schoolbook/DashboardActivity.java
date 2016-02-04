@@ -10,10 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.example.marplex.schoolbook.fragments.Dashboard;
+import com.example.marplex.schoolbook.fragments.Voti;
 
 public class DashboardActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
+    private Fragment fragment;
     private DrawerLayout drawer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,27 +29,35 @@ public class DashboardActivity extends AppCompatActivity{
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         drawer = (DrawerLayout) findViewById(R.id.drawer);
 
-        Fragment fragment;android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();fragment = new Dashboard();fragmentTransaction.replace(R.id.frame, fragment);fragmentTransaction.commit();getSupportActionBar().setTitle("Dashboard");
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();fragment = new Dashboard();fragmentTransaction.replace(R.id.frame, fragment);fragmentTransaction.commit();getSupportActionBar().setTitle("Dashboard");
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
-                        Fragment fragment;
+                        if (menuItem.isChecked()) menuItem.setChecked(false);
+                        else menuItem.setChecked(true);
+                        drawer.closeDrawers();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         switch (menuItem.getItemId()) {
                             case R.id.dashboard:
-                                fragment = new Dashboard();
-                                if(fragment instanceof Dashboard) break;
-                                fragmentTransaction.replace(R.id.frame, fragment);
+                                Dashboard dashboard = new Dashboard();
+                                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                fragmentTransaction.replace(R.id.frame, dashboard);
                                 fragmentTransaction.commit();
 
                                 getSupportActionBar().setTitle("Dashboard");
                                 menuItem.setChecked(true);
-                                break;
+                                return true;
                             case R.id.voti:
-                                break;
+                                Voti voti = new Voti();
+                                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                fragmentTransaction.replace(R.id.frame, voti);
+                                fragmentTransaction.commit();
+
+                                getSupportActionBar().setTitle("Voti");
+                                menuItem.setChecked(true);
+                                return true;
                             case R.id.verifiche:
                                 break;
                             case R.id.circolari:
@@ -56,7 +66,7 @@ public class DashboardActivity extends AppCompatActivity{
                                 break;
                         }
                         drawer.closeDrawers();
-                        return true;
+                        return false;
                     }
                 });
         navigationView.setCheckedItem(R.id.dashboard);
