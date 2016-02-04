@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/dashboard"
+            android:icon="@mipmap/ic_dashboard"
+            android:tint="#0090ff"
+            android:title="Dashboard" />
+        <item
+            android:id="@+id/voti"
+            android:icon="@mipmap/ic_voti"
+            android:tint="#d130cc4f"
+            android:title="Voti" />
+        <item
+            android:id="@+id/verifiche"
+            android:icon="@mipmap/ic_verifiche"
+            android:tint="#e99139"
+            android:title="Verifiche" />
+        <item
+            android:id="@+id/circolari"
+            android:icon="@mipmap/ic_circolari"
+            android:tint="#dbff2200"
+            android:title="Circolari" />
+    </group>
+</menu>

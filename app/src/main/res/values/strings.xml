@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Schoolbook</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="reminds"><![CDATA[
+Reminds ti aiuta nella tua organizzazione scolastica. <br/>Per esempio:<br/><ul><li>Ti ricorda di fare i compiti</li><li>Ti aiuta a preparare la cartella</li><li>Ti presenta le verifiche che dovrai compiere</li></ul>
+]]></string>
+</resources>
