@@ -1,7 +1,7 @@
 # Schoolbook, an open school register.
 Help me grow this app.
 
-<b>It can connect (for now) only to Classeviva register.</b>
+<b>It cans connect (for now) only to Classeviva register.</b>
 
 <h2>Current todos:</h2>
 
