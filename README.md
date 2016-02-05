@@ -1,3 +1,4 @@
+![alt tag](https://github.com/Marplex/Schoolbook/blob/master/art/schoolbook.png?raw=true)
 # Schoolbook, an open school register.
 Help me grow this app.
 
