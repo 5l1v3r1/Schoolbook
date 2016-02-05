@@ -3,6 +3,7 @@ package com.example.marplex.schoolbook;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -38,22 +39,21 @@ public class DashboardActivity extends AppCompatActivity{
                         if (menuItem.isChecked()) menuItem.setChecked(false);
                         else menuItem.setChecked(true);
                         drawer.closeDrawers();
-                        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         switch (menuItem.getItemId()) {
                             case R.id.dashboard:
+                                FragmentTransaction dashboardTransaction = getSupportFragmentManager().beginTransaction();
                                 Dashboard dashboard = new Dashboard();
-                                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                                fragmentTransaction.replace(R.id.frame, dashboard);
-                                fragmentTransaction.commit();
+                                dashboardTransaction.replace(R.id.frame, dashboard);
+                                dashboardTransaction.commit();
 
                                 getSupportActionBar().setTitle("Dashboard");
                                 menuItem.setChecked(true);
                                 return true;
                             case R.id.voti:
+                                FragmentTransaction votiTransaction = getSupportFragmentManager().beginTransaction();
                                 Voti voti = new Voti();
-                                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                                fragmentTransaction.replace(R.id.frame, voti);
-                                fragmentTransaction.commit();
+                                votiTransaction.replace(R.id.frame, voti);
+                                votiTransaction.commit();
 
                                 getSupportActionBar().setTitle("Voti");
                                 menuItem.setChecked(true);
@@ -69,7 +69,6 @@ public class DashboardActivity extends AppCompatActivity{
                         return false;
                     }
                 });
-        navigationView.setCheckedItem(R.id.dashboard);
     }
 
     @Override

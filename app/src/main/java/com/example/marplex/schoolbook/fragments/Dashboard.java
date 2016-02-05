@@ -11,12 +11,11 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.fragments.tabs.Home;
 import com.example.marplex.schoolbook.fragments.tabs.Reminds;
-
-import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,15 +27,25 @@ public class Dashboard extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
-        pager = (ViewPager)rootView.findViewById(R.id.pager);
+        pager = (ViewPager) rootView.findViewById(R.id.pager);
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.sliding_tabs);
-
+        Toast.makeText(getActivity(), "Dashboard", Toast.LENGTH_SHORT).show();
         pager.setAdapter(adapter);
 
         tabLayout.addTab(tabLayout.newTab().setText("Home"));
@@ -53,10 +62,13 @@ public class Dashboard extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            Fragment fg = null;
-            if(position==0) fg = new Home();
-            else if(position==1) fg = new Reminds();
-            return fg;
+            switch (position){
+                case 0:
+                    Toast.makeText(getActivity(), "Home", Toast.LENGTH_SHORT).show();
+                    return Home.newInstance();
+                case 1: return Reminds.newInstance();
+                default: return Home.newInstance();
+            }
         }
 
         @Override
@@ -65,22 +77,21 @@ public class Dashboard extends Fragment {
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            registeredFragments.put(position, fragment);
-            return fragment;
-        }
-
-        @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
                     return "Home";
                 case 1:
                     return "Reminds";
+                default: return null;
             }
-            return null;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
         }
 
         public Fragment getRegisteredFragment(int position) {

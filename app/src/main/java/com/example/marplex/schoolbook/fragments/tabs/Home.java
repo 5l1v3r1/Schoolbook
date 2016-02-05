@@ -32,6 +32,16 @@ public class Home extends Fragment implements classeViva, ClassevivaVoti{
         // Required empty public constructor
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,10 +59,12 @@ public class Home extends Fragment implements classeViva, ClassevivaVoti{
         return rootView;
     }
 
+    public static Home newInstance() {
+        return new Home();
+    }
 
     @Override
     public void onVotiReceive(List<Voto> voto) {
-
         //Save in ROM
         SharedPreferences.saveString(getActivity(),"datas","voti",new Gson().toJson(voto));
         populateRecyclerView(voto);

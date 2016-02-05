@@ -25,6 +25,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+        startActivity(i);
+        finish();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         utente = (EditText) findViewById(R.id.input_codice_utente);
         password = (EditText) findViewById(R.id.input_password);

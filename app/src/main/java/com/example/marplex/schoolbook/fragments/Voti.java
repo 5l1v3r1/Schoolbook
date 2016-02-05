@@ -11,12 +11,11 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.fragments.tabs.FirstPeriod;
 import com.example.marplex.schoolbook.fragments.tabs.Reminds;
-
-import java.util.Locale;
 
 
 /**
@@ -29,6 +28,16 @@ public class Voti extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,11 +46,8 @@ public class Voti extends Fragment {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
         pager = (ViewPager)rootView.findViewById(R.id.viewpager);
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
-
+        Toast.makeText(getActivity(), "FirstPeriod", Toast.LENGTH_SHORT).show();
         pager.setAdapter(adapter);
-
-        tabLayout.addTab(tabLayout.newTab().setText("1° PERIODO"));
-        tabLayout.addTab(tabLayout.newTab().setText("2° PERIODO"));
         tabLayout.setupWithViewPager(pager);
 
         return rootView;
@@ -55,10 +61,12 @@ public class Voti extends Fragment {
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
-            android.support.v4.app.Fragment fg = null;
-            if(position==0) fg = new FirstPeriod();
-            else if(position==1) fg = new Reminds();
-            return fg;
+            switch (position){
+                case 0:
+                    return FirstPeriod.newInstance();
+                case 1: return Reminds.newInstance();
+                default: return FirstPeriod.newInstance();
+            }
         }
 
         @Override
@@ -75,14 +83,13 @@ public class Voti extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return "1° PERIODO";
+                    return "1° Periodo";
                 case 1:
-                    return "2° PERIODO";
+                    return "2° Periodo";
+                default: return null;
             }
-            return null;
         }
 
         public android.support.v4.app.Fragment getRegisteredFragment(int position) {
