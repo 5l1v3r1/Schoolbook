@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +30,7 @@ public class Voti extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        onDestroy();
         onDestroyView();
     }
 
@@ -43,18 +43,17 @@ public class Voti extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_voti, container, false);
 
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
         pager = (ViewPager)rootView.findViewById(R.id.viewpager);
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+
         Toast.makeText(getActivity(), "FirstPeriod", Toast.LENGTH_SHORT).show();
-        pager.setAdapter(adapter);
+        pager.setAdapter(new SectionsPagerAdapter(this.getChildFragmentManager()));
         tabLayout.setupWithViewPager(pager);
 
         return rootView;
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        SparseArray<android.support.v4.app.Fragment> registeredFragments = new SparseArray<android.support.v4.app.Fragment>();
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -62,8 +61,7 @@ public class Voti extends Fragment {
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position){
-                case 0:
-                    return FirstPeriod.newInstance();
+                case 0: return FirstPeriod.newInstance();
                 case 1: return Reminds.newInstance();
                 default: return FirstPeriod.newInstance();
             }
@@ -72,13 +70,6 @@ public class Voti extends Fragment {
         @Override
         public int getCount() {
             return 2;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            android.support.v4.app.Fragment fragment = (android.support.v4.app.Fragment) super.instantiateItem(container, position);
-            registeredFragments.put(position, fragment);
-            return fragment;
         }
 
         @Override
@@ -92,9 +83,6 @@ public class Voti extends Fragment {
             }
         }
 
-        public android.support.v4.app.Fragment getRegisteredFragment(int position) {
-            return registeredFragments.get(position);
-        }
     }
 
 }

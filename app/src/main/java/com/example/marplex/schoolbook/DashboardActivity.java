@@ -6,9 +6,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.marplex.schoolbook.fragments.Dashboard;
 import com.example.marplex.schoolbook.fragments.Voti;
@@ -25,12 +27,15 @@ public class DashboardActivity extends AppCompatActivity{
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         drawer = (DrawerLayout) findViewById(R.id.drawer);
 
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();fragment = new Dashboard();fragmentTransaction.replace(R.id.frame, fragment);fragmentTransaction.commit();getSupportActionBar().setTitle("Dashboard");
+        Dashboard dashboard = new Dashboard();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame, dashboard);
+        fragmentTransaction.commit();
+        getSupportActionBar().setTitle("Dashboard");
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -41,13 +46,12 @@ public class DashboardActivity extends AppCompatActivity{
                         drawer.closeDrawers();
                         switch (menuItem.getItemId()) {
                             case R.id.dashboard:
-                                FragmentTransaction dashboardTransaction = getSupportFragmentManager().beginTransaction();
                                 Dashboard dashboard = new Dashboard();
-                                dashboardTransaction.replace(R.id.frame, dashboard);
-                                dashboardTransaction.commit();
+                                android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                fragmentTransaction.replace(R.id.frame, dashboard);
+                                fragmentTransaction.commit();
 
                                 getSupportActionBar().setTitle("Dashboard");
-                                menuItem.setChecked(true);
                                 return true;
                             case R.id.voti:
                                 FragmentTransaction votiTransaction = getSupportFragmentManager().beginTransaction();
@@ -56,19 +60,34 @@ public class DashboardActivity extends AppCompatActivity{
                                 votiTransaction.commit();
 
                                 getSupportActionBar().setTitle("Voti");
-                                menuItem.setChecked(true);
                                 return true;
                             case R.id.verifiche:
-                                break;
+                                return true;
                             case R.id.circolari:
-                                break;
+                                return true;
                             default:
-                                break;
+                                return true;
                         }
-                        drawer.closeDrawers();
-                        return false;
                     }
                 });
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.openDrawer, R.string.closeDrawer){
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        drawer.setDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+        navigationView.getMenu().getItem(0).setChecked(true);
     }
 
     @Override
