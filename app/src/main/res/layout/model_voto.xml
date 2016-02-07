@@ -2,7 +2,6 @@
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/textView4"
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
     android:id="@+id/relativeLayout"
@@ -16,14 +15,18 @@
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="3dp"
         card_view:cardElevation="2dp"
+        android:background="?android:attr/selectableItemBackground"
         card_view:cardUseCompatPadding="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="-10dp"
+        android:layout_marginLeft="-10dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp">
 
             <TextView
                 android:layout_width="50dp"

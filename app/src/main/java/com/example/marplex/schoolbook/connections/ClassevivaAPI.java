@@ -83,7 +83,7 @@ public class ClassevivaAPI implements insideCallback{
                             Element p = voti.get(x).getElementsByTag("p").first();
                             String data = span.text();
                             String voto = p.text();
-                            Voto v = new Voto(voto, getMateria(materia) , data, "Orale");
+                            Voto v = new Voto(voto, getMateria(materia) , data, "Orale", 1);
                             votoList.add(v);
                         }
                     }

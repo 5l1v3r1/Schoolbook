@@ -2,6 +2,7 @@ package com.example.marplex.schoolbook;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +21,8 @@ public class DashboardActivity extends AppCompatActivity{
     private Toolbar toolbar;
     private Fragment fragment;
     private DrawerLayout drawer;
+
+    public TabLayout tabLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +33,8 @@ public class DashboardActivity extends AppCompatActivity{
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         drawer = (DrawerLayout) findViewById(R.id.drawer);
+
+         tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
 
         Dashboard dashboard = new Dashboard();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

@@ -2,7 +2,6 @@ package com.example.marplex.schoolbook.fragments;
 
 
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,8 +9,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.example.marplex.schoolbook.DashboardActivity;
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.fragments.tabs.Home;
 import com.example.marplex.schoolbook.fragments.tabs.Reminds;
@@ -42,12 +41,10 @@ public class Dashboard extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         pager = (ViewPager) rootView.findViewById(R.id.pager);
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.sliding_tabs);
-
         pager.setAdapter(new SectionsPagerAdapter(this.getChildFragmentManager()));
-        Toast.makeText(getActivity(), "Dashboard", Toast.LENGTH_SHORT).show();
 
-        tabLayout.setupWithViewPager(pager);
+        ( (DashboardActivity) getActivity() ).tabLayout.setupWithViewPager(pager);
+
         return rootView;
     }
 
@@ -59,11 +56,8 @@ public class Dashboard extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            Toast.makeText(getActivity(), "POSITION", Toast.LENGTH_SHORT).show();
             switch (position){
-                case 0:
-                    Toast.makeText(getActivity(), "Home", Toast.LENGTH_SHORT).show();
-                    return Home.newInstance();
+                case 0: return Home.newInstance();
                 case 1: return Reminds.newInstance();
                 default: return Home.newInstance();
             }

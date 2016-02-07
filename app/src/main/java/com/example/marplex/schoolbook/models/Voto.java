@@ -5,10 +5,12 @@ package com.example.marplex.schoolbook.models;
  */
 public class Voto {
     public String materia, data, tipo, voto;
-    public Voto(String voto,  String materia, String data, String tipo){
+    int periodo;
+    public Voto(String voto,  String materia, String data, String tipo, int periodo){
         this.voto = voto;
         this.materia = materia;
         this.data = data;
         this.tipo = tipo;
+        this.periodo = periodo;
     }
 }

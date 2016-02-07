@@ -2,7 +2,6 @@ package com.example.marplex.schoolbook.fragments;
 
 
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,8 +9,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.example.marplex.schoolbook.DashboardActivity;
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.fragments.tabs.FirstPeriod;
 import com.example.marplex.schoolbook.fragments.tabs.Reminds;
@@ -44,11 +43,9 @@ public class Voti extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_voti, container, false);
 
         pager = (ViewPager)rootView.findViewById(R.id.viewpager);
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
-
-        Toast.makeText(getActivity(), "FirstPeriod", Toast.LENGTH_SHORT).show();
         pager.setAdapter(new SectionsPagerAdapter(this.getChildFragmentManager()));
-        tabLayout.setupWithViewPager(pager);
+
+        ( (DashboardActivity) getActivity() ).tabLayout.setupWithViewPager(pager);
 
         return rootView;
     }

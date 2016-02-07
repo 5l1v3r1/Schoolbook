@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.marplex.schoolbook.Globals;
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.adapters.votiAdapter;
 import com.example.marplex.schoolbook.connections.ClassevivaAPI;
@@ -18,9 +17,7 @@ import com.example.marplex.schoolbook.interfaces.classeViva;
 import com.example.marplex.schoolbook.models.Voto;
 import com.example.marplex.schoolbook.utilities.SharedPreferences;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class Home extends Fragment implements classeViva, ClassevivaVoti{
@@ -46,16 +43,6 @@ public class Home extends Fragment implements classeViva, ClassevivaVoti{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.home, container, false);
-        //IS in Rom?
-        if(SharedPreferences.loadString(getActivity(), "datas", "voti")==null){
-            api = new ClassevivaAPI(this, Globals.getInstance().getSession());
-            api.getVotes(this);
-        }else{
-            Type type = new TypeToken<List<Voto>>(){}.getType();
-            List<Voto> voti = new Gson().fromJson(SharedPreferences.loadString(getActivity(),"datas","voti"), type);
-            populateRecyclerView(voti);
-        }
-
         return rootView;
     }
 
