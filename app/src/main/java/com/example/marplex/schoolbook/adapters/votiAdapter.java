@@ -75,7 +75,7 @@ public class votiAdapter extends RecyclerView.Adapter <votiAdapter.votiAdapterHo
         if(6<=val && val<=7){
             return Color.parseColor("#ffae00"); //Giallo
         }else{
-            if(val>7 || val<=10){
+            if(7<val && val<=10){
                 return Color.parseColor("#00FF66"); //Verde
             }else if(val==11) return Color.parseColor("#3F51B5"); //Blu per nav
             else if(val==12) return Color.parseColor("#00FF66"); //Verde per +

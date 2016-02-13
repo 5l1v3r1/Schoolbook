@@ -3,6 +3,7 @@ package com.example.marplex.schoolbook.fragments.tabs;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
     ClassevivaAPI api;
     View rootView;
     RecyclerView list;
+    SwipeRefreshLayout swipe;
 
     public FirstPeriod() { }
 
@@ -42,6 +44,9 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_first_period, container, false);
+        swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+
+        swipe.setColorSchemeColors(R.color.blue,R.color.red, R.color.yellow, R.color.green);
 
         if(SharedPreferences.loadString(getActivity(), "datas", "voti")==null){
             api = new ClassevivaAPI(this, Globals.getInstance().getSession());
@@ -52,13 +57,28 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
             populateRecyclerView(voti);
         }
 
+        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshContent();
+        }});
+
         return rootView;
+    }
+
+    void refreshContent(){
+        if(api!=null) api.getVotes(this);
+        else {
+            api = new ClassevivaAPI(this, Globals.getInstance().getSession());
+            api.getVotes(this);
+        }
     }
 
     @Override
     public void onVotiReceive(List<Voto> voto) {
         //Save in ROM
         SharedPreferences.saveString(getActivity(),"datas","voti",new Gson().toJson(voto));
+        swipe.setRefreshing(false);
         populateRecyclerView(voto);
 
     }

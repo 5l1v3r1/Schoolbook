@@ -43,6 +43,15 @@ public class ClassevivaAPI implements insideCallback{
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
+    public ClassevivaAPI(String username, String password, classeViva methods, Map<String, String> session ){
+        this.usr = username;
+        this.pws = password;
+        this.session = session;
+        this.methods = methods;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+    }
     public ClassevivaAPI(classeViva methods, Map<String, String> session){
         this.methods = methods;
         this.session = session;
@@ -50,10 +59,15 @@ public class ClassevivaAPI implements insideCallback{
         StrictMode.setThreadPolicy(policy);
     }
     public void doLogin(){
-        new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN+"login="+usr+"&password="+pws+"&custcode=PNIT0003&mode=custcode&lc=it");
+        new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN + "login=" + usr + "&password=" + pws + "&custcode=PNIT0003&mode=custcode&lc=it");
     }
     public void getVotes(ClassevivaVoti callback){
         this.callbackVoti = callback;
+        new JSOUP(VOTES, this).execute("https://web.spaggiari.eu/cvv/app/default/genitori_voti.php");
+    }
+    public void getVotes(ClassevivaVoti callback, Map<String, String> session){
+        this.callbackVoti = callback;
+        this.session = session;
         new JSOUP(VOTES, this).execute("https://web.spaggiari.eu/cvv/app/default/genitori_voti.php");
     }
 

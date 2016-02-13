@@ -12,31 +12,38 @@ import android.widget.EditText;
 
 import com.example.marplex.schoolbook.connections.ClassevivaAPI;
 import com.example.marplex.schoolbook.interfaces.classeViva;
+import com.example.marplex.schoolbook.utilities.SharedPreferences;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import java.util.HashMap;
+
+import se.simbio.encryption.Encryption;
 
 
 public class LoginActivity extends AppCompatActivity {
     EditText utente, password;
     classeViva callback;
     ClassevivaAPI login;
+
+    String name, pw;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
-        startActivity(i);
-        finish();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        utente = (EditText) findViewById(R.id.input_codice_utente);
-        password = (EditText) findViewById(R.id.input_password);
-        setSupportActionBar(toolbar);
+
+        final Encryption encryption = Encryption.getDefault("Key", "Salt", new byte[16]);
 
         callback = new classeViva() {
             @Override
             public void onPageLoaded(String html) {
-                Document doc = Jsoup.parse(html);
+
+                SharedPreferences.saveString(LoginActivity.this, "user", "user", name);
+                try {
+                    SharedPreferences.saveString(LoginActivity.this, "user", "password", encryption.encrypt(pw));
+                } catch (Exception e){}
+                SharedPreferences.saveString(LoginActivity.this, "user", "session", new Gson().toJson(login.getSession()));
+
                 Globals.getInstance().setSession(login.getSession());
                 Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                 startActivity(i);
@@ -44,11 +51,36 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
+        String user = SharedPreferences.loadString(this, "user", "user");
+        String pass = SharedPreferences.loadString(this, "user", "password");
+        String cookies = SharedPreferences.loadString(this, "user", "session");
+
+        if(user!=null && pass!=null && cookies!=null){
+
+            System.out.println("TEST");
+
+            String decrypted = encryption.decryptOrNull(pass);
+
+            HashMap<String, String> session = new Gson().fromJson(cookies, new TypeToken<HashMap<String, String>>(){}.getType());
+
+            login = new ClassevivaAPI(user, decrypted, callback, session);
+            login.doLogin();
+        }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        utente = (EditText) findViewById(R.id.input_codice_utente);
+        password = (EditText) findViewById(R.id.input_password);
+        setSupportActionBar(toolbar);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                login = new ClassevivaAPI(utente.getText().toString(), password.getText().toString(), callback);
+
+                name = utente.getText().toString();
+                pw = password.getText().toString();
+
+                login = new ClassevivaAPI(name, pw, callback);
                 login.doLogin();
             }
         });
