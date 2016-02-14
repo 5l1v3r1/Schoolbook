@@ -1,12 +1,16 @@
 package com.example.marplex.schoolbook.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.marplex.schoolbook.Materia;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -24,17 +28,19 @@ public class SimpleSectionedRecyclerViewAdapter extends RecyclerView.Adapter<Rec
     private int mTextResourceId;
     private LayoutInflater mLayoutInflater;
     private RecyclerView.Adapter mBaseAdapter;
+    private int mPeriodo;
     private SparseArray<Section> mSections = new SparseArray<Section>();
 
 
     public SimpleSectionedRecyclerViewAdapter(Context context, int sectionResourceId, int textResourceId,
-                                              RecyclerView.Adapter baseAdapter) {
+                                              RecyclerView.Adapter baseAdapter, int periodo) {
 
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mSectionResourceId = sectionResourceId;
         mTextResourceId = textResourceId;
         mBaseAdapter = baseAdapter;
         mContext = context;
+        mPeriodo = periodo;
 
         mBaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -85,9 +91,22 @@ public class SimpleSectionedRecyclerViewAdapter extends RecyclerView.Adapter<Rec
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder sectionViewHolder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder sectionViewHolder, final int position) {
         if (isSectionHeaderPosition(position)) {
             ((SectionViewHolder)sectionViewHolder).title.setText(mSections.get(position).title);
+            ((SectionViewHolder)sectionViewHolder).title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle b = new Bundle();
+                    Intent intent = new Intent(mContext, Materia.class);
+
+                    String materia = mSections.get(position).title.toString().toUpperCase().substring(0,1)+mSections.get(position).title.toString().toLowerCase().substring(1, mSections.get(position).title.toString().length());
+                    b.putString("materia",materia);
+                    b.putInt("periodo", mPeriodo);
+                    intent.putExtras(b);
+                    mContext.startActivity(intent);
+                }
+            });
         }else{
             mBaseAdapter.onBindViewHolder(sectionViewHolder,sectionedPositionToPosition(position));
         }

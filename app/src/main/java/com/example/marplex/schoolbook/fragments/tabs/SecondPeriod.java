@@ -56,7 +56,6 @@ public class SecondPeriod extends Fragment implements classeViva, ClassevivaVoti
         rootView = inflater.inflate(R.layout.fragment_second_period, container, false);
 
         swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        refreshContent();
         swipe.setColorSchemeColors(R.color.red, R.color.yellow, R.color.green, R.color.blue);
 
         if(SharedPreferences.loadString(getActivity(), "datas", "voti")==null){
@@ -125,7 +124,7 @@ public class SecondPeriod extends Fragment implements classeViva, ClassevivaVoti
                 if(i==0){
                     sections.add(new SimpleSectionedRecyclerViewAdapter.Section(0, voto.get(i).materia));
                 }else{
-                    if(voto.get(i).materia!=voto.get(i-1).materia) {
+                    if( !(voto.get(i).materia.equals(voto.get(i-1).materia)) ) {
                         sections.add(new SimpleSectionedRecyclerViewAdapter.Section(i, voto.get(i).materia));
                     }
                 }
@@ -135,7 +134,7 @@ public class SecondPeriod extends Fragment implements classeViva, ClassevivaVoti
 
         SimpleSectionedRecyclerViewAdapter.Section[] dummy = new SimpleSectionedRecyclerViewAdapter.Section[sections.size()];
         SimpleSectionedRecyclerViewAdapter mSectionedAdapter = new
-                SimpleSectionedRecyclerViewAdapter(getActivity(),R.layout.section,R.id.section_text,adapter);
+                SimpleSectionedRecyclerViewAdapter(getActivity(),R.layout.section,R.id.section_text,adapter,2);
         mSectionedAdapter.setSections(sections.toArray(dummy));
 
         list.setAdapter(mSectionedAdapter);

@@ -52,23 +52,22 @@ public class votiAdapter extends RecyclerView.Adapter <votiAdapter.votiAdapterHo
         double value = 0.0;
         if(val.length()==1){
             try {
-                value = Integer.parseInt(val);
+                return Integer.parseInt(val);
             }catch(Exception e){
                 if(val=="+") return 12;
                 else if(val=="-") return 13;
             }
         }
         else {
-            try{
-                value = Integer.parseInt(val.substring(0, val.length() - 1));
-            }catch (Exception e){
-                if(val=="nav") return 11;
+            if(val=="nav") return 11;
+            else{
+                value = Integer.parseInt(val.substring(0,1));
+                if(val.endsWith("-")) return value - 0.15;
+                else if(val.endsWith("+")) return value + 0.15;
+                else if(val.endsWith("½")) return value + 0.5;
             }
-        }
 
-        if(val.endsWith("-")) return value - 0.15;
-        else if(val.endsWith("½")) return value + 0.5;
-        else return value;
+        }return 0;
     }
 
     int riceviColore(double val){

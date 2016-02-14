@@ -8,4 +8,5 @@
     <string name="reminds"><![CDATA[
 Reminds ti aiuta nella tua organizzazione scolastica. <br/>Per esempio:<br/><ul><li>Ti ricorda di fare i compiti</li><li>Ti aiuta a preparare la cartella</li><li>Ti presenta le verifiche che dovrai compiere</li></ul>
 ]]></string>
+    <string name="title_activity_materia">Materia</string>
 </resources>

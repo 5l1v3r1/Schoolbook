@@ -56,7 +56,6 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
         rootView = inflater.inflate(R.layout.fragment_first_period, container, false);
 
         swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        refreshContent();
         swipe.setColorSchemeColors(R.color.red, R.color.yellow, R.color.green, R.color.blue);
 
         if(SharedPreferences.loadString(getActivity(), "datas", "voti")==null){
@@ -136,7 +135,7 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
 
         SimpleSectionedRecyclerViewAdapter.Section[] dummy = new SimpleSectionedRecyclerViewAdapter.Section[sections.size()];
         SimpleSectionedRecyclerViewAdapter mSectionedAdapter = new
-                SimpleSectionedRecyclerViewAdapter(getActivity(),R.layout.section,R.id.section_text,adapter);
+                SimpleSectionedRecyclerViewAdapter(getActivity(),R.layout.section,R.id.section_text,adapter, 1);
         mSectionedAdapter.setSections(sections.toArray(dummy));
 
         list.setAdapter(mSectionedAdapter);
