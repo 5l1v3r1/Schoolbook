@@ -3,6 +3,7 @@ package com.example.marplex.schoolbook;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,8 +16,6 @@ import com.example.marplex.schoolbook.utilities.SharedPreferences;
 import com.github.jorgecastilloprz.FABProgressCircle;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.jsoup.nodes.Document;
 
 import java.util.HashMap;
 
@@ -32,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     String name, pw;
 
     String user,pass,cookies;
+    TextInputLayout n,p;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +39,9 @@ public class LoginActivity extends AppCompatActivity {
 
         utente = (EditText) findViewById(R.id.input_codice_utente);
         password = (EditText) findViewById(R.id.input_password);
+
+        n = (TextInputLayout) findViewById(R.id.name);
+        p = (TextInputLayout) findViewById(R.id.pw);
 
         final Encryption encryption = Encryption.getDefault("Key", "Salt", new byte[16]);
 
@@ -49,13 +52,12 @@ public class LoginActivity extends AppCompatActivity {
         callback = new classeViva() {
             @Override
             public void onPageLoaded(String html) {
-                Document doc = new Document(html);
-                if(doc.title().toString()=="La Scuola del futuro, oggi"){
+                if(html.contains("La Scuola del futuro, oggi")){
                     progress.hide();
-                    if(doc.body().text().contains("Password errata")){
-                        password.setError("La password è errata");
-                    }else if(doc.body().text().contains("Nome utente errato")){
-                        utente.setError("Nome utente errato");
+                    if(html.contains("Password errata")){
+                        //p.setError("La password è errata");
+                    }else if(html.contains("Nome utente errato")){
+                        //n.setError("Nome utente errato");
                     }
                 }else {
                     progress.beginFinalAnimation();
