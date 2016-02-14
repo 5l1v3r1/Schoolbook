@@ -18,7 +18,7 @@ import com.example.marplex.schoolbook.fragments.Voti;
 
 public class DashboardActivity extends AppCompatActivity{
 
-    private Toolbar toolbar;
+    public Toolbar toolbar;
     private Fragment fragment;
     private DrawerLayout drawer;
 
@@ -34,7 +34,7 @@ public class DashboardActivity extends AppCompatActivity{
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         drawer = (DrawerLayout) findViewById(R.id.drawer);
 
-         tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
 
         Dashboard dashboard = new Dashboard();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -98,10 +98,15 @@ public class DashboardActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings)  return true;
-        else if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
             drawer.openDrawer(GravityCompat.START);
         }return super.onOptionsItemSelected(item);
+    }
+
+    public void setMenu(int menu, Toolbar.OnMenuItemClickListener callback){
+        toolbar.getMenu().clear();
+        toolbar.inflateMenu(menu);
+        toolbar.setOnMenuItemClickListener(callback);
     }
 
 

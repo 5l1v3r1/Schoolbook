@@ -6,14 +6,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.marplex.schoolbook.DashboardActivity;
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.fragments.tabs.FirstPeriod;
-import com.example.marplex.schoolbook.fragments.tabs.Reminds;
+import com.example.marplex.schoolbook.fragments.tabs.SecondPeriod;
 
 
 /**
@@ -47,10 +50,30 @@ public class Voti extends Fragment {
 
         ( (DashboardActivity) getActivity() ).tabLayout.setupWithViewPager(pager);
 
+        DashboardActivity main = (DashboardActivity) getActivity();
+        main.setMenu(R.menu.voti, new Toolbar.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.ordina) {
+                    if(pager.getCurrentItem()==0){
+                        FirstPeriod firstPeriod = (FirstPeriod) ((SectionsPagerAdapter)pager.getAdapter()).getRegisteredFragment(pager.getCurrentItem());
+                        firstPeriod.ordina();
+                    }else{
+                        SecondPeriod secondPeriod = (SecondPeriod) ((SectionsPagerAdapter)pager.getAdapter()).getRegisteredFragment(pager.getCurrentItem());
+                        secondPeriod.ordina();
+                    }
+
+                }
+                return false;
+            }
+        });
+
         return rootView;
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -59,7 +82,7 @@ public class Voti extends Fragment {
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position){
                 case 0: return FirstPeriod.newInstance();
-                case 1: return Reminds.newInstance();
+                case 1: return SecondPeriod.newInstance();
                 default: return FirstPeriod.newInstance();
             }
         }
@@ -78,6 +101,23 @@ public class Voti extends Fragment {
                     return "2° Periodo";
                 default: return null;
             }
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            registeredFragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        public Fragment getRegisteredFragment(int position) {
+            return registeredFragments.get(position);
         }
 
     }

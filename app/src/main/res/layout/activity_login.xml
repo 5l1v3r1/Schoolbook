@@ -6,21 +6,40 @@
     android:layout_height="match_parent" android:fitsSystemWindows="true"
     tools:context=".LoginActivity">
 
-    <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
-            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" android:theme="@style/AppTheme.AppBarOverlay"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
     <include layout="@layout/content_login" />
 
-    <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom" android:layout_margin="@dimen/fab_margin"
-        android:src="@mipmap/login_done" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Accedi a Classeviva"
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:paddingTop="70dp"
+        android:textSize="30dp"
+        android:textColor="@color/white"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textStyle="bold"
+        android:gravity="center" />
+
+    <com.github.jorgecastilloprz.FABProgressCircle
+        android:id="@+id/fabProgressCircle"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center|bottom"
+        app:arcWidth="7dp"
+        app:arcColor="#00ffff"
+        app:reusable="true"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@mipmap/login_done" />
+
+    </com.github.jorgecastilloprz.FABProgressCircle>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,11 +1,14 @@
 package com.example.marplex.schoolbook.connections;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 
 import com.example.marplex.schoolbook.interfaces.ClassevivaVoti;
 import com.example.marplex.schoolbook.interfaces.classeViva;
 import com.example.marplex.schoolbook.models.Voto;
+import com.example.marplex.schoolbook.utilities.SharedPreferences;
+import com.google.gson.Gson;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -27,6 +30,8 @@ public class ClassevivaAPI implements insideCallback{
     protected final String TAG = "Classeviva Login";
     classeViva methods;
     String usr,pws;
+    Context c;
+
 
     Map<String, String> session;
 
@@ -61,7 +66,8 @@ public class ClassevivaAPI implements insideCallback{
     public void doLogin(){
         new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN + "login=" + usr + "&password=" + pws + "&custcode=PNIT0003&mode=custcode&lc=it");
     }
-    public void getVotes(ClassevivaVoti callback){
+    public void getVotes(ClassevivaVoti callback, Context c){
+        this.c = c;
         this.callbackVoti = callback;
         new JSOUP(VOTES, this).execute("https://web.spaggiari.eu/cvv/app/default/genitori_voti.php");
     }
@@ -78,6 +84,7 @@ public class ClassevivaAPI implements insideCallback{
             Document doc = Jsoup.parse(html);
             Elements trs = doc.getElementsByTag("tr");
             List<Voto> votoList = new ArrayList<>();
+            ArrayList<String> materie = new ArrayList<>();
             for(int i = 0; i<trs.size();i++){
                 Element tr = trs.get(i);
                 if(tr.select("td.registro").first()==null) continue;
@@ -90,19 +97,47 @@ public class ClassevivaAPI implements insideCallback{
                         }
                     }else materia = tr.select("td[class=registro grautext open_sans_condensed_bold font_size_14]").first().text();
 
+                    materie.add(materia);
+
                     Elements voti = tr.select("td.registro_voti_dettaglio_voto_piccolo");
                     for(int x = 0; x < voti.size(); x++){
                         if(voti.get(x).hasText()){
                             Element span = voti.get(x).getElementsByTag("span").first();
                             Element p = voti.get(x).getElementsByTag("p").first();
+
+                            int periodo = 0;
+                            String tipo = null;
+                            if( (x+1) <= 15 ){
+                                periodo=1;
+                                if((x+1) <= 5) tipo="Scritto";
+                                else if((x+1) <= 10) tipo="Orale";
+                                else if((x+1) <= 15) tipo="Pratico";
+                            }else if((x+1) <= 30){
+                                periodo=2;
+                                if((x+1) <= 20) tipo="Scritto";
+                                else if((x+1) <= 25) tipo="Orale";
+                                else if((x+1) <= 30) tipo="Pratico";
+                            }
+
                             String data = span.text();
                             String voto = p.text();
-                            Voto v = new Voto(voto, getMateria(materia) , data, "Orale", 1);
+                            Voto v = new Voto(voto, getMateria(materia) , data, tipo, periodo);
                             votoList.add(v);
                         }
                     }
                 }
             }
+
+            ArrayList<String> finalMaterie = new ArrayList<>();
+            for(int i=0; i<materie.size(); i++){
+                if(i==0) finalMaterie.add(getMateria(materie.get(i)));
+                else {
+                    String materia = getMateria(materie.get(i));
+                    if(materia == getMateria(materie.get(i-1))) continue;
+                    else finalMaterie.add(materia);
+                }
+            }
+            SharedPreferences.saveString(c,"materie","materie", new Gson().toJson(finalMaterie));
             callbackVoti.onVotiReceive(votoList);
         }else if(type==LOGIN){
 
@@ -176,7 +211,8 @@ public class ClassevivaAPI implements insideCallback{
         else if (materia.startsWith("rc")) return "Religione";
         else if(materia.startsWith("scienze")) return "Ginnastica";
         else if(materia.startsWith("storia")) return "Storia";
-        else if(materia.startsWith("tecnologie")) return "Tecnica";
+        else if(materia.startsWith("tecnologie e")) return "Tecnica";
+        else if(materia.startsWith("tecnologie")) return "Informatica";
         else return null;
     }
 }

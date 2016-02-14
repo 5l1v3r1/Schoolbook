@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti {
+public class SecondPeriod extends Fragment implements classeViva, ClassevivaVoti {
 
     ClassevivaAPI api;
     View rootView;
@@ -43,17 +43,17 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
     SwipeRefreshLayout swipe;
     LayoutInflater inflater;
 
-    public FirstPeriod() { }
+    public SecondPeriod() { }
 
-    public static FirstPeriod newInstance() {
-        return new FirstPeriod();
+    public static SecondPeriod newInstance() {
+        return new SecondPeriod();
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.inflater = inflater;
-        rootView = inflater.inflate(R.layout.fragment_first_period, container, false);
+        rootView = inflater.inflate(R.layout.fragment_second_period, container, false);
 
         swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         refreshContent();
@@ -68,7 +68,7 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
 
             List<Voto> voti = new ArrayList<>();
             for(int i=0; i<datas.size();i++){
-                if(datas.get(i).periodo==1) voti.add(datas.get(i));
+                if(datas.get(i).periodo==2) voti.add(datas.get(i));
                 else continue;
             }
 
@@ -79,7 +79,7 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
             @Override
             public void onRefresh() {
                 refreshContent();
-        }});
+            }});
 
         return rootView;
     }
@@ -95,12 +95,12 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
     @Override
     public void onVotiReceive(List<Voto> voto) {
         //Save in ROM
-        SharedPreferences.saveString(getActivity(), "datas", "voti", new Gson().toJson(voto));
+        SharedPreferences.saveString(getActivity(),"datas","voti",new Gson().toJson(voto));
         swipe.setRefreshing(false);
 
         List<Voto> voti = new ArrayList<>();
         for(int i=0; i<voto.size();i++){
-            if(voto.get(i).periodo==1) voti.add(voto.get(i));
+            if(voto.get(i).periodo==2) voti.add(voto.get(i));
             else continue;
         }
 
@@ -117,10 +117,9 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
 
         List<SimpleSectionedRecyclerViewAdapter.Section> sections =
                 new ArrayList<SimpleSectionedRecyclerViewAdapter.Section>();
-
         if(voto.size()!=0){
-            if(voto.get(0).materia.equals(voto.get(voto.size()-1).materia)){
-                sections.add(new SimpleSectionedRecyclerViewAdapter.Section(0, voto.get(0).materia));
+        if(voto.get(0).materia.equals(voto.get(voto.size()-1).materia)){
+            sections.add(new SimpleSectionedRecyclerViewAdapter.Section(0, voto.get(0).materia));
         }else{
             for(int i=0; i<voto.size(); i++) {
                 if(i==0){
@@ -164,7 +163,7 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
                 List<Voto> datas = new Gson().fromJson(SharedPreferences.loadString(getActivity(), "datas", "voti"), type);
                 List<Voto> tmp = new ArrayList<>();
                 for(int i=0; i<datas.size();i++){
-                    if(datas.get(i).periodo==1) tmp.add(datas.get(i));
+                    if(datas.get(i).periodo==2) tmp.add(datas.get(i));
                     else continue;
                 }
 
@@ -188,7 +187,7 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
         mBottomSheetDialog.setContentView(view);
         mBottomSheetDialog.setCancelable(true);
         mBottomSheetDialog.getWindow ().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        mBottomSheetDialog.getWindow ().setGravity(Gravity.BOTTOM);
+        mBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
         mBottomSheetDialog.show();
 
     }
