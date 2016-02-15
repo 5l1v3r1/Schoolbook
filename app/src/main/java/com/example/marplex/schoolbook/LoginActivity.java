@@ -15,9 +15,6 @@ import com.example.marplex.schoolbook.interfaces.classeViva;
 import com.example.marplex.schoolbook.utilities.SharedPreferences;
 import com.github.jorgecastilloprz.FABProgressCircle;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.util.HashMap;
 
 import se.simbio.encryption.Encryption;
 
@@ -83,12 +80,9 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if(user!=null && pass!=null && cookies!=null){
-            String decrypted = encryption.decryptOrNull(pass);
-
-            HashMap<String, String> session = new Gson().fromJson(cookies, new TypeToken<HashMap<String, String>>(){}.getType());
-
-            login = new ClassevivaAPI(user, decrypted, callback, session);
-            login.doLogin();
+            Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+            startActivity(i);
+            finish();
         }
 
 
@@ -101,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                 name = utente.getText().toString();
                 pw = password.getText().toString();
 
-                login = new ClassevivaAPI(name, pw, callback);
+                login = new ClassevivaAPI(name, pw, callback, LoginActivity.this);
                 login.doLogin();
 
             }

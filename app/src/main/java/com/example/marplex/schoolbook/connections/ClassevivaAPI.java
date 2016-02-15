@@ -19,7 +19,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by marco on 1/27/16.
@@ -33,33 +32,34 @@ public class ClassevivaAPI implements insideCallback{
     Context c;
 
 
-    Map<String, String> session;
+    String session;
 
     private final int LOGIN = 1;
     private final int VOTES = 2;
 
     ClassevivaVoti callbackVoti;
 
-    public ClassevivaAPI(String username, String password, classeViva methods){
+    public ClassevivaAPI(String username, String password, classeViva methods, Context c){
         this.usr = username;
         this.pws = password;
+        this.c = c;
         this.methods = methods;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
-    public ClassevivaAPI(String username, String password, classeViva methods, Map<String, String> session ){
+    public ClassevivaAPI(String username, String password, classeViva methods, String session , Context c){
         this.usr = username;
         this.pws = password;
         this.session = session;
         this.methods = methods;
+        this.c = c;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
-    public ClassevivaAPI(classeViva methods, Map<String, String> session){
+    public ClassevivaAPI(classeViva methods){
         this.methods = methods;
-        this.session = session;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
@@ -71,7 +71,7 @@ public class ClassevivaAPI implements insideCallback{
         this.callbackVoti = callback;
         new JSOUP(VOTES, this).execute("https://web.spaggiari.eu/cvv/app/default/genitori_voti.php");
     }
-    public void getVotes(ClassevivaVoti callback, Map<String, String> session){
+    public void getVotes(ClassevivaVoti callback, String session){
         this.callbackVoti = callback;
         this.session = session;
         new JSOUP(VOTES, this).execute("https://web.spaggiari.eu/cvv/app/default/genitori_voti.php");
@@ -79,9 +79,18 @@ public class ClassevivaAPI implements insideCallback{
 
     @Override
     public void onDataReceive(int type, String html) {
-        System.out.println("Type: "+type);
+        System.out.println("Type: " + type);
         if(type==VOTES){
             Document doc = Jsoup.parse(html);
+            if(doc.title().equals("La Scuola del futuro, oggi")){
+                try {
+                    getLoginPage(CLASSEVIVA_LOGIN + "login=" + usr + "&password=" + pws + "&custcode=PNIT0003&mode=custcode&lc=it");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                callbackVoti.onVotiReceive(null);
+                return;
+            }
             Elements trs = doc.getElementsByTag("tr");
             List<Voto> votoList = new ArrayList<>();
             ArrayList<String> materie = new ArrayList<>();
@@ -140,12 +149,16 @@ public class ClassevivaAPI implements insideCallback{
             SharedPreferences.saveString(c,"materie","materie", new Gson().toJson(finalMaterie));
             callbackVoti.onVotiReceive(votoList);
         }else if(type==LOGIN){
-
+            Document doc = Jsoup.parse(html);
+            System.out.println(doc.title());
         }
     }
 
-    public Map<String, String> getSession(){
+    public String getSession(){
         return this.session;
+    }
+    public void setSession(String session){
+        this.session = session;
     }
 
     private class JSOUP extends AsyncTask<String, Void, String> {
@@ -191,13 +204,13 @@ public class ClassevivaAPI implements insideCallback{
     Document getLoginPage(String url) throws IOException {
         Connection connection = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6");
         Connection.Response response = connection.execute();
-        session = response.cookies();
-        connection.cookies(session);
+        System.out.println("TEST-------------- "+ response.hasCookie("PHPSESSID"));
+        this.session = response.cookie("PHPSESSID").toString();
+        SharedPreferences.saveString(c, "user", "sessionID", this.session);
         return connection.get();
     }
     Document getPage(String url) throws IOException {
-        Connection connection = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6");
-        connection.cookies(session);
+        Connection connection = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6").cookie("PHPSESSID",SharedPreferences.loadString(c,"user","sessionID"));
         return connection.get();
     }
     String getMateria(String materia){

@@ -3,6 +3,7 @@ package com.example.marplex.schoolbook;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.marplex.schoolbook.models.Voto;
@@ -52,8 +53,9 @@ public class Materia extends AppCompatActivity {
         List<Voto> materiaVoti = new ArrayList<>();
         for(int i=0; i<voti.size();i++){
             if(voti.get(i).materia.equals(title)){
-                System.out.println(voti.get(i).materia);
-                materiaVoti.add(voti.get(i));
+                if( !(voti.get(i).voto.equals("-") || voti.get(i).voto.equals("+") || voti.get(i).voto.equals("nav")) ){
+                    materiaVoti.add(voti.get(i));
+                }
             }
             else continue;
         }voti.clear();
@@ -91,31 +93,45 @@ public class Materia extends AppCompatActivity {
 
         progress.setProgress((int)totalAverage*10);
 
+    }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                finish();
+        }
+        return (super.onOptionsItemSelected(menuItem));
     }
 
     double getVoto(String val){
 
-        double value = 0.0;
         if(val.length()==1){
-            try {
-                return Integer.parseInt(val);
-            }catch(Exception e){
-                if(val=="+") return 0.15;
-                else if(val=="-") return -0.15;
+            if(val.contains("+")) return 0;
+            else if(val.contains("-"))return 0;
+            else return Double.parseDouble(val);
+        }else if(val.length()==2){
+            if(val.endsWith("½")) {
+                String value = val.substring(0, val.length()-1);
+                return Double.parseDouble(value) + 0.5;
+            }else if(val.endsWith("-")){
+                String value = val.substring(0, val.length()-1);
+                return Double.parseDouble(value) - 0.15;
+            }else if(val.endsWith("+")){
+                String value = val.substring(0, val.length()-1);
+                return Double.parseDouble(value) + 0.15;
+            }else if(val=="10"){
+                return Double.parseDouble(val);
             }
+        }else if(val.length()==3){
+            if(val.endsWith("-")){
+                String value = val.substring(0, val.length()-1);
+                return Double.parseDouble(value) - 0.15;
+            }else return 0;
         }
-        else {
-            if(val=="nav") return 0;
-            else{
-                value = Integer.parseInt(val.substring(0,1));
-                if(val.endsWith("-")) return value - 0.15;
-                else if(val.endsWith("+")) return value + 0.15;
-                else if(val.endsWith("½")) return value + 0.5;
-            }
 
-        }return 0;
+        return 0;
     }
 
     public static double arrotondaRint(double value, int numCifreDecimali) {

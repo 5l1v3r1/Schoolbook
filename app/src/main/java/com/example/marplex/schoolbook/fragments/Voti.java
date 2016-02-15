@@ -48,6 +48,7 @@ public class Voti extends Fragment {
         pager = (ViewPager)rootView.findViewById(R.id.viewpager);
         pager.setAdapter(new SectionsPagerAdapter(this.getChildFragmentManager()));
 
+        ( (DashboardActivity) getActivity() ).tabLayout.setVisibility(View.VISIBLE);
         ( (DashboardActivity) getActivity() ).tabLayout.setupWithViewPager(pager);
 
         DashboardActivity main = (DashboardActivity) getActivity();

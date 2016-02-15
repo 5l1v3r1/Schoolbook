@@ -49,32 +49,38 @@ public class votiAdapter extends RecyclerView.Adapter <votiAdapter.votiAdapterHo
 
     double getVoto(String val){
 
-        double value = 0.0;
         if(val.length()==1){
-            try {
-                return Integer.parseInt(val);
-            }catch(Exception e){
-                if(val=="+") return 12;
-                else if(val=="-") return 13;
+            if(val.contains("+")) return 12;
+            else if(val.contains("-"))return 13;
+            else return Double.parseDouble(val);
+        }else if(val.length()==2){
+            if(val.endsWith("½")) {
+                String value = val.substring(0, val.length()-1);
+                return Double.parseDouble(value) + 0.5;
+            }else if(val.endsWith("-")){
+                String value = val.substring(0, val.length()-1);
+                return Double.parseDouble(value) - 0.15;
+            }else if(val.endsWith("+")){
+                String value = val.substring(0, val.length()-1);
+                return Double.parseDouble(value) + 0.15;
+            }else if(val=="10"){
+                return Double.parseDouble(val);
             }
+        }else if(val.length()==3){
+            if(val.endsWith("-")){
+                String value = val.substring(0, val.length()-1);
+                return Double.parseDouble(value) - 0.15;
+            }else return 11;
         }
-        else {
-            if(val=="nav") return 11;
-            else{
-                value = Integer.parseInt(val.substring(0,1));
-                if(val.endsWith("-")) return value - 0.15;
-                else if(val.endsWith("+")) return value + 0.15;
-                else if(val.endsWith("½")) return value + 0.5;
-            }
 
-        }return 0;
+        return 0;
     }
 
     int riceviColore(double val){
         if(6<=val && val<=7){
             return Color.parseColor("#ffae00"); //Giallo
         }else{
-            if(val>7 && val<=10){
+            if(val>7 && val<11){
                 return Color.parseColor("#00FF66"); //Verde
             }else if(val==11) return Color.parseColor("#3F51B5"); //Blu per nav
             else if(val==12) return Color.parseColor("#00FF66"); //Verde per +

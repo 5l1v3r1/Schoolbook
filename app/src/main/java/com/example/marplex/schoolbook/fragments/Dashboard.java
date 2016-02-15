@@ -43,12 +43,10 @@ public class Dashboard extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         DashboardActivity main = (DashboardActivity) getActivity();
+        main.tabLayout.setVisibility(View.VISIBLE);
         main.setMenu(R.menu.menu_login, new Toolbar.OnMenuItemClickListener() {
-
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return false;
-            }
+            public boolean onMenuItemClick(MenuItem item) {return false;}
         });
 
         pager = (ViewPager) rootView.findViewById(R.id.pager);

@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:text="La tua media"
                 android:id="@+id/textView11"
-                android:textSize="15dp"
+                android:textSize="20dp"
                 android:padding="5dp"
                 android:background="#2397f3"
                 android:textColor="#fff"
@@ -53,16 +53,17 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="5dp"
                 android:padding="10dp">
 
                 <com.mikhaellopez.circularprogressbar.CircularProgressBar
                     android:layout_width="250dp"
                     android:layout_height="110dp"
-                    app:cpb_background_progressbar_color="@color/colorPrimaryDark"
-                    app:cpb_background_progressbar_width="5dp"
+                    app:cpb_background_progressbar_color="#d7d7d7"
+                    app:cpb_background_progressbar_width="12dp"
                     app:cpb_progressbar_color="@color/colorPrimary"
-                    app:cpb_progressbar_width="5dp"
+                    app:cpb_progressbar_width="12dp"
                     android:id="@+id/view"
                     android:layout_centerHorizontal="true" />
 

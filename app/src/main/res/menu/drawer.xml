@@ -15,7 +15,7 @@
             android:id="@+id/verifiche"
             android:icon="@mipmap/ic_verifiche"
             android:tint="#e99139"
-            android:title="Verifiche" />
+            android:title="Agenda" />
         <item
             android:id="@+id/circolari"
             android:icon="@mipmap/ic_circolari"

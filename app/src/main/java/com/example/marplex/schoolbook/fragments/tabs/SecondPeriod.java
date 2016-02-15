@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.example.marplex.schoolbook.Globals;
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.adapters.SimpleSectionedRecyclerViewAdapter;
 import com.example.marplex.schoolbook.adapters.votiAdapter;
@@ -59,7 +58,8 @@ public class SecondPeriod extends Fragment implements classeViva, ClassevivaVoti
         swipe.setColorSchemeColors(R.color.red, R.color.yellow, R.color.green, R.color.blue);
 
         if(SharedPreferences.loadString(getActivity(), "datas", "voti")==null){
-            api = new ClassevivaAPI(this, Globals.getInstance().getSession());
+            api = new ClassevivaAPI(this);
+
             api.getVotes(this, getActivity());
         }else{
             Type type = new TypeToken<List<Voto>>(){}.getType();
@@ -86,13 +86,20 @@ public class SecondPeriod extends Fragment implements classeViva, ClassevivaVoti
     void refreshContent(){
         if(api!=null) api.getVotes(this, getActivity());
         else {
-            api = new ClassevivaAPI(this, Globals.getInstance().getSession());
+            api = new ClassevivaAPI(this);
+
+            String cookies = SharedPreferences.loadString(getActivity(), "user", "sessionID");
+            api.setSession(cookies);
+
             api.getVotes(this, getActivity());
         }
     }
 
     @Override
     public void onVotiReceive(List<Voto> voto) {
+
+        if(voto==null) refreshContent();
+
         //Save in ROM
         SharedPreferences.saveString(getActivity(),"datas","voti",new Gson().toJson(voto));
         swipe.setRefreshing(false);

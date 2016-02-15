@@ -32,4 +32,5 @@ dependencies {
     compile 'se.simbio.encryption:library:1.2.0'
     compile 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'
     compile 'com.mikhaellopez:circularprogressbar:1.1.0'
+    compile 'com.roomorama:caldroid:2.3.1'
 }

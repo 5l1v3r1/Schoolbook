@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.example.marplex.schoolbook.Globals;
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.adapters.SimpleSectionedRecyclerViewAdapter;
 import com.example.marplex.schoolbook.adapters.votiAdapter;
@@ -59,7 +58,7 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
         swipe.setColorSchemeColors(R.color.red, R.color.yellow, R.color.green, R.color.blue);
 
         if(SharedPreferences.loadString(getActivity(), "datas", "voti")==null){
-            api = new ClassevivaAPI(this, Globals.getInstance().getSession());
+            api = new ClassevivaAPI(this);
             api.getVotes(this, getActivity());
         }else{
             Type type = new TypeToken<List<Voto>>(){}.getType();
@@ -86,7 +85,11 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
     void refreshContent(){
         if(api!=null) api.getVotes(this, getActivity());
         else {
-            api = new ClassevivaAPI(this, Globals.getInstance().getSession());
+            api = new ClassevivaAPI(this);
+
+            String cookies = SharedPreferences.loadString(getActivity(), "user", "sessionID");
+            api.setSession(cookies);
+
             api.getVotes(this, getActivity());
         }
     }
@@ -94,6 +97,9 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
     @Override
     public void onVotiReceive(List<Voto> voto) {
         //Save in ROM
+
+        if(voto==null) refreshContent();
+
         SharedPreferences.saveString(getActivity(), "datas", "voti", new Gson().toJson(voto));
         swipe.setRefreshing(false);
 
@@ -125,7 +131,7 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
                 if(i==0){
                     sections.add(new SimpleSectionedRecyclerViewAdapter.Section(0, voto.get(i).materia));
                 }else{
-                    if(voto.get(i).materia!=voto.get(i-1).materia) {
+                    if( !(voto.get(i).materia.endsWith(voto.get(i-1).materia)) ) {
                         sections.add(new SimpleSectionedRecyclerViewAdapter.Section(i, voto.get(i).materia));
                     }
                 }

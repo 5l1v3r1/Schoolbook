@@ -1,5 +1,6 @@
 package com.example.marplex.schoolbook;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.marplex.schoolbook.fragments.Agenda;
 import com.example.marplex.schoolbook.fragments.Dashboard;
 import com.example.marplex.schoolbook.fragments.Voti;
 
@@ -35,6 +37,8 @@ public class DashboardActivity extends AppCompatActivity{
         drawer = (DrawerLayout) findViewById(R.id.drawer);
 
         tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+
 
         Dashboard dashboard = new Dashboard();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -67,6 +71,12 @@ public class DashboardActivity extends AppCompatActivity{
                                 getSupportActionBar().setTitle("Voti");
                                 return true;
                             case R.id.verifiche:
+                                FragmentTransaction agendaTransaction = getSupportFragmentManager().beginTransaction();
+                                Agenda agenda = new Agenda();
+                                agendaTransaction.replace(R.id.frame, agenda);
+                                agendaTransaction.commit();
+
+                                getSupportActionBar().setTitle("Voti");
                                 return true;
                             case R.id.circolari:
                                 return true;
