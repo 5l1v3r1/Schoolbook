@@ -4,12 +4,16 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 
+import com.example.marplex.schoolbook.interfaces.ClassevivaAgenda;
 import com.example.marplex.schoolbook.interfaces.ClassevivaVoti;
 import com.example.marplex.schoolbook.interfaces.classeViva;
+import com.example.marplex.schoolbook.models.Evento;
 import com.example.marplex.schoolbook.models.Voto;
 import com.example.marplex.schoolbook.utilities.SharedPreferences;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,7 +22,10 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import se.simbio.encryption.Encryption;
 
 /**
  * Created by marco on 1/27/16.
@@ -36,8 +43,13 @@ public class ClassevivaAPI implements insideCallback{
 
     private final int LOGIN = 1;
     private final int VOTES = 2;
+    private final int AGENDA = 3;
+
+    private boolean isVoti;
+    private boolean isAgenda;
 
     ClassevivaVoti callbackVoti;
+    ClassevivaAgenda agendaCallback;
 
     public ClassevivaAPI(String username, String password, classeViva methods, Context c){
         this.usr = username;
@@ -66,6 +78,20 @@ public class ClassevivaAPI implements insideCallback{
     public void doLogin(){
         new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN + "login=" + usr + "&password=" + pws + "&custcode=PNIT0003&mode=custcode&lc=it");
     }
+    public void doLogin(boolean custom){
+        if(custom){
+            String name = SharedPreferences.loadString(c, "user", "user");
+            String pw = SharedPreferences.loadString(c, "user", "password");
+            final Encryption encryption = Encryption.getDefault("Key", "Salt", new byte[16]);
+            String password = null;
+            try {
+                password = encryption.decrypt(pw);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN + "login=" + name + "&password=" + password + "&custcode=PNIT0003&mode=custcode&lc=it");
+        }
+    }
     public void getVotes(ClassevivaVoti callback, Context c){
         this.c = c;
         this.callbackVoti = callback;
@@ -76,19 +102,19 @@ public class ClassevivaAPI implements insideCallback{
         this.session = session;
         new JSOUP(VOTES, this).execute("https://web.spaggiari.eu/cvv/app/default/genitori_voti.php");
     }
+    public void getAgenda(ClassevivaAgenda callback, Context c){
+        this.c = c;
+        this.agendaCallback = callback;
+        new JSOUP(AGENDA, this).execute("https://web.spaggiari.eu/cvv/app/default/agenda_studenti.php?ope=get_events&gruppo_id=&start=" + (int) (new Date().getTime() / 1000 - 1209600) + "&end=" + (int) (new Date().getTime() * 7));
+    }
 
     @Override
     public void onDataReceive(int type, String html) {
-        System.out.println("Type: " + type);
         if(type==VOTES){
             Document doc = Jsoup.parse(html);
             if(doc.title().equals("La Scuola del futuro, oggi")){
-                try {
-                    getLoginPage(CLASSEVIVA_LOGIN + "login=" + usr + "&password=" + pws + "&custcode=PNIT0003&mode=custcode&lc=it");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                callbackVoti.onVotiReceive(null);
+                isVoti=true;
+                doLogin(true);
                 return;
             }
             Elements trs = doc.getElementsByTag("tr");
@@ -149,8 +175,38 @@ public class ClassevivaAPI implements insideCallback{
             SharedPreferences.saveString(c,"materie","materie", new Gson().toJson(finalMaterie));
             callbackVoti.onVotiReceive(votoList);
         }else if(type==LOGIN){
+            if(isVoti){
+                isVoti=false;
+                getVotes(callbackVoti, c);
+            }else if(isAgenda){
+                isAgenda=false;
+                getAgenda(agendaCallback, c);
+            }
+        }else if(type==AGENDA){
             Document doc = Jsoup.parse(html);
-            System.out.println(doc.title());
+            if(doc.title().equals("La Scuola del futuro, oggi")) {
+                isAgenda=true;
+                doLogin(true);
+                return;
+            }
+
+            try {
+                ArrayList<Evento> eventi = new ArrayList<>();
+                JSONArray array = new JSONArray(doc.body().text());
+                for(int i=0; i<array.length(); i++){
+                    JSONObject object = array.getJSONObject(i);
+                    String prof = object.getString("autore_desc");
+                    String testo = object.getString("nota_2");
+
+                    String modifica = object.getString("start");
+                    String data = modifica.substring(0, 10);
+                    Evento evento = new Evento(data, prof, testo);
+                    eventi.add(evento);
+                }
+
+                agendaCallback.onAgendaReceive(eventi);
+
+            } catch (Exception e) {e.printStackTrace();}
         }
     }
 
@@ -204,7 +260,6 @@ public class ClassevivaAPI implements insideCallback{
     Document getLoginPage(String url) throws IOException {
         Connection connection = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6");
         Connection.Response response = connection.execute();
-        System.out.println("TEST-------------- "+ response.hasCookie("PHPSESSID"));
         this.session = response.cookie("PHPSESSID").toString();
         SharedPreferences.saveString(c, "user", "sessionID", this.session);
         return connection.get();

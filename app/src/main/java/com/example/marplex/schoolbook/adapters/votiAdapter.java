@@ -63,8 +63,8 @@ public class votiAdapter extends RecyclerView.Adapter <votiAdapter.votiAdapterHo
             }else if(val.endsWith("+")){
                 String value = val.substring(0, val.length()-1);
                 return Double.parseDouble(value) + 0.15;
-            }else if(val=="10"){
-                return Double.parseDouble(val);
+            }else if(val.equals("10")){
+                return 10;
             }
         }else if(val.length()==3){
             if(val.endsWith("-")){
