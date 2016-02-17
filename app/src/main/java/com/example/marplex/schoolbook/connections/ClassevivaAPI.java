@@ -22,7 +22,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import se.simbio.encryption.Encryption;
@@ -105,7 +104,7 @@ public class ClassevivaAPI implements insideCallback{
     public void getAgenda(ClassevivaAgenda callback, Context c){
         this.c = c;
         this.agendaCallback = callback;
-        new JSOUP(AGENDA, this).execute("https://web.spaggiari.eu/cvv/app/default/agenda_studenti.php?ope=get_events&gruppo_id=&start=" + (int) (new Date().getTime() / 1000 - 1209600) + "&end=" + (int) (new Date().getTime() * 7));
+        new JSOUP(AGENDA, this).execute("https://web.spaggiari.eu/cvv/app/default/agenda_studenti.php?ope=get_events&gruppo_id=&start=" + (int) (System.currentTimeMillis()/1000 - 1728000) + "&end=" + (int) (System.currentTimeMillis()/1000 + 864000));
     }
 
     @Override
@@ -191,8 +190,10 @@ public class ClassevivaAPI implements insideCallback{
             }
 
             try {
+                System.out.println(doc.body().text());
                 ArrayList<Evento> eventi = new ArrayList<>();
                 JSONArray array = new JSONArray(doc.body().text());
+
                 for(int i=0; i<array.length(); i++){
                     JSONObject object = array.getJSONObject(i);
                     String prof = object.getString("autore_desc");

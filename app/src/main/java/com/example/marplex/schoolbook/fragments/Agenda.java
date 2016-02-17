@@ -29,6 +29,7 @@ import com.example.marplex.schoolbook.models.Evento;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,6 +51,8 @@ public class Agenda extends Fragment implements ClassevivaAgenda,classeViva {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_agenda, container, false);
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
 
         ( (DashboardActivity)getActivity() ).tabLayout.setVisibility(View.GONE);
         ( (DashboardActivity)getActivity() ).setMenu(R.menu.menu_login, new Toolbar.OnMenuItemClickListener() {
@@ -79,11 +82,20 @@ public class Agenda extends Fragment implements ClassevivaAgenda,classeViva {
                 Evento evento = null;
                 for(int i=0; i< eventi.size(); i++){
                     Evento evento1 = eventi.get(i);
+                    String data = formatter.format(date);
+                    StringTokenizer tokenizerData = new StringTokenizer(data, "/");
+                    String day = tokenizerData.nextToken();
+                    String month = tokenizerData.nextToken();
+                    String year = tokenizerData.nextToken();
+
                     StringTokenizer tokenizer = new StringTokenizer(evento1.data, "-");
                     String anno = tokenizer.nextToken();
                     String mese = tokenizer.nextToken();
                     String giorno = tokenizer.nextToken();
-                    if(date.getDay()==Integer.parseInt(giorno) && date.getMonth()==Integer.parseInt(mese) && date.getYear()==Integer.parseInt(anno)){
+                    System.out.println("Day: "+day);
+                    System.out.println("Month: "+month);
+                    System.out.println("Year: "+year);
+                    if(day.equals(giorno) && month.equals(mese) && year.equals(anno)){
                         evento = evento1;
                     }
                 }
