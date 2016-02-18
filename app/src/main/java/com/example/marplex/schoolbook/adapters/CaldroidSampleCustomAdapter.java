@@ -50,7 +50,7 @@ public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
 
         if(((ArrayList<Evento>)extraData.get("eventi"))==null){
             date.setTextColor(Color.BLACK);
-            cellView.setBackgroundResource(R.color.white);
+            date.setBackgroundColor(Color.parseColor("#EEEEEE"));
             date.setText("" + dateTime.getDay());
 
             cellView.setPadding(leftPadding, topPadding, rightPadding,
@@ -73,7 +73,7 @@ public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
             }
             if(evento==null){
                 date.setTextColor(Color.BLACK);
-                cellView.setBackgroundResource(R.color.white);
+                date.setBackgroundColor(Color.parseColor("#EEEEEE"));
                 date.setText("" + dateTime.getDay());
                 cellView.setPadding(leftPadding, topPadding, rightPadding,
                         bottomPadding);
@@ -83,20 +83,17 @@ public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
             }
 
 
-
-            date.setTextColor(Color.BLACK);
-
             StringTokenizer tokenizer = new StringTokenizer(evento.data, "-");
             String anno = tokenizer.nextToken();
             String mese = tokenizer.nextToken();
             String giorno = tokenizer.nextToken();
 
             if (dateTime.getYear() == Integer.parseInt(anno) && dateTime.getMonth() == Integer.parseInt(mese) && dateTime.getDay() == Integer.parseInt(giorno)) {
-                cellView.setBackgroundResource(R.drawable.red_border_gray_bg);
                 date.setTextColor(Color.WHITE);
+                date.setBackgroundResource(R.drawable.circle);
             } else {
                 date.setTextColor(Color.BLACK);
-                cellView.setBackgroundResource(R.color.white);
+                date.setBackgroundColor(Color.parseColor("#EEEEEE"));
             }
 
             date.setText("" + dateTime.getDay());

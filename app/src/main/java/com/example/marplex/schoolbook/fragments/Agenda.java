@@ -4,8 +4,14 @@ package com.example.marplex.schoolbook.fragments;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -135,7 +141,21 @@ public class Agenda extends Fragment implements ClassevivaAgenda,classeViva {
 
             @Override
             public void onCaldroidViewCreated() {
+                Button leftButton = caldroidFragment.getLeftArrowButton();
 
+                Drawable left = getResources().getDrawable( R.mipmap.action_previous );
+                ColorFilter filter = new LightingColorFilter( Color.WHITE, Color.BLACK);
+                left.setColorFilter(filter);
+
+                leftButton.setBackground(left);
+                Button rightButton = caldroidFragment.getRightArrowButton();
+
+                Drawable right = getResources().getDrawable( R.mipmap.action_next );
+                ColorFilter filter2 = new LightingColorFilter( Color.WHITE, Color.BLACK);
+                right.setColorFilter(filter2);
+
+                rightButton.setBackground(right);
+                TextView textView = caldroidFragment.getMonthTitleTextView();
             }
 
         };
@@ -150,6 +170,12 @@ public class Agenda extends Fragment implements ClassevivaAgenda,classeViva {
         t.commit();
 
         return rootView;
+    }
+
+    public static Drawable convertColorDrawable(int resource, int color, Context context) {
+        final Drawable drawable = context.getResources().getDrawable(resource);
+        drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        return drawable.mutate();
     }
 
 

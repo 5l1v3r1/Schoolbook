@@ -76,7 +76,7 @@ public class DashboardActivity extends AppCompatActivity{
                                 agendaTransaction.replace(R.id.frame, agenda);
                                 agendaTransaction.commit();
 
-                                getSupportActionBar().setTitle("Voti");
+                                getSupportActionBar().setTitle("Agenda");
                                 return true;
                             case R.id.circolari:
                                 return true;
