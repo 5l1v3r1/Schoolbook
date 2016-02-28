@@ -22,7 +22,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import se.simbio.encryption.Encryption;
 
@@ -37,7 +36,6 @@ public class ClassevivaAPI implements insideCallback{
     String usr,pws;
     Context c;
 
-
     String session;
 
     private final int LOGIN = 1;
@@ -50,6 +48,16 @@ public class ClassevivaAPI implements insideCallback{
     ClassevivaVoti callbackVoti;
     ClassevivaAgenda agendaCallback;
 
+    /**
+     * ClassevivaAPI constructor
+     *
+     * @param username  User's username
+     * @param password  User's password
+     * @param methods  Interface which return the requested html string
+     * @param c  Activity context
+     *
+     */
+
     public ClassevivaAPI(String username, String password, classeViva methods, Context c){
         this.usr = username;
         this.pws = password;
@@ -59,48 +67,71 @@ public class ClassevivaAPI implements insideCallback{
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
-    public ClassevivaAPI(String username, String password, classeViva methods, String session , Context c){
-        this.usr = username;
-        this.pws = password;
-        this.session = session;
-        this.methods = methods;
-        this.c = c;
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-    }
+    /**
+     * ClassevivaAPI constructor
+     *
+     * @param methods  Interface which return the requested html string
+     *
+     */
+
     public ClassevivaAPI(classeViva methods){
         this.methods = methods;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
+
+    //Call Classeviva login page with requested credentials
     public void doLogin(){
+        //Perform new HTTP call
         new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN + "login=" + usr + "&password=" + pws + "&custcode=PNIT0003&mode=custcode&lc=it");
     }
+    //Call Classeviva login page with saved credentials
     public void doLogin(boolean custom){
         if(custom){
+
+            //Get user's credentials from SharedPreference
             String name = SharedPreferences.loadString(c, "user", "user");
             String pw = SharedPreferences.loadString(c, "user", "password");
+
+            //Decrypt password usign Encryption class
             final Encryption encryption = Encryption.getDefault("Key", "Salt", new byte[16]);
             String password = null;
             try {
                 password = encryption.decrypt(pw);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } catch (Exception e) {}
+
+            //Perform new HTTP call
             new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN + "login=" + name + "&password=" + password + "&custcode=PNIT0003&mode=custcode&lc=it");
         }
     }
+
+    /**
+     * getVotes() method
+     *
+     * @param callback  Interface which return the requested ArrayList<Voto> list
+     * @param c  Activity context
+     * @see ClassevivaVoti
+     *
+     */
+
     public void getVotes(ClassevivaVoti callback, Context c){
         this.c = c;
         this.callbackVoti = callback;
+
+        //Perform new HTTP call
         new JSOUP(VOTES, this).execute("https://web.spaggiari.eu/cvv/app/default/genitori_voti.php");
     }
-    public void getVotes(ClassevivaVoti callback, String session){
-        this.callbackVoti = callback;
-        this.session = session;
-        new JSOUP(VOTES, this).execute("https://web.spaggiari.eu/cvv/app/default/genitori_voti.php");
-    }
+
+    /**
+     * getAgenda() method
+     *
+     * @param callback  Interface which return the requested ArrayList<Evento> list
+     * @param c  Activity context
+     * @see ClassevivaVoti
+     *
+     */
+
     public void getAgenda(ClassevivaAgenda callback, Context c){
         this.c = c;
         this.agendaCallback = callback;
@@ -110,14 +141,20 @@ public class ClassevivaAPI implements insideCallback{
     @Override
     public void onDataReceive(int type, String html) {
         if(type==VOTES){
+
             Document doc = Jsoup.parse(html);
+            //Check for expired sesion
             if(doc.title().equals("La Scuola del futuro, oggi")){
                 isVoti=true;
+
+                //Re-perform the login for retrieve the new session
                 doLogin(true);
                 return;
             }
+
+            //Part of code which fill the votoList with all retrieved votes
             Elements trs = doc.getElementsByTag("tr");
-            List<Voto> votoList = new ArrayList<>();
+            ArrayList<Voto> votoList = new ArrayList<>();
             ArrayList<String> materie = new ArrayList<>();
             for(int i = 0; i<trs.size();i++){
                 Element tr = trs.get(i);
@@ -162,6 +199,7 @@ public class ClassevivaAPI implements insideCallback{
                 }
             }
 
+            //Save all subjects on SharedPreferences
             ArrayList<String> finalMaterie = new ArrayList<>();
             for(int i=0; i<materie.size(); i++){
                 if(i==0) finalMaterie.add(getMateria(materie.get(i)));
@@ -172,6 +210,7 @@ public class ClassevivaAPI implements insideCallback{
                 }
             }
             SharedPreferences.saveString(c,"materie","materie", new Gson().toJson(finalMaterie));
+            //Call interface method
             callbackVoti.onVotiReceive(votoList);
         }else if(type==LOGIN){
             if(isVoti){
@@ -183,14 +222,16 @@ public class ClassevivaAPI implements insideCallback{
             }
         }else if(type==AGENDA){
             Document doc = Jsoup.parse(html);
+            //Check for expired sesion
             if(doc.title().equals("La Scuola del futuro, oggi")) {
                 isAgenda=true;
+
+                //Re-perform the login for retrieve the new session
                 doLogin(true);
                 return;
             }
-
             try {
-                System.out.println(doc.body().text());
+
                 ArrayList<Evento> eventi = new ArrayList<>();
                 JSONArray array = new JSONArray(doc.body().text());
 
@@ -201,7 +242,9 @@ public class ClassevivaAPI implements insideCallback{
 
                     String modifica = object.getString("start");
                     String data = modifica.substring(0, 10);
+                    //Fill Evento class with all retrieved datas
                     Evento evento = new Evento(data, prof, testo);
+                    //Add evento to an ArrayList
                     eventi.add(evento);
                 }
 
@@ -211,9 +254,17 @@ public class ClassevivaAPI implements insideCallback{
         }
     }
 
+    /**
+     * getSession() method
+     *
+     * @return The current session from SharedPreferences
+     *
+     */
+
     public String getSession(){
-        return this.session;
+        return SharedPreferences.loadString(c,"user","sessionID");
     }
+
     public void setSession(String session){
         this.session = session;
     }
@@ -259,6 +310,7 @@ public class ClassevivaAPI implements insideCallback{
     }
 
     Document getLoginPage(String url) throws IOException {
+        //Get the page with a new session
         Connection connection = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6");
         Connection.Response response = connection.execute();
         this.session = response.cookie("PHPSESSID").toString();
@@ -266,10 +318,14 @@ public class ClassevivaAPI implements insideCallback{
         return connection.get();
     }
     Document getPage(String url) throws IOException {
+        //Get the page with the saved session
         Connection connection = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6").cookie("PHPSESSID",SharedPreferences.loadString(c,"user","sessionID"));
         return connection.get();
     }
     String getMateria(String materia){
+
+        //Replace the current String with another more "comprensible"
+
         if(materia.startsWith("(chimica)")) return "Chimica";
         else if(materia.startsWith("(fisica)")) return "Fisica";
         else if(materia.startsWith("(scienze ")) return "Scienze";

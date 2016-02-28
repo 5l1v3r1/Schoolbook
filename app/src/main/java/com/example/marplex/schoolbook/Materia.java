@@ -16,19 +16,24 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class Materia extends AppCompatActivity {
+
+    @Bind(R.id.view)
+    CircularProgressBar progress;
+    @Bind(R.id.votoOrale) TextView orale;
+    @Bind(R.id.mediaVoti) TextView media;
+    @Bind(R.id.votoScritto) TextView scritto;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_materia);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-
-        TextView scritto = (TextView)findViewById(R.id.votoScritto);
-        TextView orale = (TextView)findViewById(R.id.votoOrale);
-        TextView media = (TextView)findViewById(R.id.mediaVoti);
-        CircularProgressBar progress = (CircularProgressBar) findViewById(R.id.view);
 
         Bundle b = getIntent().getExtras();
         String title = b.getString("materia");
@@ -83,15 +88,12 @@ public class Materia extends AppCompatActivity {
         double scrittoAverage = sumScritto/scrittoTimes;
         double oraleAverage = sumOrale/oraleTimes;
 
-        System.out.println(totalAverage);
-        System.out.println(scrittoAverage);
-        System.out.println(oraleAverage);
+        scritto.setText("" + arrotondaRint(scrittoAverage, 1));
+        orale.setText("" + arrotondaRint(oraleAverage, 1));
+        media.setText("" + arrotondaRint(totalAverage, 1));
 
-        scritto.setText(""+arrotondaRint(scrittoAverage, 2));
-        orale.setText("" + arrotondaRint(oraleAverage, 2));
-        media.setText("" + arrotondaRint(totalAverage, 2));
-
-        progress.setProgress((int)totalAverage*10);
+        int animationDuration = 2500;
+        progress.setProgressWithAnimation((int) totalAverage * 10, animationDuration);
 
     }
 

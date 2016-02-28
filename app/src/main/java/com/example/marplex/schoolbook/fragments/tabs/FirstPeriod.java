@@ -95,7 +95,7 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
     }
 
     @Override
-    public void onVotiReceive(List<Voto> voto) {
+    public void onVotiReceive(ArrayList<Voto> voto) {
         //Save in ROM
 
         if(voto==null) refreshContent();
@@ -177,9 +177,6 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
                 for(int x = 0; x< tmp.size(); x++){
                     String materia = materie.get(position);
                     if(tmp.get(x).materia.equals(materia)){
-                        System.out.println(tmp.get(x).materia);
-                        System.out.println(materia+" !");
-                        System.out.println("OK");
                         voti.add(tmp.get(x));
                     }
                     else continue;
@@ -196,6 +193,19 @@ public class FirstPeriod extends Fragment implements classeViva, ClassevivaVoti 
         mBottomSheetDialog.getWindow ().setGravity(Gravity.BOTTOM);
         mBottomSheetDialog.show();
 
+    }
+
+    public void eliminaOrdine(){
+        Type type = new TypeToken<List<Voto>>(){}.getType();
+        List<Voto> datas = new Gson().fromJson(SharedPreferences.loadString(getActivity(), "datas", "voti"), type);
+
+        List<Voto> voti = new ArrayList<>();
+        for(int i=0; i<datas.size();i++){
+            if(datas.get(i).periodo==1) voti.add(datas.get(i));
+            else continue;
+        }
+
+        populateRecyclerView(voti);
     }
 
 }

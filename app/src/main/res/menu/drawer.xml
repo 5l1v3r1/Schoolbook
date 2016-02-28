@@ -6,16 +6,25 @@
             android:icon="@mipmap/ic_dashboard"
             android:tint="#0090ff"
             android:title="Dashboard" />
+
         <item
             android:id="@+id/voti"
             android:icon="@mipmap/ic_voti"
             android:tint="#d130cc4f"
             android:title="Voti" />
+
         <item
-            android:id="@+id/verifiche"
+            android:id="@+id/materie"
+            android:icon="@mipmap/ic_verifiche"
+            android:tint="#e9d439"
+            android:title="Materie" />
+
+        <item
+            android:id="@+id/agenda"
             android:icon="@mipmap/ic_verifiche"
             android:tint="#e99139"
             android:title="Agenda" />
+
         <item
             android:id="@+id/circolari"
             android:icon="@mipmap/ic_circolari"

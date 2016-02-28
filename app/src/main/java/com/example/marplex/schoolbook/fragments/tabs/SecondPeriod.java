@@ -96,7 +96,7 @@ public class SecondPeriod extends Fragment implements classeViva, ClassevivaVoti
     }
 
     @Override
-    public void onVotiReceive(List<Voto> voto) {
+    public void onVotiReceive(ArrayList<Voto> voto) {
 
         if(voto==null) refreshContent();
 
@@ -165,24 +165,21 @@ public class SecondPeriod extends Fragment implements classeViva, ClassevivaVoti
         Listamaterie.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Type type = new TypeToken<List<Voto>>(){}.getType();
+                Type type = new TypeToken<List<Voto>>() {
+                }.getType();
                 List<Voto> datas = new Gson().fromJson(SharedPreferences.loadString(getActivity(), "datas", "voti"), type);
                 List<Voto> tmp = new ArrayList<>();
-                for(int i=0; i<datas.size();i++){
-                    if(datas.get(i).periodo==2) tmp.add(datas.get(i));
+                for (int i = 0; i < datas.size(); i++) {
+                    if (datas.get(i).periodo == 2) tmp.add(datas.get(i));
                     else continue;
                 }
 
                 List<Voto> voti = new ArrayList<>();
-                for(int x = 0; x< tmp.size(); x++){
+                for (int x = 0; x < tmp.size(); x++) {
                     String materia = materie.get(position);
-                    if(tmp.get(x).materia.equals(materia)){
-                        System.out.println(tmp.get(x).materia);
-                        System.out.println(materia+" !");
-                        System.out.println("OK");
+                    if (tmp.get(x).materia.equals(materia)) {
                         voti.add(tmp.get(x));
-                    }
-                    else continue;
+                    } else continue;
                 }
 
                 mBottomSheetDialog.hide();
@@ -196,6 +193,19 @@ public class SecondPeriod extends Fragment implements classeViva, ClassevivaVoti
         mBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
         mBottomSheetDialog.show();
 
+    }
+
+    public void eliminaOrdine(){
+        Type type = new TypeToken<List<Voto>>(){}.getType();
+        List<Voto> datas = new Gson().fromJson(SharedPreferences.loadString(getActivity(), "datas", "voti"), type);
+
+        List<Voto> voti = new ArrayList<>();
+        for(int i=0; i<datas.size();i++){
+            if(datas.get(i).periodo==1) voti.add(datas.get(i));
+            else continue;
+        }
+
+        populateRecyclerView(voti);
     }
 
 }

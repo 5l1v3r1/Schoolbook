@@ -26,7 +26,7 @@
         <activity
             android:name=".Materia"
             android:label="@string/title_activity_materia"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppThemeGreen" >
         </activity>
     </application>
 

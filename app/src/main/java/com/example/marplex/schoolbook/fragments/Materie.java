@@ -15,72 +15,34 @@ import android.view.ViewGroup;
 
 import com.example.marplex.schoolbook.DashboardActivity;
 import com.example.marplex.schoolbook.R;
-import com.example.marplex.schoolbook.fragments.tabs.FirstPeriod;
-import com.example.marplex.schoolbook.fragments.tabs.SecondPeriod;
+import com.example.marplex.schoolbook.fragments.tabs.MateriaFirstPeriod;
+import com.example.marplex.schoolbook.fragments.tabs.MateriaSecondPeriod;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+public class Materie extends Fragment {
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class Voti extends Fragment {
+    @Bind(R.id.pager) ViewPager pager;
 
-    @Bind(R.id.viewpager) ViewPager pager;
-
-    public Voti() {
-        // Required empty public constructor
-    }
+    public Materie() { }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        onDestroy();
-        onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_voti, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_materie, container, false);
         ButterKnife.bind(this, rootView);
 
         pager.setAdapter(new SectionsPagerAdapter(this.getChildFragmentManager()));
 
         ((DashboardActivity) getActivity()).tabLayout.setVisibility(View.VISIBLE);
         ((DashboardActivity) getActivity()).tabLayout.setupWithViewPager(pager);
-
-        ((DashboardActivity) getActivity()).setMenu(R.menu.voti, new Toolbar.OnMenuItemClickListener() {
-
+        ((DashboardActivity) getActivity()).setMenu(R.menu.menu_login, new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.ordina) {
-                    if (pager.getCurrentItem() == 0) {
-                        FirstPeriod firstPeriod = (FirstPeriod) ((SectionsPagerAdapter) pager.getAdapter()).getRegisteredFragment(pager.getCurrentItem());
-                        firstPeriod.ordina();
-                    } else {
-                        SecondPeriod secondPeriod = (SecondPeriod) ((SectionsPagerAdapter) pager.getAdapter()).getRegisteredFragment(pager.getCurrentItem());
-                        secondPeriod.ordina();
-                    }
-
-                }else if (item.getItemId() == R.id.elimina_filtro) {
-                    if (pager.getCurrentItem() == 0) {
-                        FirstPeriod firstPeriod = (FirstPeriod) ((SectionsPagerAdapter) pager.getAdapter()).getRegisteredFragment(pager.getCurrentItem());
-                        firstPeriod.eliminaOrdine();
-                    } else {
-                        SecondPeriod secondPeriod = (SecondPeriod) ((SectionsPagerAdapter) pager.getAdapter()).getRegisteredFragment(pager.getCurrentItem());
-                        secondPeriod.eliminaOrdine();
-                    }
-
-                }
                 return false;
             }
         });
+
 
         return rootView;
     }
@@ -94,9 +56,9 @@ public class Voti extends Fragment {
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position){
-                case 0: return FirstPeriod.newInstance();
-                case 1: return SecondPeriod.newInstance();
-                default: return FirstPeriod.newInstance();
+                case 0: return MateriaFirstPeriod.newInstance();
+                case 1: return MateriaSecondPeriod.newInstance();
+                default: return MateriaFirstPeriod.newInstance();
             }
         }
 

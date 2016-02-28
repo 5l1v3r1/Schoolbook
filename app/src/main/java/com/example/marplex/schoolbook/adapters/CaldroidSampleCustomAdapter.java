@@ -50,7 +50,7 @@ public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
 
         if(((ArrayList<Evento>)extraData.get("eventi"))==null){
             date.setTextColor(Color.BLACK);
-            date.setBackgroundColor(Color.parseColor("#EEEEEE"));
+            date.setBackgroundColor(Color.parseColor("#FFFFFF"));
             date.setText("" + dateTime.getDay());
 
             cellView.setPadding(leftPadding, topPadding, rightPadding,
@@ -73,7 +73,7 @@ public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
             }
             if(evento==null){
                 date.setTextColor(Color.BLACK);
-                date.setBackgroundColor(Color.parseColor("#EEEEEE"));
+                date.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 date.setText("" + dateTime.getDay());
                 cellView.setPadding(leftPadding, topPadding, rightPadding,
                         bottomPadding);

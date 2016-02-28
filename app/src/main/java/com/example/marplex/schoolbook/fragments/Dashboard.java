@@ -17,12 +17,15 @@ import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.fragments.tabs.Home;
 import com.example.marplex.schoolbook.fragments.tabs.Reminds;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class Dashboard extends Fragment {
 
-    private ViewPager pager;
+    @Bind(R.id.pager) ViewPager pager;
     public Dashboard() {
         // Required empty public constructor
     }
@@ -41,18 +44,17 @@ public class Dashboard extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
-
-        DashboardActivity main = (DashboardActivity) getActivity();
-        main.tabLayout.setVisibility(View.VISIBLE);
-        main.setMenu(R.menu.menu_login, new Toolbar.OnMenuItemClickListener() {
+        ButterKnife.bind(this, rootView);
+        ((DashboardActivity) getActivity()).tabLayout.setVisibility(View.VISIBLE);
+        ((DashboardActivity) getActivity()).setMenu(R.menu.menu_login, new Toolbar.OnMenuItemClickListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {return false;}
+            public boolean onMenuItemClick(MenuItem item) {
+                return false;
+            }
         });
 
-        pager = (ViewPager) rootView.findViewById(R.id.pager);
         pager.setAdapter(new SectionsPagerAdapter(this.getChildFragmentManager()));
-
-        ( (DashboardActivity) getActivity() ).tabLayout.setupWithViewPager(pager);
+        ((DashboardActivity) getActivity()).tabLayout.setupWithViewPager(pager);
 
         return rootView;
     }

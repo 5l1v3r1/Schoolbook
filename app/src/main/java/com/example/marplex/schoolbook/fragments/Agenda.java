@@ -60,8 +60,8 @@ public class Agenda extends Fragment implements ClassevivaAgenda,classeViva {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 
-        ( (DashboardActivity)getActivity() ).tabLayout.setVisibility(View.GONE);
-        ( (DashboardActivity)getActivity() ).setMenu(R.menu.menu_login, new Toolbar.OnMenuItemClickListener() {
+        ((DashboardActivity) getActivity()).tabLayout.setVisibility(View.GONE);
+        ((DashboardActivity) getActivity()).setMenu(R.menu.menu_login, new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 return false;
@@ -104,7 +104,7 @@ public class Agenda extends Fragment implements ClassevivaAgenda,classeViva {
                     if(day.equals(giorno) && month.equals(mese) && year.equals(anno)){
                         evento = evento1;
                     }
-                }
+                }if(evento==null) return;
 
                 prof.setText(evento.titolo);
                 testo.setText(evento.testo);

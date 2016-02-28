@@ -16,59 +16,72 @@ import com.example.marplex.schoolbook.utilities.SharedPreferences;
 import com.github.jorgecastilloprz.FABProgressCircle;
 import com.google.gson.Gson;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import se.simbio.encryption.Encryption;
 
 
 public class LoginActivity extends AppCompatActivity {
-    EditText utente, password;
-    classeViva callback;
-    ClassevivaAPI login;
-    FABProgressCircle progress;
 
-    String name, pw;
+    @Bind(R.id.input_codice_utente) EditText utente;
+    @Bind(R.id.input_password) EditText password;
+    @Bind(R.id.name) TextInputLayout n;
+    @Bind(R.id.pw) TextInputLayout p;
+    @Bind(R.id.fabProgressCircle) FABProgressCircle progress;
+    @Bind(R.id.fab) FloatingActionButton fab;
 
     String user,pass,cookies;
-    TextInputLayout n,p;
+    String name, pw;
+
+    Encryption encryption;
+
+    classeViva callback;
+    ClassevivaAPI login;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
 
-        utente = (EditText) findViewById(R.id.input_codice_utente);
-        password = (EditText) findViewById(R.id.input_password);
+        // Create an instance of Encrytion
+        encryption = Encryption.getDefault("Key", "Salt", new byte[16]);
 
-        n = (TextInputLayout) findViewById(R.id.name);
-        p = (TextInputLayout) findViewById(R.id.pw);
-
-        final Encryption encryption = Encryption.getDefault("Key", "Salt", new byte[16]);
-
+        // Load user's credentials with SharedPreferences help class
         user = SharedPreferences.loadString(this, "user", "user");
         pass = SharedPreferences.loadString(this, "user", "password");
         cookies = SharedPreferences.loadString(this, "user", "session");
 
+        //Create the callback for ClassevivaAPI class
         callback = new classeViva() {
             @Override
             public void onPageLoaded(String html) {
+                //If there's some error in login (Check if the <title> tag contains the login page title)
                 if(html.contains("La Scuola del futuro, oggi")){
                     progress.hide();
                     if(html.contains("Password errata")){
-                        //p.setError("La password è errata");
+                        // Error for wrong password
                     }else if(html.contains("Nome utente errato")){
-                        //n.setError("Nome utente errato");
+                        // Error for wrong name
                     }
-                }else {
+                }
+                //Succesfull login
+                else {
                     progress.beginFinalAnimation();
+                    //If the user doesn't log in
                     if(user==null && pass==null && cookies==null){
-
+                        //Save the new credentials
                         SharedPreferences.saveString(LoginActivity.this, "user", "user", name);
                         try {
-                            SharedPreferences.saveString(LoginActivity.this, "user", "password", encryption.encrypt(pw));
-                        } catch (Exception e) {
-                        }
+                            //Use Encryption to cript the password
+                            String encryptedPassword = encryption.encrypt(pw);
+                            SharedPreferences.saveString(LoginActivity.this, "user", "password", encryptedPassword);
+                        } catch (Exception e) {}
                         SharedPreferences.saveString(LoginActivity.this, "user", "session", new Gson().toJson(login.getSession()));
                     }
 
-                    Globals.getInstance().setSession(login.getSession());
+                    //Start DashboardActivity
                     Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                     startActivity(i);
                     finish();
@@ -77,25 +90,25 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-
-
+        //Check if the user already has saved his credentials
         if(user!=null && pass!=null && cookies!=null){
+            //Start DashboardActivity
             Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
             startActivity(i);
             finish();
         }
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        progress = (FABProgressCircle) findViewById(R.id.fabProgressCircle);
         progress.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
                 progress.show();
 
+                //name and pw now have the relative edittexts values
                 name = utente.getText().toString();
                 pw = password.getText().toString();
 
+                //Create an instance of ClassevivaAPI
                 login = new ClassevivaAPI(name, pw, callback, LoginActivity.this);
+                //Perform login which return its  value in the callback
                 login.doLogin();
 
             }
@@ -104,16 +117,14 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu, this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_login, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here
         int id = item.getItemId();
         return super.onOptionsItemSelected(item);
     }
