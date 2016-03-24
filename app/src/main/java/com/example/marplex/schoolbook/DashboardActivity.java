@@ -71,7 +71,7 @@ public class DashboardActivity extends AppCompatActivity{
                             case R.id.materie:
 
                                 //Change activity color
-                                changeActivityColor(R.color.colorPrimaryOrange, R.color.colorPrimaryDarkGreen);
+                                changeActivityColor(R.color.colorPrimaryOrange, R.color.colorPrimaryDarkOrange);
 
                                 //Replace R.id.frame with the Voti fragment
                                 setContainerFragment(new Materie());

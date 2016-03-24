@@ -11,30 +11,25 @@ import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.models.Materia;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by marco on 1/29/16.
  */
 public class materieAdapter extends RecyclerView.Adapter <materieAdapter.materieAdapterHolder> {
 
-    private List<Materia> materie;
+    private ArrayList<Materia> materie;
 
-    public materieAdapter(List<Materia> modelData) {
-        if (modelData == null) {
-            throw new IllegalArgumentException(
-                    "materia must not be null");
-        }
+    public materieAdapter(ArrayList<Materia> modelData) {
         this.materie = modelData;
     }
 
     @Override
     public materieAdapterHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View itemView = LayoutInflater.
-                from(viewGroup.getContext()).
-                inflate(R.layout.model_materia,
-                        viewGroup,
-                        false);
+        View itemView = LayoutInflater.from(viewGroup.getContext()).
+        inflate(R.layout.model_materia,
+                viewGroup,
+                false);
         return new materieAdapterHolder(itemView);
     }
 

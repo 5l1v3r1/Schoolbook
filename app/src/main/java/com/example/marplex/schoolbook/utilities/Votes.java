@@ -23,6 +23,22 @@ public class Votes {
         return votoArrayList;
     }
 
+    public static ArrayList<Voto> getNumericalVotesByMateria(Context c, String materia, int period){
+        ArrayList<Voto> tmp = Votes.getVotesByPeriod(c, period);
+
+        ArrayList<Voto> voti = new ArrayList<>();
+        for(Voto voto : tmp){
+            if( !(voto.voto.equals("-") || voto.voto.equals("+") || voto.voto.equals("nav")) ){
+                if(voto.materia.equals(materia)){
+                    voti.add(voto);
+                }
+                else continue;
+            }else continue;
+        }
+        return voti;
+
+    }
+
     public static ArrayList<Voto> getVotesByMateria(Context c, String materia, int period){
         ArrayList<Voto> tmp = Votes.getVotesByPeriod(c, period);
 
