@@ -3,7 +3,6 @@ package com.example.marplex.schoolbook;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,9 +11,8 @@ import android.widget.EditText;
 
 import com.example.marplex.schoolbook.connections.ClassevivaAPI;
 import com.example.marplex.schoolbook.interfaces.classeViva;
-import com.example.marplex.schoolbook.utilities.SharedPreferences;
+import com.example.marplex.schoolbook.utilities.Credentials;
 import com.github.jorgecastilloprz.FABProgressCircle;
-import com.google.gson.Gson;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,20 +21,18 @@ import se.simbio.encryption.Encryption;
 
 public class LoginActivity extends AppCompatActivity {
 
-    @Bind(R.id.input_codice_utente) EditText utente;
-    @Bind(R.id.input_password) EditText password;
-    @Bind(R.id.name) TextInputLayout n;
-    @Bind(R.id.pw) TextInputLayout p;
-    @Bind(R.id.fabProgressCircle) FABProgressCircle progress;
-    @Bind(R.id.fab) FloatingActionButton fab;
+    @Bind(R.id.input_codice_utente) EditText mUtente;
+    @Bind(R.id.input_password) EditText mPassword;
+    @Bind(R.id.fabProgressCircle) FABProgressCircle mProgress;
+    @Bind(R.id.fab) FloatingActionButton mFab;
 
-    String user,pass,cookies;
-    String name, pw;
+    String mUser,mPass, mSession;
+    String mName, mPw;
 
-    Encryption encryption;
+    Encryption mEncryption;
 
-    classeViva callback;
-    ClassevivaAPI login;
+    classeViva mCallback;
+    ClassevivaAPI mLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,20 +42,21 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         // Create an instance of Encrytion
-        encryption = Encryption.getDefault("Key", "Salt", new byte[16]);
+        mEncryption = Encryption.getDefault("Key", "Salt", new byte[16]);
 
         // Load user's credentials with SharedPreferences help class
-        user = SharedPreferences.loadString(this, "user", "user");
-        pass = SharedPreferences.loadString(this, "user", "password");
-        cookies = SharedPreferences.loadString(this, "user", "session");
+        mUser = Credentials.getName(this);
+        mPass = Credentials.getPassword(this);
+        mSession = Credentials.getSession(this);
 
         //Create the callback for ClassevivaAPI class
-        callback = new classeViva() {
+        mCallback = new classeViva() {
             @Override
             public void onPageLoaded(String html) {
                 //If there's some error in login (Check if the <title> tag contains the login page title)
                 if(html.contains("La Scuola del futuro, oggi")){
-                    progress.hide();
+                    mProgress.hide();
+
                     if(html.contains("Password errata")){
                         // Error for wrong password
                     }else if(html.contains("Nome utente errato")){
@@ -68,17 +65,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 //Succesfull login
                 else {
-                    progress.beginFinalAnimation();
+                    mProgress.beginFinalAnimation();
+
                     //If the user doesn't log in
-                    if(user==null && pass==null && cookies==null){
+                    if(mUser==null && mPass==null && mSession ==null){
                         //Save the new credentials
-                        SharedPreferences.saveString(LoginActivity.this, "user", "user", name);
-                        try {
-                            //Use Encryption to cript the password
-                            String encryptedPassword = encryption.encrypt(pw);
-                            SharedPreferences.saveString(LoginActivity.this, "user", "password", encryptedPassword);
-                        } catch (Exception e) {}
-                        SharedPreferences.saveString(LoginActivity.this, "user", "session", new Gson().toJson(login.getSession()));
+                        Credentials.saveCredentials(LoginActivity.this, mName, mPw, mLogin.getSession() );
                     }
 
                     //Start DashboardActivity
@@ -91,25 +83,25 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         //Check if the user already has saved his credentials
-        if(user!=null && pass!=null && cookies!=null){
+        if(mUser!=null && mPass!=null && mSession !=null){
             //Start DashboardActivity
             Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
             startActivity(i);
             finish();
         }
 
-        progress.setOnClickListener(new View.OnClickListener() {
+        mProgress.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
-                progress.show();
+                mProgress.show();
 
                 //name and pw now have the relative edittexts values
-                name = utente.getText().toString();
-                pw = password.getText().toString();
+                mName = mUtente.getText().toString();
+                mPw = mPassword.getText().toString();
 
                 //Create an instance of ClassevivaAPI
-                login = new ClassevivaAPI(name, pw, callback, LoginActivity.this);
+                mLogin = new ClassevivaAPI(mName, mPw, mCallback, LoginActivity.this);
                 //Perform login which return its  value in the callback
-                login.doLogin();
+                mLogin.doLogin();
 
             }
         });

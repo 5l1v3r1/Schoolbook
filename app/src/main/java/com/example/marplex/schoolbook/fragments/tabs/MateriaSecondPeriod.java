@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.adapters.materieAdapter;
+import com.example.marplex.schoolbook.fragments.custom.PagerFragment;
 import com.example.marplex.schoolbook.models.Materia;
 import com.example.marplex.schoolbook.models.Voto;
 import com.example.marplex.schoolbook.utilities.SharedPreferences;
@@ -30,16 +31,10 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MateriaSecondPeriod extends Fragment {
+public class MateriaSecondPeriod extends PagerFragment {
 
     @Bind(R.id.materieList) RecyclerView materieRecyclerList;
     @Bind(R.id.mediaTotaleMaterie) TextView mediaTotaleMaterie;
-
-    public MateriaSecondPeriod() {}
-
-    public static MateriaSecondPeriod newInstance() {
-        return new MateriaSecondPeriod();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -179,4 +174,8 @@ public class MateriaSecondPeriod extends Fragment {
         return 0;
     }
 
+    @Override
+    public String getPageTitle() {
+        return "2° Periodo";
+    }
 }

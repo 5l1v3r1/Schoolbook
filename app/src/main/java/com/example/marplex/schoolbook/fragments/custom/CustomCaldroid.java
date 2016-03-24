@@ -1,4 +1,4 @@
-package com.example.marplex.schoolbook.fragments;
+package com.example.marplex.schoolbook.fragments.custom;
 
 /**
  * Created by marco on 2/16/16.

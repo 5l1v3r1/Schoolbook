@@ -8,28 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.marplex.schoolbook.R;
+import com.example.marplex.schoolbook.fragments.custom.PagerFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Reminds extends Fragment {
-
-
-    public Reminds() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
+public class Reminds extends PagerFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -37,8 +21,8 @@ public class Reminds extends Fragment {
         return rootView;
     }
 
-    public static Reminds newInstance() {
-        return new Reminds();
+    @Override
+    public String getPageTitle() {
+        return "Reminds";
     }
-
 }

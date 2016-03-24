@@ -6,18 +6,19 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.example.marplex.schoolbook.fragments.Agenda;
 import com.example.marplex.schoolbook.fragments.Dashboard;
 import com.example.marplex.schoolbook.fragments.Materie;
 import com.example.marplex.schoolbook.fragments.Voti;
+import com.example.marplex.schoolbook.fragments.custom.DrawerFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,11 +40,7 @@ public class DashboardActivity extends AppCompatActivity{
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
 
         //When the activity start, automatically replace R.id.frame with the Dashboard fragment
-        Dashboard dashboard = new Dashboard();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame, dashboard);
-        fragmentTransaction.commit();
-        getSupportActionBar().setTitle("Dashboard");
+        setContainerFragment(new Dashboard());
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -56,70 +53,38 @@ public class DashboardActivity extends AppCompatActivity{
                             case R.id.dashboard:
 
                                 //Change activity color
-                                if (Build.VERSION.SDK_INT >= 21) {
-                                    getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-                                    toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                                    tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                                }
+                                changeActivityColor(R.color.colorPrimary, R.color.colorPrimaryDark);
 
                                 //Replace R.id.frame with the Dashboard fragment
-                                Dashboard dashboard = new Dashboard();
-                                android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                                fragmentTransaction.replace(R.id.frame, dashboard);
-                                fragmentTransaction.commit();
+                                setContainerFragment(new Dashboard());
 
-                                getSupportActionBar().setTitle("Dashboard");
                                 return true;
                             case R.id.voti:
 
                                 //Change activity color
-                                if (Build.VERSION.SDK_INT >= 21) {
-                                    getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDarkGreen));
-                                    toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryGreen));
-                                    tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimaryGreen));
-                                }
+                                changeActivityColor(R.color.colorPrimaryGreen, R.color.colorPrimaryDarkGreen);
 
                                 //Replace R.id.frame with the Voti fragment
-                                FragmentTransaction votiTransaction = getSupportFragmentManager().beginTransaction();
-                                Voti voti = new Voti();
-                                votiTransaction.replace(R.id.frame, voti);
-                                votiTransaction.commit();
+                                setContainerFragment(new Voti());
 
-                                getSupportActionBar().setTitle("Voti");
                                 return true;
                             case R.id.materie:
 
                                 //Change activity color
-                                if (Build.VERSION.SDK_INT >= 21) {
-                                    getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDarkOrange));
-                                    toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryOrange));
-                                    tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimaryOrange));
-                                }
+                                changeActivityColor(R.color.colorPrimaryOrange, R.color.colorPrimaryDarkGreen);
 
                                 //Replace R.id.frame with the Voti fragment
-                                FragmentTransaction materieTransaction = getSupportFragmentManager().beginTransaction();
-                                Materie materie = new Materie();
-                                materieTransaction.replace(R.id.frame, materie);
-                                materieTransaction.commit();
+                                setContainerFragment(new Materie());
 
-                                getSupportActionBar().setTitle("Materie");
                                 return true;
                             case R.id.agenda:
 
                                 //Change activity color
-                                if (Build.VERSION.SDK_INT >= 21) {
-                                    getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDarkTeal));
-                                    toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryTeal));
-                                    tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimaryTeal));
-                                }
+                                changeActivityColor(R.color.colorPrimaryTeal, R.color.colorPrimaryDark);
 
                                 //Replace R.id.frame with the Agenda fragment
-                                FragmentTransaction agendaTransaction = getSupportFragmentManager().beginTransaction();
-                                Agenda agenda = new Agenda();
-                                agendaTransaction.replace(R.id.frame, agenda);
-                                agendaTransaction.commit();
+                                setContainerFragment(new Agenda());
 
-                                getSupportActionBar().setTitle("Agenda");
                                 return true;
                             case R.id.circolari:
                                 return true;
@@ -129,17 +94,7 @@ public class DashboardActivity extends AppCompatActivity{
                     }
                 });
 
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.openDrawer, R.string.closeDrawer){
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
-        };
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.openDrawer, R.string.closeDrawer);
 
         drawer.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
@@ -147,6 +102,45 @@ public class DashboardActivity extends AppCompatActivity{
         navigationView.getMenu().getItem(0).setChecked(true);
     }
 
+    /**
+     * changeActivityColor() method
+     *
+     * @param colorPrimary Activity primary color
+     * @param colorPrimaryDark Activity primary dark color
+     *
+     */
+    private void changeActivityColor(int colorPrimary, int colorPrimaryDark){
+        if (Build.VERSION.SDK_INT >= 21) {
+            //Statusbar color
+            getWindow().setStatusBarColor(ContextCompat.getColor(DashboardActivity.this, colorPrimaryDark));
+
+            //Toolbar background color
+            toolbar.setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
+
+            //TabLayout background color
+            tabLayout.setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
+
+            //Navigation drawer's header background color
+            navigationView.getRootView().findViewById(R.id.header_bg).setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
+        }
+    }
+
+    /**
+     * setContainerFragment() method
+     *
+     * @param fragment The inflated fragment
+     * @see DrawerFragment
+     *
+     */
+    private void setContainerFragment(DrawerFragment fragment){
+        //Replace R.id.frame with fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame, fragment);
+        transaction.commit();
+
+        //Set toolbar title
+        getSupportActionBar().setTitle(fragment.getTitle());
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

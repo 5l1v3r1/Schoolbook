@@ -2,13 +2,14 @@ package com.example.marplex.schoolbook.connections;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.StrictMode;
 
 import com.example.marplex.schoolbook.interfaces.ClassevivaAgenda;
 import com.example.marplex.schoolbook.interfaces.ClassevivaVoti;
 import com.example.marplex.schoolbook.interfaces.classeViva;
 import com.example.marplex.schoolbook.models.Evento;
 import com.example.marplex.schoolbook.models.Voto;
+import com.example.marplex.schoolbook.utilities.Credentials;
+import com.example.marplex.schoolbook.utilities.Cripter;
 import com.example.marplex.schoolbook.utilities.SharedPreferences;
 import com.google.gson.Gson;
 
@@ -22,8 +23,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import se.simbio.encryption.Encryption;
 
 /**
  * Created by marco on 1/27/16.
@@ -63,9 +62,6 @@ public class ClassevivaAPI implements insideCallback{
         this.pws = password;
         this.c = c;
         this.methods = methods;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
     }
 
     /**
@@ -77,8 +73,6 @@ public class ClassevivaAPI implements insideCallback{
 
     public ClassevivaAPI(classeViva methods){
         this.methods = methods;
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
     }
 
     //Call Classeviva login page with requested credentials
@@ -89,17 +83,13 @@ public class ClassevivaAPI implements insideCallback{
     //Call Classeviva login page with saved credentials
     public void doLogin(boolean custom){
         if(custom){
-
+            String name, pw;
             //Get user's credentials from SharedPreference
-            String name = SharedPreferences.loadString(c, "user", "user");
-            String pw = SharedPreferences.loadString(c, "user", "password");
+            name = Credentials.getName(c);
+            pw = Credentials.getPassword(c);
 
             //Decrypt password usign Encryption class
-            final Encryption encryption = Encryption.getDefault("Key", "Salt", new byte[16]);
-            String password = null;
-            try {
-                password = encryption.decrypt(pw);
-            } catch (Exception e) {}
+            String password = Cripter.decriptString(pw);
 
             //Perform new HTTP call
             new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN + "login=" + name + "&password=" + password + "&custcode=PNIT0003&mode=custcode&lc=it");
@@ -135,7 +125,8 @@ public class ClassevivaAPI implements insideCallback{
     public void getAgenda(ClassevivaAgenda callback, Context c){
         this.c = c;
         this.agendaCallback = callback;
-        new JSOUP(AGENDA, this).execute("https://web.spaggiari.eu/cvv/app/default/agenda_studenti.php?ope=get_events&gruppo_id=&start=" + (int) (System.currentTimeMillis()/1000 - 1728000) + "&end=" + (int) (System.currentTimeMillis()/1000 + 864000));
+        new JSOUP(AGENDA, this).execute("https://web.spaggiari.eu/cvv/app/default/agenda_studenti.php?ope=get_events&gruppo_id=&start="
+                + (int) (System.currentTimeMillis()/1000 - 1728000) + "&end=" + (int) (System.currentTimeMillis()/1000 + 864000));
     }
 
     @Override
@@ -147,8 +138,9 @@ public class ClassevivaAPI implements insideCallback{
             if(doc.title().equals("La Scuola del futuro, oggi")){
                 isVoti=true;
 
-                //Re-perform the login for retrieve the new session
+                //Re-perform the login to retrieve a new session
                 doLogin(true);
+
                 return;
             }
 
@@ -210,8 +202,10 @@ public class ClassevivaAPI implements insideCallback{
                 }
             }
             SharedPreferences.saveString(c,"materie","materie", new Gson().toJson(finalMaterie));
+
             //Call interface method
             callbackVoti.onVotiReceive(votoList);
+
         }else if(type==LOGIN){
             if(isVoti){
                 isVoti=false;
@@ -222,6 +216,7 @@ public class ClassevivaAPI implements insideCallback{
             }
         }else if(type==AGENDA){
             Document doc = Jsoup.parse(html);
+
             //Check for expired sesion
             if(doc.title().equals("La Scuola del futuro, oggi")) {
                 isAgenda=true;
@@ -230,8 +225,8 @@ public class ClassevivaAPI implements insideCallback{
                 doLogin(true);
                 return;
             }
-            try {
 
+            try {
                 ArrayList<Evento> eventi = new ArrayList<>();
                 JSONArray array = new JSONArray(doc.body().text());
 
@@ -249,7 +244,6 @@ public class ClassevivaAPI implements insideCallback{
                 }
 
                 agendaCallback.onAgendaReceive(eventi);
-
             } catch (Exception e) {e.printStackTrace();}
         }
     }
@@ -277,21 +271,33 @@ public class ClassevivaAPI implements insideCallback{
         JSOUP(int type, insideCallback callback){this.type = type; this.callback = callback;}
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(final String... params) {
             if(type==LOGIN) {
-                try {
-                    Document doc = getLoginPage(params[0]);
-                    html = doc.html();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Runnable run = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Document doc = getLoginPage(params[0]);
+                            html = doc.html();
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                run.run();
             }else{
-                try {
-                    Document doc = getPage(params[0]);
-                    html = doc.html();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Runnable run = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Document doc = getPage(params[0]);
+                            html = doc.html();
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                run.run();
             }
             return null;
         }
@@ -309,6 +315,13 @@ public class ClassevivaAPI implements insideCallback{
         protected void onProgressUpdate(Void... values) {}
     }
 
+    /**
+     * getLoginPage() method
+     *
+     * @param url The url
+     * @return connection
+     * @throws IOException
+     */
     Document getLoginPage(String url) throws IOException {
         //Get the page with a new session
         Connection connection = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6");
@@ -317,15 +330,23 @@ public class ClassevivaAPI implements insideCallback{
         SharedPreferences.saveString(c, "user", "sessionID", this.session);
         return connection.get();
     }
+
+    /**
+     * getPage() method
+     *
+     * @param url The url
+     * @return connection
+     * @throws IOException
+     */
     Document getPage(String url) throws IOException {
         //Get the page with the saved session
-        Connection connection = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6").cookie("PHPSESSID",SharedPreferences.loadString(c,"user","sessionID"));
+        Connection connection = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+                .cookie("PHPSESSID", SharedPreferences.loadString(c, "user", "sessionID"));
         return connection.get();
     }
     String getMateria(String materia){
 
-        //Replace the current String with another more "comprensible"
-
+        //Replace the current String with another more "readable"
         if(materia.startsWith("(chimica)")) return "Chimica";
         else if(materia.startsWith("(fisica)")) return "Fisica";
         else if(materia.startsWith("(scienze ")) return "Scienze";
@@ -341,6 +362,7 @@ public class ClassevivaAPI implements insideCallback{
         else return null;
     }
 }
+
 interface insideCallback{
     void onDataReceive(int type, String html);
 }

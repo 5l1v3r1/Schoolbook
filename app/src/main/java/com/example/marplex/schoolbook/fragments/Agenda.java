@@ -17,18 +17,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.marplex.schoolbook.DashboardActivity;
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.connections.ClassevivaAPI;
+import com.example.marplex.schoolbook.fragments.custom.CustomCaldroid;
+import com.example.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.example.marplex.schoolbook.interfaces.ClassevivaAgenda;
 import com.example.marplex.schoolbook.interfaces.classeViva;
 import com.example.marplex.schoolbook.models.Evento;
@@ -45,28 +44,19 @@ import java.util.StringTokenizer;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Agenda extends Fragment implements ClassevivaAgenda,classeViva {
+public class Agenda extends DrawerFragment implements ClassevivaAgenda,classeViva {
     CustomCaldroid caldroidFragment;
     ArrayList<Evento> eventi;
-
-    public Agenda() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_agenda, container, false);
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-
-        ((DashboardActivity) getActivity()).tabLayout.setVisibility(View.GONE);
-        ((DashboardActivity) getActivity()).setMenu(R.menu.menu_login, new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return false;
-            }
-        });
+        /**
+         * @see DrawerFragment
+         */
+        setTabGone();
 
         caldroidFragment = new CustomCaldroid();
         Bundle args = new Bundle();
@@ -220,5 +210,10 @@ public class Agenda extends Fragment implements ClassevivaAgenda,classeViva {
     @Override
     public void onPageLoaded(String html) {
 
+    }
+
+    @Override
+    public String getTitle() {
+        return "Agenda";
     }
 }
