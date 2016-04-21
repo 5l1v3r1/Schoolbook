@@ -52,6 +52,7 @@ public class votiAdapter extends RecyclerView.Adapter <votiAdapter.votiAdapterHo
         if(val.length()==1){
             if(val.contains("+")) return 12;
             else if(val.contains("-"))return 13;
+            else if(val.contains("g")) return 11;
             else return Double.parseDouble(val);
         }else if(val.length()==2){
             if(val.endsWith("½")) {

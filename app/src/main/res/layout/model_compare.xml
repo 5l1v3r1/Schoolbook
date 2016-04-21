@@ -85,12 +85,12 @@
                         android:gravity="center"
                         android:textSize="25dp"
                         android:textColor="#5e5e5e"
-                        android:layout_below="@+id/textView"
-                        android:layout_alignLeft="@+id/testoMateria"
-                        android:layout_alignStart="@+id/testoMateria"
-                        android:layout_above="@+id/testoMateria"
+                        android:layout_alignTop="@+id/view"
                         android:layout_alignRight="@+id/view"
-                        android:layout_alignEnd="@+id/view" />
+                        android:layout_alignEnd="@+id/view"
+                        android:layout_alignLeft="@+id/view"
+                        android:layout_alignStart="@+id/view"
+                        android:layout_above="@+id/testoMateria" />
 
                 </RelativeLayout>
 

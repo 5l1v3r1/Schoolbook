@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loginContainer"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:fitsSystemWindows="true"
@@ -13,7 +14,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Accedi a Classeviva"
-        android:id="@+id/textView2"
+        android:id="@+id/login_title"
         android:layout_alignParentTop="true"
         android:paddingTop="70dp"
         android:textSize="30dp"
@@ -25,20 +26,57 @@
         android:textStyle="bold"
         android:gravity="center" />
 
-    <com.github.jorgecastilloprz.FABProgressCircle
-        android:id="@+id/fabProgressCircle"
+    <io.codetail.widget.RevealFrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:focusable="false"
+        android:clickable="false"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:visibility="invisible"
+            android:id="@+id/red_bg"
+            android:layout_height="match_parent"
+            android:background="@color/pink">
+
+            <TextView
+                android:id="@+id/txt_loading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sto effettuando il login"
+                android:textColor="@color/white"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:layout_marginBottom="10dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <com.zl.reik.dilatingdotsprogressbar.DilatingDotsProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:radius="10dp"
+                android:color="@color/white"
+                app:dd_numDots="3"
+                app:dd_scaleMultiplier="1.5"
+                app:dd_animationDuration="700"
+                app:dd_horizontalSpacing="4dp"
+                android:layout_below="@+id/txt_loading"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+    </io.codetail.widget.RevealFrameLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabLogin"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
         android:layout_gravity="center|bottom"
-        app:arcColor="#00ffff"
-        app:reusable="true"
-        android:layout_margin="5dp"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@mipmap/login_done" />
-
-    </com.github.jorgecastilloprz.FABProgressCircle>
+        app:backgroundTint="@color/pink"
+        android:src="@mipmap/login_done"/>
 
 </android.support.design.widget.CoordinatorLayout>

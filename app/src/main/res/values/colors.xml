@@ -20,5 +20,7 @@
     <color name="yellow">#FBBC05</color>
     <color name="green">#34A853</color>
     <color name="red">#EA4335</color>
+    <color name="pink">#E91E63</color>
+    <color name="cyan">#00BCD4</color>
 
 </resources>
