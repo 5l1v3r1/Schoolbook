@@ -3,6 +3,7 @@ package com.example.marplex.schoolbook;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentTransaction;
@@ -46,9 +47,16 @@ public class DashboardActivity extends AppCompatActivity{
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        if (menuItem.isChecked()) menuItem.setChecked(false);
-                        else menuItem.setChecked(true);
-                        drawer.closeDrawers();
+                        menuItem.setChecked(true);
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                drawer.closeDrawers();
+                            }
+                        }, 35);
+
                         switch (menuItem.getItemId()) {
                             case R.id.dashboard:
 
@@ -134,6 +142,8 @@ public class DashboardActivity extends AppCompatActivity{
      */
     private void setContainerFragment(DrawerFragment fragment){
         //Replace R.id.frame with fragment
+
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame, fragment);
         transaction.commit();

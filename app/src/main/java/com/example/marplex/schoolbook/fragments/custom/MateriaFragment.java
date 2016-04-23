@@ -13,7 +13,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
 import com.example.marplex.schoolbook.R;
-import com.example.marplex.schoolbook.adapters.materieAdapter;
+import com.example.marplex.schoolbook.adapters.MaterieAdapter;
 import com.example.marplex.schoolbook.models.Materia;
 import com.example.marplex.schoolbook.models.Voto;
 import com.example.marplex.schoolbook.utilities.SharedPreferences;
@@ -99,7 +99,7 @@ public abstract class MateriaFragment extends PagerFragment {
             double sum = 0;
 
             for(Voto voto : materiaVoti) {
-                sum += getVoto(voto.voto);
+                sum += Votes.getNumericalVoteByString(voto.voto);
             }
 
             double totalAverage = arrotondaRint(sum/materiaVoti.size(), 1);
@@ -107,7 +107,7 @@ public abstract class MateriaFragment extends PagerFragment {
             materieList.add(mMateria);
         }
 
-        materieAdapter adapter = new materieAdapter(materieList);
+        MaterieAdapter adapter = new MaterieAdapter(materieList);
         materieRecyclerList.setAdapter(adapter);
 
         double defSum = 0;
@@ -127,30 +127,4 @@ public abstract class MateriaFragment extends PagerFragment {
         return Math.rint(value * temp) / temp;
     }
 
-    double getVoto(String val){
-        if(val.length()==1){
-            if(val.contains("+")) return 0;
-            else if(val.contains("-"))return 0;
-            else return Double.parseDouble(val);
-        }else if(val.length()==2){
-            if(val.endsWith("½")) {
-                String value = val.substring(0, val.length()-1);
-                return Double.parseDouble(value) + 0.5;
-            }else if(val.endsWith("-")){
-                String value = val.substring(0, val.length()-1);
-                return Double.parseDouble(value) - 0.15;
-            }else if(val.endsWith("+")){
-                String value = val.substring(0, val.length()-1);
-                return Double.parseDouble(value) + 0.15;
-            }else if(val.equals("10")){
-                return 10;
-            }
-        }else if(val.length()==3){
-            if(val.endsWith("-")){
-                String value = val.substring(0, val.length()-1);
-                return Double.parseDouble(value) - 0.15;
-            }else return 0;
-        }
-        return 0;
-    }
 }

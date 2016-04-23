@@ -4,6 +4,7 @@ package com.example.marplex.schoolbook.fragments.custom;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +19,7 @@ import android.widget.ListView;
 
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.adapters.SimpleSectionedRecyclerViewAdapter;
-import com.example.marplex.schoolbook.adapters.votiAdapter;
+import com.example.marplex.schoolbook.adapters.VotiAdapter;
 import com.example.marplex.schoolbook.connections.ClassevivaAPI;
 import com.example.marplex.schoolbook.interfaces.ClassevivaVoti;
 import com.example.marplex.schoolbook.interfaces.classeViva;
@@ -33,6 +34,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -46,20 +50,26 @@ public abstract class VoteFragment extends PagerFragment implements classeViva{
 
     protected int mPeriod;
     protected ArrayList<String> materie;
-    protected SwipeRefreshLayout mSwipe;
+
+    @Bind(R.id.swipe_refresh_layout) protected SwipeRefreshLayout mSwipe;
+    @Bind(R.id.listaVoti) RecyclerView mList;
+
+    private AppBarLayout abl;
 
     private ClassevivaVoti mVotesListener;
-
-    private RecyclerView mList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_first_period, container, false);
+        ButterKnife.bind(this, mRootView);
+
+        abl = (AppBarLayout) getActivity().findViewById(R.id.app_bar_layout);
         mInflater = inflater;
 
         mLlm = new LinearLayoutManager(getActivity());
+        mList.setHasFixedSize(true);
+        mList.setLayoutManager(mLlm);
 
-        mSwipe = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipe.setColorSchemeColors(R.color.green);
 
         init();
@@ -67,13 +77,14 @@ public abstract class VoteFragment extends PagerFragment implements classeViva{
         if(!isDataSaved()){
             mApi = new ClassevivaAPI(this);
             mApi.getVotes(mVotesListener, getActivity());
+            mSwipe.setRefreshing(true);
         }else{
 
-        /**
-         * @see Votes
-         */
-        ArrayList<Voto> voti = Votes.getVotesByPeriod(getActivity(), mPeriod);
-        populateRecyclerView(voti);
+            /**
+             * @see Votes
+             */
+            final ArrayList<Voto> voti = Votes.getVotesByPeriod(getActivity(), mPeriod);
+            populateRecyclerView(voti);
         }
 
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -105,10 +116,7 @@ public abstract class VoteFragment extends PagerFragment implements classeViva{
 
     protected void populateRecyclerView(List<Voto> voto){
 
-        mList = (RecyclerView) mRootView.findViewById(R.id.listaVoti);
-        mList.setHasFixedSize(true);
-        mList.setLayoutManager(mLlm);
-        votiAdapter adapter = new votiAdapter(voto);
+        VotiAdapter adapter = new VotiAdapter(voto);
 
         List<SimpleSectionedRecyclerViewAdapter.Section> sections = new ArrayList<SimpleSectionedRecyclerViewAdapter.Section>();
 
@@ -126,14 +134,16 @@ public abstract class VoteFragment extends PagerFragment implements classeViva{
                     }
 
                 }
-            }}
+            }
+        }
 
         SimpleSectionedRecyclerViewAdapter.Section[] dummy = new SimpleSectionedRecyclerViewAdapter.Section[sections.size()];
         SimpleSectionedRecyclerViewAdapter mSectionedAdapter = new
-                SimpleSectionedRecyclerViewAdapter(getActivity(),R.layout.section,R.id.section_text,adapter, mPeriod);
+                SimpleSectionedRecyclerViewAdapter(getActivity(),R.layout.section,R.id.section_text,adapter, mPeriod, abl, getActivity());
         mSectionedAdapter.setSections(sections.toArray(dummy));
 
         mList.setAdapter(mSectionedAdapter);
+        mSwipe.setRefreshing(false);
     }
 
     protected Dialog viewOrderDialog(AdapterView.OnItemClickListener clickListener){
@@ -149,8 +159,8 @@ public abstract class VoteFragment extends PagerFragment implements classeViva{
 
         mBottomSheetDialog.setContentView(view);
         mBottomSheetDialog.setCancelable(true);
-        mBottomSheetDialog.getWindow ().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        mBottomSheetDialog.getWindow ().setGravity(Gravity.BOTTOM);
+        mBottomSheetDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        mBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
         mBottomSheetDialog.show();
 
         Listamaterie.setOnItemClickListener(clickListener);

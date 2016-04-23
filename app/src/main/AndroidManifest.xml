@@ -25,7 +25,7 @@
         <activity
             android:name=".Materia"
             android:label="@string/title_activity_materia"
-            android:theme="@style/AppThemeGreen" />
+            android:theme="@style/AppThemeGreen"/>
         <activity
             android:name=".CompareActivity"
             android:label="@string/title_activity_compare"

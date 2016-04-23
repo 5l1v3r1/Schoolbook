@@ -1,8 +1,11 @@
 package com.example.marplex.schoolbook.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -29,11 +32,12 @@ public class SimpleSectionedRecyclerViewAdapter extends RecyclerView.Adapter<Rec
     private LayoutInflater mLayoutInflater;
     private RecyclerView.Adapter mBaseAdapter;
     private int mPeriodo;
+    private View toolbar;
+    private Activity mActivity;
     private SparseArray<Section> mSections = new SparseArray<Section>();
 
-
     public SimpleSectionedRecyclerViewAdapter(Context context, int sectionResourceId, int textResourceId,
-                                              RecyclerView.Adapter baseAdapter, int periodo) {
+                                              RecyclerView.Adapter baseAdapter, int periodo, View toolbar, Activity activity) {
 
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mSectionResourceId = sectionResourceId;
@@ -41,6 +45,8 @@ public class SimpleSectionedRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         mBaseAdapter = baseAdapter;
         mContext = context;
         mPeriodo = periodo;
+        this.toolbar = toolbar;
+        this.mActivity = activity;
 
         mBaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -91,7 +97,7 @@ public class SimpleSectionedRecyclerViewAdapter extends RecyclerView.Adapter<Rec
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder sectionViewHolder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder sectionViewHolder, final int position) {
         if (isSectionHeaderPosition(position)) {
             ((SectionViewHolder)sectionViewHolder).title.setText(mSections.get(position).title);
             ((SectionViewHolder)sectionViewHolder).title.setOnClickListener(new View.OnClickListener() {
@@ -99,12 +105,19 @@ public class SimpleSectionedRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                 public void onClick(View v) {
                     Bundle b = new Bundle();
                     Intent intent = new Intent(mContext, Materia.class);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ActivityOptionsCompat options = ActivityOptionsCompat.
+                                makeSceneTransitionAnimation(mActivity, toolbar, "voteToolbar");
 
-                    String materia = mSections.get(position).title.toString().toUpperCase().substring(0,1)+mSections.get(position).title.toString().toLowerCase().substring(1, mSections.get(position).title.toString().length());
-                    b.putString("materia",materia);
-                    b.putInt("periodo", mPeriodo);
-                    intent.putExtras(b);
-                    mContext.startActivity(intent);
+                        if(position==0) b.putString("materia", mSections.get(position).title.toString() );
+                        else b.putString("materia", mSections.get(position).title.toString());
+                        b.putInt("periodo", mPeriodo);
+                        intent.putExtras(b);
+
+                        mContext.startActivity(intent, options.toBundle());
+                    }else{
+                        mContext.startActivity(intent);
+                    }
                 }
             });
         }else{

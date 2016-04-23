@@ -1,6 +1,5 @@
 package com.example.marplex.schoolbook.fragments;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -22,10 +21,11 @@ import butterknife.ButterKnife;
 
 public class Materie extends DrawerFragment {
 
-    @Bind(R.id.pager) ViewPager pager;
+    @Bind(R.id.pager)
+    ViewPager pager;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_materie, container, false);
         ButterKnife.bind(this, rootView);
 
@@ -42,7 +42,7 @@ public class Materie extends DrawerFragment {
         setToolbarLayout(pager, R.menu.materie, new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch(item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.compara:
                         startActivity(new Intent(getActivity(), CompareActivity.class));
                 }
@@ -57,7 +57,5 @@ public class Materie extends DrawerFragment {
     public String getTitle() {
         return "Materie";
     }
-
-
 
 }

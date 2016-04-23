@@ -16,11 +16,11 @@ import java.util.ArrayList;
 /**
  * Created by marco on 1/29/16.
  */
-public class materieAdapter extends RecyclerView.Adapter <materieAdapter.materieAdapterHolder> {
+public class MaterieAdapter extends RecyclerView.Adapter <MaterieAdapter.materieAdapterHolder> {
 
     private ArrayList<Materia> materie;
 
-    public materieAdapter(ArrayList<Materia> modelData) {
+    public MaterieAdapter(ArrayList<Materia> modelData) {
         this.materie = modelData;
     }
 

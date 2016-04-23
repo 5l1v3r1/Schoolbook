@@ -83,16 +83,16 @@ public class ClassevivaAPI implements insideCallback{
     //Call Classeviva login page with saved credentials
     public void doLogin(boolean custom){
         if(custom){
-            String name, pw;
+            String pw;
             //Get user's credentials from SharedPreference
-            name = Credentials.getName(c);
+            usr = Credentials.getName(c);
             pw = Credentials.getPassword(c);
 
             //Decrypt password usign Encryption class
-            String password = Cripter.decriptString(pw);
+            pws = Cripter.decriptString(pw);
 
             //Perform new HTTP call
-            new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN + "login=" + name + "&password=" + password + "&custcode=PNIT0003&mode=custcode&lc=it");
+            new JSOUP(LOGIN, this).execute(CLASSEVIVA_LOGIN + "login=" + usr + "&password=" + pws + "&custcode=PNIT0003&mode=custcode&lc=it");
         }
     }
 
@@ -130,122 +130,130 @@ public class ClassevivaAPI implements insideCallback{
     }
 
     @Override
-    public void onDataReceive(int type, String html) {
-        if(type==VOTES){
+    public void onDataReceive(final int type, final String html) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(type==VOTES){
 
-            Document doc = Jsoup.parse(html);
-            //Check for expired sesion
-            if(doc.title().equals("La Scuola del futuro, oggi")){
-                isVoti=true;
+                    Document doc = Jsoup.parse(html);
+                    //Check for expired sesion
+                    if(doc.title().equals("La Scuola del futuro, oggi")){
+                        isVoti=true;
 
-                //Re-perform the login to retrieve a new session
-                doLogin(true);
+                        //Re-perform the login to retrieve a new session
+                        doLogin(true);
 
-                return;
-            }
+                        return;
+                    }
 
-            //Part of code which fill the votoList with all retrieved votes
-            Elements trs = doc.getElementsByTag("tr");
-            ArrayList<Voto> votoList = new ArrayList<>();
-            ArrayList<String> materie = new ArrayList<>();
-            for(int i = 0; i<trs.size();i++){
-                Element tr = trs.get(i);
-                if(tr.select("td.registro").first()==null) continue;
-                else{
-                    String materia = null;
+                    //Part of code which fill the votoList with all retrieved votes
+                    Elements trs = doc.getElementsByTag("tr");
+                    ArrayList<Voto> votoList = new ArrayList<>();
+                    ArrayList<String> materie = new ArrayList<>();
+                    for(int i = 0; i<trs.size();i++){
+                        Element tr = trs.get(i);
+                        if(tr.select("td.registro").first()==null) continue;
+                        else{
+                            String materia = null;
 
-                    if(tr.select("td[class=registro grautext open_sans_condensed_bold font_size_14]").first()==null){
-                        if(tr.select("td[class= open_sans_condensed font_size_10]").first()!=null){
-                            materia= trs.get(i-1).select("td[class=registro grautext open_sans_condensed_bold font_size_14]").first().text();
-                        }
-                    }else materia = tr.select("td[class=registro grautext open_sans_condensed_bold font_size_14]").first().text();
+                            if(tr.select("td[class=registro grautext open_sans_condensed_bold font_size_14]").first()==null){
+                                if(tr.select("td[class= open_sans_condensed font_size_10]").first()!=null){
+                                    materia= trs.get(i-1).select("td[class=registro grautext open_sans_condensed_bold font_size_14]").first().text();
+                                }
+                            }else materia = tr.select("td[class=registro grautext open_sans_condensed_bold font_size_14]").first().text();
 
-                    materie.add(materia);
+                            materie.add(materia);
 
-                    Elements voti = tr.select("td.registro_voti_dettaglio_voto_piccolo");
-                    for(int x = 0; x < voti.size(); x++){
-                        if(voti.get(x).hasText()){
-                            Element span = voti.get(x).getElementsByTag("span").first();
-                            Element p = voti.get(x).getElementsByTag("p").first();
+                            Elements voti = tr.select("td.registro_voti_dettaglio_voto_piccolo");
+                            for(int x = 0; x < voti.size(); x++){
+                                if(voti.get(x).hasText()){
+                                    Element span = voti.get(x).getElementsByTag("span").first();
+                                    Element p = voti.get(x).getElementsByTag("p").first();
 
-                            int periodo = 0;
-                            String tipo = null;
-                            if( (x+1) <= 15 ){
-                                periodo=1;
-                                if((x+1) <= 5) tipo="Scritto";
-                                else if((x+1) <= 10) tipo="Orale";
-                                else if((x+1) <= 15) tipo="Pratico";
-                            }else if((x+1) <= 30){
-                                periodo=2;
-                                if((x+1) <= 20) tipo="Scritto";
-                                else if((x+1) <= 25) tipo="Orale";
-                                else if((x+1) <= 30) tipo="Pratico";
+                                    int periodo = 0;
+                                    String tipo = null;
+                                    if( (x+1) <= 15 ){
+                                        periodo=1;
+                                        if((x+1) <= 5) tipo="Scritto";
+                                        else if((x+1) <= 10) tipo="Orale";
+                                        else if((x+1) <= 15) tipo="Pratico";
+                                    }else if((x+1) <= 30){
+                                        periodo=2;
+                                        if((x+1) <= 20) tipo="Scritto";
+                                        else if((x+1) <= 25) tipo="Orale";
+                                        else if((x+1) <= 30) tipo="Pratico";
+                                    }
+
+                                    String data = span.text();
+                                    String voto = p.text();
+                                    Voto v = new Voto(voto, getMateria(materia) , data, tipo, periodo);
+                                    votoList.add(v);
+                                }
                             }
-
-                            String data = span.text();
-                            String voto = p.text();
-                            Voto v = new Voto(voto, getMateria(materia) , data, tipo, periodo);
-                            votoList.add(v);
                         }
                     }
+
+                    //Save all subjects on SharedPreferences
+                    ArrayList<String> finalMaterie = new ArrayList<>();
+                    for(int i=0; i<materie.size(); i++){
+                        if(i==0) finalMaterie.add(getMateria(materie.get(i)));
+                        else {
+                            String materia = getMateria(materie.get(i));
+                            if(materia == getMateria(materie.get(i-1))) continue;
+                            else finalMaterie.add(materia);
+                        }
+                    }
+                    SharedPreferences.saveString(c,"materie","materie", new Gson().toJson(finalMaterie));
+
+                    //Call interface method
+                    callbackVoti.onVotiReceive(votoList);
+
+                }else if(type==LOGIN){
+                    if(isVoti){
+                        isVoti=false;
+                        getVotes(callbackVoti, c);
+                    }else if(isAgenda){
+                        isAgenda=false;
+                        getAgenda(agendaCallback, c);
+                    }else{
+                        Credentials.saveCredentials(c, usr, pws, session);
+                    }
+                }else if(type==AGENDA){
+                    Document doc = Jsoup.parse(html);
+
+                    //Check for expired sesion
+                    if(doc.title().equals("La Scuola del futuro, oggi")) {
+                        isAgenda=true;
+
+                        //Re-perform the login for retrieve the new session
+                        doLogin(true);
+                        return;
+                    }
+
+                    try {
+                        ArrayList<Evento> eventi = new ArrayList<>();
+                        JSONArray array = new JSONArray(doc.body().text());
+
+                        for(int i=0; i<array.length(); i++){
+                            JSONObject object = array.getJSONObject(i);
+                            String prof = object.getString("autore_desc");
+                            String testo = object.getString("nota_2");
+
+                            String modifica = object.getString("start");
+                            String data = modifica.substring(0, 10);
+                            //Fill Evento class with all retrieved datas
+                            Evento evento = new Evento(data, prof, testo);
+                            //Add evento to an ArrayList
+                            eventi.add(evento);
+                        }
+
+                        agendaCallback.onAgendaReceive(eventi);
+                    } catch (Exception e) {e.printStackTrace();}
                 }
             }
-
-            //Save all subjects on SharedPreferences
-            ArrayList<String> finalMaterie = new ArrayList<>();
-            for(int i=0; i<materie.size(); i++){
-                if(i==0) finalMaterie.add(getMateria(materie.get(i)));
-                else {
-                    String materia = getMateria(materie.get(i));
-                    if(materia == getMateria(materie.get(i-1))) continue;
-                    else finalMaterie.add(materia);
-                }
-            }
-            SharedPreferences.saveString(c,"materie","materie", new Gson().toJson(finalMaterie));
-
-            //Call interface method
-            callbackVoti.onVotiReceive(votoList);
-
-        }else if(type==LOGIN){
-            if(isVoti){
-                isVoti=false;
-                getVotes(callbackVoti, c);
-            }else if(isAgenda){
-                isAgenda=false;
-                getAgenda(agendaCallback, c);
-            }
-        }else if(type==AGENDA){
-            Document doc = Jsoup.parse(html);
-
-            //Check for expired sesion
-            if(doc.title().equals("La Scuola del futuro, oggi")) {
-                isAgenda=true;
-
-                //Re-perform the login for retrieve the new session
-                doLogin(true);
-                return;
-            }
-
-            try {
-                ArrayList<Evento> eventi = new ArrayList<>();
-                JSONArray array = new JSONArray(doc.body().text());
-
-                for(int i=0; i<array.length(); i++){
-                    JSONObject object = array.getJSONObject(i);
-                    String prof = object.getString("autore_desc");
-                    String testo = object.getString("nota_2");
-
-                    String modifica = object.getString("start");
-                    String data = modifica.substring(0, 10);
-                    //Fill Evento class with all retrieved datas
-                    Evento evento = new Evento(data, prof, testo);
-                    //Add evento to an ArrayList
-                    eventi.add(evento);
-                }
-
-                agendaCallback.onAgendaReceive(eventi);
-            } catch (Exception e) {e.printStackTrace();}
-        }
+        });
+        thread.run();
     }
 
     /**
@@ -319,7 +327,7 @@ public class ClassevivaAPI implements insideCallback{
      * getLoginPage() method
      *
      * @param url The url
-     * @return connection
+     * @return JSoup Connection
      * @throws IOException
      */
     Document getLoginPage(String url) throws IOException {
@@ -335,7 +343,7 @@ public class ClassevivaAPI implements insideCallback{
      * getPage() method
      *
      * @param url The url
-     * @return connection
+     * @return JSoup Connection
      * @throws IOException
      */
     Document getPage(String url) throws IOException {
@@ -346,20 +354,20 @@ public class ClassevivaAPI implements insideCallback{
     }
     String getMateria(String materia){
 
-        //Replace the current String with another more "readable"
-        if(materia.startsWith("(chimica)")) return "Chimica";
-        else if(materia.startsWith("(fisica)")) return "Fisica";
-        else if(materia.startsWith("(scienze ")) return "Scienze";
-        else if(materia.startsWith("diritto")) return "Diritto";
-        else if(materia.startsWith("lingua e")) return "Italiano";
-        else if(materia.startsWith("lingua")) return "Inglese";
-        else if(materia.startsWith("matematica")) return "Matematica";
-        else if (materia.startsWith("rc")) return "Religione";
-        else if(materia.startsWith("scienze")) return "Ginnastica";
-        else if(materia.startsWith("storia")) return "Storia";
-        else if(materia.startsWith("tecnologie e")) return "Tecnica";
-        else if(materia.startsWith("tecnologie")) return "Informatica";
-        else return null;
+        //Replace the current String with something more "readable"
+        if(materia.contains("(chimica)")) return "Chimica";
+        else if(materia.contains("(fisica)")) return "Fisica";
+        else if(materia.contains("(scienze ")) return "Scienze";
+        else if(materia.contains("diritto")) return "Diritto";
+        else if(materia.contains("lingua e")) return "Italiano";
+        else if(materia.contains("lingua")) return "Inglese";
+        else if(materia.contains("matematica")) return "Matematica";
+        else if (materia.contains("rc")) return "Religione";
+        else if(materia.contains("scienze")) return "Ginnastica";
+        else if(materia.contains("storia")) return "Storia";
+        else if(materia.contains("tecnologie e")) return "Tecnica";
+        else if(materia.contains("tecnologie") || materia.contains("informatica")) return "Informatica";
+        else return materia;
     }
 }
 
