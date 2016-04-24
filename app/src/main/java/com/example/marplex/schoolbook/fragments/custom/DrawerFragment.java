@@ -57,6 +57,16 @@ public abstract class DrawerFragment extends Fragment {
         ((DashboardActivity) getActivity()).setMenu(menu, listener);
     }
 
+    protected void removeMenuItems(){
+        //Blank menu
+        ((DashboardActivity) getActivity()).setMenu(R.menu.menu_login, new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return false;
+            }
+        });
+    }
+
     /**
      * setToolbarLayout method
      *

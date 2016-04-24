@@ -26,14 +26,12 @@
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/materieList"
-            android:layout_gravity="left|top"
             android:scrollbars="none"
             android:layout_below="@+id/mediaTotaleMaterie"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
-
 
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

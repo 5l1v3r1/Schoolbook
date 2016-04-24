@@ -47,7 +47,7 @@ public class Materia extends AppCompatActivity{
     @Bind(R.id.txt_objectiveTitle) TextView mObjectiveTitleText;
     @Bind(R.id.pbar_objective) RoundCornerProgressBar mObjectiveProgressBar;
 
-    @Bind(R.id.view) CircularProgressBar progress;
+    @Bind(R.id.pbar_materiaPrimo) CircularProgressBar progress;
     @Bind(R.id.fab_addObjective) FloatingActionButton mAddObjective;
 
     private double totalAverage;

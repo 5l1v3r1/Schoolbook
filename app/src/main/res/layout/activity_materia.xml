@@ -69,7 +69,7 @@
                     app:cpb_background_progressbar_width="12dp"
                     app:cpb_progressbar_color="@color/colorPrimaryGreen"
                     app:cpb_progressbar_width="12dp"
-                    android:id="@+id/view"
+                    android:id="@+id/pbar_materiaPrimo"
                     android:layout_centerHorizontal="true" />
 
                 <TextView
@@ -83,20 +83,20 @@
                     android:textColor="@color/colorPrimaryGreen"
                     android:translationZ="10dp"
                     android:padding="5dp"
-                    android:layout_alignLeft="@+id/view"
-                    android:layout_alignStart="@+id/view"
+                    android:layout_alignLeft="@+id/pbar_materiaPrimo"
+                    android:layout_alignStart="@+id/pbar_materiaPrimo"
                     android:layout_toLeftOf="@+id/relativeLayout2"
                     android:layout_toStartOf="@+id/relativeLayout2"
-                    android:layout_alignBottom="@+id/view"
-                    android:layout_alignTop="@+id/view" />
+                    android:layout_alignBottom="@+id/pbar_materiaPrimo"
+                    android:layout_alignTop="@+id/pbar_materiaPrimo" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/relativeLayout3"
-                    android:layout_toLeftOf="@+id/view"
-                    android:layout_toStartOf="@+id/view"
-                    android:layout_alignBottom="@+id/view">
+                    android:layout_toLeftOf="@+id/pbar_materiaPrimo"
+                    android:layout_toStartOf="@+id/pbar_materiaPrimo"
+                    android:layout_alignBottom="@+id/pbar_materiaPrimo">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -123,9 +123,9 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_toRightOf="@+id/view"
-                    android:layout_toEndOf="@+id/view"
-                    android:layout_alignBottom="@+id/view"
+                    android:layout_toRightOf="@+id/pbar_materiaPrimo"
+                    android:layout_toEndOf="@+id/pbar_materiaPrimo"
+                    android:layout_alignBottom="@+id/pbar_materiaPrimo"
                     android:id="@+id/relativeLayout2">
 
                     <TextView

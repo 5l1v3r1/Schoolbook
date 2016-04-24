@@ -57,6 +57,7 @@ public class Agenda extends DrawerFragment implements ClassevivaAgenda,classeViv
          * @see DrawerFragment
          */
         setTabGone();
+        removeMenuItems();
 
         caldroidFragment = new CustomCaldroid();
         Bundle args = new Bundle();

@@ -15,13 +15,9 @@ import android.widget.TextView;
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.adapters.MaterieAdapter;
 import com.example.marplex.schoolbook.models.Materia;
-import com.example.marplex.schoolbook.models.Voto;
-import com.example.marplex.schoolbook.utilities.SharedPreferences;
-import com.example.marplex.schoolbook.utilities.Votes;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.example.marplex.schoolbook.utilities.MathUtils;
+import com.example.marplex.schoolbook.utilities.Subjects;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
@@ -45,8 +41,30 @@ public abstract class MateriaFragment extends PagerFragment {
         materieRecyclerList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         init();
+        setScrollListener();
         populateList();
 
+        return rootView;
+    }
+
+    public void populateList(){
+
+        ArrayList<Materia> mList = Subjects.getSubjects(getContext(), mPeriod);
+
+        MaterieAdapter adapter = new MaterieAdapter(mList);
+        materieRecyclerList.setAdapter(adapter);
+
+        double defSum = 0;
+        int NaNNumbers = 0;
+        for (Materia item : mList){
+            if(item.mediaMateria>0) {
+                defSum += item.mediaMateria;
+            }else NaNNumbers ++;
+        }
+        mediaTotaleMaterie.setText("Media totale: " + MathUtils.rintRound( defSum / ( mList.size() - NaNNumbers ), 1));
+    }
+
+    private void setScrollListener(){
         RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
             boolean hideView = false;
             @Override
@@ -83,48 +101,8 @@ public abstract class MateriaFragment extends PagerFragment {
         };
 
         materieRecyclerList.setOnScrollListener(onScrollListener);
-
-        return rootView;
-    }
-
-    public void populateList(){
-        ArrayList<Materia> materieList = new ArrayList<>();
-
-        Type type = new TypeToken<ArrayList<String>>(){}.getType();
-        final ArrayList<String> materie = new Gson().fromJson(SharedPreferences.loadString(getActivity(), "materie", "materie"), type);
-
-        for(String materia : materie){
-            ArrayList<Voto> materiaVoti = Votes.getNumericalVotesByMateria(getActivity(), materia, mPeriod);
-
-            double sum = 0;
-
-            for(Voto voto : materiaVoti) {
-                sum += Votes.getNumericalVoteByString(voto.voto);
-            }
-
-            double totalAverage = arrotondaRint(sum/materiaVoti.size(), 1);
-            Materia mMateria = new Materia(totalAverage, materia);
-            materieList.add(mMateria);
-        }
-
-        MaterieAdapter adapter = new MaterieAdapter(materieList);
-        materieRecyclerList.setAdapter(adapter);
-
-        double defSum = 0;
-        int NaNNumbers = 0;
-        for (Materia item : materieList){
-            if(item.mediaMateria>0) {
-                defSum += item.mediaMateria;
-            }else NaNNumbers ++;
-        }
-        mediaTotaleMaterie.setText("Media totale: " + arrotondaRint( defSum / ( materieList.size() - NaNNumbers ), 1));
     }
 
     public abstract void init();
-
-    public static double arrotondaRint(double value, int numCifreDecimali) {
-        double temp = Math.pow(10, numCifreDecimali);
-        return Math.rint(value * temp) / temp;
-    }
 
 }

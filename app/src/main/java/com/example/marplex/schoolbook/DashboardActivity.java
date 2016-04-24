@@ -88,7 +88,7 @@ public class DashboardActivity extends AppCompatActivity{
                             case R.id.agenda:
 
                                 //Change activity color
-                                changeActivityColor(R.color.colorPrimaryTeal, R.color.colorPrimaryDark);
+                                changeActivityColor(R.color.colorPrimaryTeal, R.color.colorPrimaryDarkTeal);
 
                                 //Replace R.id.frame with the Agenda fragment
                                 setContainerFragment(new Agenda());
@@ -142,8 +142,6 @@ public class DashboardActivity extends AppCompatActivity{
      */
     private void setContainerFragment(DrawerFragment fragment){
         //Replace R.id.frame with fragment
-
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame, fragment);
         transaction.commit();

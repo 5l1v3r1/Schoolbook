@@ -21,8 +21,7 @@ import butterknife.ButterKnife;
 
 public class Materie extends DrawerFragment {
 
-    @Bind(R.id.pager)
-    ViewPager pager;
+    @Bind(R.id.pager) ViewPager pager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,7 +31,7 @@ public class Materie extends DrawerFragment {
         /**
          * @see SectionPagerAdapter
          */
-        pager.setAdapter(new SectionPagerAdapter(this.getChildFragmentManager(),
+        pager.setAdapter(new SectionPagerAdapter(getChildFragmentManager(),
                 new MateriaFirstPeriod(),
                 new MateriaSecondPeriod()));
 

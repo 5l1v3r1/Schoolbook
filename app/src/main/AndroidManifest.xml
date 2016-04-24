@@ -29,7 +29,7 @@
         <activity
             android:name=".CompareActivity"
             android:label="@string/title_activity_compare"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppThemeOrange"></activity>
     </application>
 
 </manifest>

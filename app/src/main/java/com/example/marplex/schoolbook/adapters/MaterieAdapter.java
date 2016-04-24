@@ -71,9 +71,9 @@ public class MaterieAdapter extends RecyclerView.Adapter <MaterieAdapter.materie
 
         materieAdapterHolder(View itemView) {
             super(itemView);
-            bar = (CircularProgressBar) itemView.findViewById(R.id.view);
+            bar = (CircularProgressBar) itemView.findViewById(R.id.pbar_materiaPrimo);
             media = (TextView)itemView.findViewById(R.id.mediaMateria);
-            materia = (TextView)itemView.findViewById(R.id.testoMateria);
+            materia = (TextView)itemView.findViewById(R.id.txt_materiaPrimoperiodo);
         }
     }
 }
