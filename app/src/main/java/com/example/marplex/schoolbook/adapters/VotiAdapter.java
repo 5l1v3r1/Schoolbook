@@ -1,6 +1,5 @@
 package com.example.marplex.schoolbook.adapters;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,7 @@ import java.util.List;
 /**
  * Created by marco on 1/29/16.
  */
-public class VotiAdapter extends RecyclerView.Adapter <VotiAdapter.votiAdapterHolder> {
+public class VotiAdapter extends RecyclerView.Adapter <VotiAdapter.votiAdapterHolder>{
 
     private List<Voto> voti;
 

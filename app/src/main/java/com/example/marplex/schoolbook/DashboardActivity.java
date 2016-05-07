@@ -15,11 +15,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.example.marplex.schoolbook.connections.ClassevivaCaller;
 import com.example.marplex.schoolbook.fragments.Agenda;
 import com.example.marplex.schoolbook.fragments.Dashboard;
 import com.example.marplex.schoolbook.fragments.Materie;
 import com.example.marplex.schoolbook.fragments.Voti;
 import com.example.marplex.schoolbook.fragments.custom.DrawerFragment;
+import com.example.marplex.schoolbook.interfaces.ClassevivaCallback;
+import com.example.marplex.schoolbook.utilities.Votes;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,6 +35,8 @@ public class DashboardActivity extends AppCompatActivity{
     @Bind(R.id.nav_view) NavigationView navigationView;
     @Bind(R.id.drawer) DrawerLayout drawer;
     @Bind(R.id.sliding_tabs) public TabLayout tabLayout;
+
+    private boolean mCanSelect = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,48 +64,50 @@ public class DashboardActivity extends AppCompatActivity{
                             }
                         }, 35);
 
-                        switch (menuItem.getItemId()) {
-                            case R.id.dashboard:
+                        if(mCanSelect) {
+                            switch (menuItem.getItemId()) {
+                                case R.id.dashboard:
 
-                                //Change activity color
-                                changeActivityColor(R.color.colorPrimary, R.color.colorPrimaryDark);
+                                    //Change activity color
+                                    changeActivityColor(R.color.colorPrimary, R.color.colorPrimaryDark);
 
-                                //Replace R.id.frame with the Dashboard fragment
-                                setContainerFragment(new Dashboard());
+                                    //Replace R.id.frame with the Dashboard fragment
+                                    setContainerFragment(new Dashboard());
 
-                                return true;
-                            case R.id.voti:
+                                    return true;
+                                case R.id.voti:
 
-                                //Change activity color
-                                changeActivityColor(R.color.colorPrimaryGreen, R.color.colorPrimaryDarkGreen);
+                                    //Change activity color
+                                    changeActivityColor(R.color.colorPrimaryGreen, R.color.colorPrimaryDarkGreen);
 
-                                //Replace R.id.frame with the Voti fragment
-                                setContainerFragment(new Voti());
+                                    //Replace R.id.frame with the Voti fragment
+                                    setContainerFragment(new Voti());
 
-                                return true;
-                            case R.id.materie:
+                                    return true;
+                                case R.id.materie:
 
-                                //Change activity color
-                                changeActivityColor(R.color.colorPrimaryOrange, R.color.colorPrimaryDarkOrange);
+                                    //Change activity color
+                                    changeActivityColor(R.color.colorPrimaryOrange, R.color.colorPrimaryDarkOrange);
 
-                                //Replace R.id.frame with the Voti fragment
-                                setContainerFragment(new Materie());
+                                    //Replace R.id.frame with the Voti fragment
+                                    setContainerFragment(new Materie());
 
-                                return true;
-                            case R.id.agenda:
+                                    return true;
+                                case R.id.agenda:
 
-                                //Change activity color
-                                changeActivityColor(R.color.colorPrimaryTeal, R.color.colorPrimaryDarkTeal);
+                                    //Change activity color
+                                    changeActivityColor(R.color.colorPrimaryTeal, R.color.colorPrimaryDarkTeal);
 
-                                //Replace R.id.frame with the Agenda fragment
-                                setContainerFragment(new Agenda());
+                                    //Replace R.id.frame with the Agenda fragment
+                                    setContainerFragment(new Agenda());
 
-                                return true;
-                            case R.id.circolari:
-                                return true;
-                            default:
-                                return true;
-                        }
+                                    return true;
+                                case R.id.circolari:
+                                    return true;
+                                default:
+                                    return true;
+                            }
+                        }else return true;
                     }
                 });
 
@@ -108,10 +117,28 @@ public class DashboardActivity extends AppCompatActivity{
         actionBarDrawerToggle.syncState();
 
         navigationView.getMenu().getItem(0).setChecked(true);
+
+        //Start downloading votes from Classeviva
+        ClassevivaCaller caller = new ClassevivaCaller(new ClassevivaCallback() {
+            @Override
+            public void onResponse(final ArrayList list) {
+                DashboardActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                    Votes.saveVotes(DashboardActivity.this, list);
+                    mCanSelect = true;
+
+                    //Refresh fragment
+                    setContainerFragment(new Dashboard());
+                    }
+                });
+            }
+        }, this);
+        caller.getVotes();
     }
 
     /**
-     * changeActivityColor() method
+     * Change the activity base color(statusbar, toolbar, navigationbar, tabs and navigation drawer's header)
      *
      * @param colorPrimary Activity primary color
      * @param colorPrimaryDark Activity primary dark color
@@ -121,6 +148,9 @@ public class DashboardActivity extends AppCompatActivity{
         if (Build.VERSION.SDK_INT >= 21) {
             //Statusbar color
             getWindow().setStatusBarColor(ContextCompat.getColor(DashboardActivity.this, colorPrimaryDark));
+
+            //Navigation bar color
+            getWindow().setNavigationBarColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
 
             //Toolbar background color
             toolbar.setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
@@ -134,7 +164,7 @@ public class DashboardActivity extends AppCompatActivity{
     }
 
     /**
-     * setContainerFragment() method
+     * Inflate a fragment in R.id.frame view
      *
      * @param fragment The inflated fragment
      * @see DrawerFragment
@@ -163,6 +193,4 @@ public class DashboardActivity extends AppCompatActivity{
         toolbar.inflateMenu(menu);
         toolbar.setOnMenuItemClickListener(callback);
     }
-
-
 }

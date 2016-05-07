@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.example.marplex.schoolbook.fragments.custom.VoteFragment;
-import com.example.marplex.schoolbook.interfaces.ClassevivaVoti;
 import com.example.marplex.schoolbook.models.Voto;
 import com.example.marplex.schoolbook.utilities.Votes;
 
@@ -15,27 +14,13 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FirstPeriod extends VoteFragment implements ClassevivaVoti {
+public class FirstPeriod extends VoteFragment {
 
     private Dialog mDialog = null;
 
     @Override
     public void init(){
         mPeriod = 1;
-        setVotiListener(this);
-    }
-
-    @Override
-    public void onVotiReceive(ArrayList<Voto> voto) {
-        if(voto==null) refreshContent();
-
-        /**
-         * @see Votes
-         */
-        Votes.saveVotes(getActivity(), voto);
-        mSwipe.setRefreshing(false);
-
-        populateRecyclerView(Votes.getVotesByPeriod(voto, mPeriod));
     }
 
     @Override
@@ -58,5 +43,20 @@ public class FirstPeriod extends VoteFragment implements ClassevivaVoti {
     @Override
     public String getPageTitle() {
         return "1° Periodo";
+    }
+
+    @Override
+    public void onResponse(final ArrayList<Voto> list) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(list==null) refreshContent();
+
+                Votes.saveVotes(getActivity(), list);
+                mSwipe.setRefreshing(false);
+
+                populateRecyclerView(Votes.getVotesByPeriod(list, mPeriod));
+            }
+        });
     }
 }

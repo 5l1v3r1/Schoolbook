@@ -13,8 +13,8 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.marplex.schoolbook.connections.ClassevivaAPI;
-import com.example.marplex.schoolbook.interfaces.classeViva;
+import com.example.marplex.schoolbook.connections.ClassevivaCaller;
+import com.example.marplex.schoolbook.interfaces.ClassevivaLoginCallback;
 import com.example.marplex.schoolbook.utilities.Credentials;
 import com.example.marplex.schoolbook.utilities.WindowUtil;
 import com.zl.reik.dilatingdotsprogressbar.DilatingDotsProgressBar;
@@ -43,8 +43,8 @@ public class LoginActivity extends AppCompatActivity {
 
     Encryption mEncryption;
 
-    classeViva mCallback;
-    ClassevivaAPI mLogin;
+    ClassevivaLoginCallback mCallback;
+    ClassevivaCaller mLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,28 +70,18 @@ public class LoginActivity extends AppCompatActivity {
         mPass = Credentials.getPassword(this);
         mSession = Credentials.getSession(this);
 
-        //Create the callback for ClassevivaAPI class
-        mCallback = new classeViva() {
+        //Create the callback for ClassevivaCaller class
+        mCallback = new ClassevivaLoginCallback() {
             @Override
-            public void onPageLoaded(String html) {
+            public void onLoginDone(boolean success) {
                 //If there's some error in login (Check if the <title> tag contains the login page title)
-                if(html.contains("La Scuola del futuro, oggi")){
+                if(!success){
                     animateReverseFab();
-                }
-                //Succesfull login
-                else {
-
-                    //If the user doesn't log in
-                    if(mUser==null && mPass==null && mSession ==null){
-                        //Save the new credentials
-                        Credentials.saveCredentials(LoginActivity.this, mName, mPw, mLogin.getSession() );
-                    }
-
+                }else {
                     //Start DashboardActivity
                     Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                     startActivity(i);
                     finish();
-
                 }
             }
         };
@@ -113,8 +103,8 @@ public class LoginActivity extends AppCompatActivity {
                 mName = mUtente.getText().toString();
                 mPw = mPassword.getText().toString();
 
-                //Create an instance of ClassevivaAPI
-                mLogin = new ClassevivaAPI(mName, mPw, mCallback, LoginActivity.this);
+                //Create an instance of ClassevivaCaller
+                mLogin = new ClassevivaCaller(mName, mPw, mCallback, LoginActivity.this);
                 //Perform login which return its  value in the callback
                 mLogin.doLogin();
 

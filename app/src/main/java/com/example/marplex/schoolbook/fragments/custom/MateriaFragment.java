@@ -17,6 +17,7 @@ import com.example.marplex.schoolbook.adapters.MaterieAdapter;
 import com.example.marplex.schoolbook.models.Materia;
 import com.example.marplex.schoolbook.utilities.MathUtils;
 import com.example.marplex.schoolbook.utilities.Subjects;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,7 @@ import java.util.ArrayList;
  */
 public abstract class MateriaFragment extends PagerFragment {
 
-    private RecyclerView materieRecyclerList;
+    private FastScrollRecyclerView materieRecyclerList;
     private TextView mediaTotaleMaterie;
 
     protected int mPeriod;
@@ -34,7 +35,7 @@ public abstract class MateriaFragment extends PagerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_materia_first_period, container, false);
 
-        materieRecyclerList = (RecyclerView) rootView.findViewById(R.id.materieList);
+        materieRecyclerList = (FastScrollRecyclerView) rootView.findViewById(R.id.materieList);
         mediaTotaleMaterie = (TextView) rootView.findViewById(R.id.mediaTotaleMaterie);
 
         materieRecyclerList.setHasFixedSize(true);

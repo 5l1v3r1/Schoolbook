@@ -20,11 +20,10 @@ import android.widget.ListView;
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.adapters.SimpleSectionedRecyclerViewAdapter;
 import com.example.marplex.schoolbook.adapters.VotiAdapter;
-import com.example.marplex.schoolbook.connections.ClassevivaAPI;
+import com.example.marplex.schoolbook.connections.ClassevivaCaller;
+import com.example.marplex.schoolbook.interfaces.ClassevivaCallback;
 import com.example.marplex.schoolbook.interfaces.ClassevivaVoti;
-import com.example.marplex.schoolbook.interfaces.classeViva;
 import com.example.marplex.schoolbook.models.Voto;
-import com.example.marplex.schoolbook.utilities.Credentials;
 import com.example.marplex.schoolbook.utilities.SharedPreferences;
 import com.example.marplex.schoolbook.utilities.Votes;
 import com.google.gson.Gson;
@@ -40,11 +39,11 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public abstract class VoteFragment extends PagerFragment implements classeViva{
+public abstract class VoteFragment extends PagerFragment implements ClassevivaCallback<Voto> {
 
     private View mRootView;
     private LinearLayoutManager mLlm;
-    private ClassevivaAPI mApi;
+    private ClassevivaCaller mApi;
 
     private LayoutInflater mInflater;
 
@@ -69,20 +68,20 @@ public abstract class VoteFragment extends PagerFragment implements classeViva{
         mLlm = new LinearLayoutManager(getActivity());
         mList.setHasFixedSize(true);
         mList.setLayoutManager(mLlm);
-
         mSwipe.setColorSchemeColors(R.color.green);
 
         init();
 
         if(!isDataSaved()){
-            mApi = new ClassevivaAPI(this);
-            mApi.getVotes(mVotesListener, getActivity());
-            mSwipe.setRefreshing(true);
+            mApi = new ClassevivaCaller(this, getContext());
+            mApi.getVotes();
+            mSwipe.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSwipe.setRefreshing(true);
+                }
+            });
         }else{
-
-            /**
-             * @see Votes
-             */
             final ArrayList<Voto> voti = Votes.getVotesByPeriod(getActivity(), mPeriod);
             populateRecyclerView(voti);
         }
@@ -102,15 +101,11 @@ public abstract class VoteFragment extends PagerFragment implements classeViva{
     public abstract void ordina();
     public abstract void eliminaOrdine();
 
-    @Override
-    public void onPageLoaded(String html) { }
-
     protected void refreshContent(){
-        if(mApi!=null) mApi.getVotes(mVotesListener, getActivity());
+        if(mApi!=null) mApi.getVotes();
         else {
-            mApi = new ClassevivaAPI(this);
-            mApi.setSession(Credentials.getSession(getActivity()));
-            mApi.getVotes(mVotesListener, getActivity());
+            mApi = new ClassevivaCaller(this, getContext());
+            mApi.getVotes();
         }
     }
 
@@ -166,10 +161,6 @@ public abstract class VoteFragment extends PagerFragment implements classeViva{
         Listamaterie.setOnItemClickListener(clickListener);
 
         return mBottomSheetDialog;
-    }
-
-    protected void setVotiListener(ClassevivaVoti mVotesListener) {
-        this.mVotesListener = mVotesListener;
     }
 
     @Override

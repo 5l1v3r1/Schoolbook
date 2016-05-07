@@ -25,11 +25,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.marplex.schoolbook.R;
-import com.example.marplex.schoolbook.connections.ClassevivaAPI;
 import com.example.marplex.schoolbook.fragments.custom.CustomCaldroid;
 import com.example.marplex.schoolbook.fragments.custom.DrawerFragment;
-import com.example.marplex.schoolbook.interfaces.ClassevivaAgenda;
-import com.example.marplex.schoolbook.interfaces.classeViva;
 import com.example.marplex.schoolbook.models.Evento;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
@@ -38,13 +35,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Agenda extends DrawerFragment implements ClassevivaAgenda,classeViva {
+public class Agenda extends DrawerFragment{
     CustomCaldroid caldroidFragment;
     ArrayList<Evento> eventi;
 
@@ -153,8 +149,8 @@ public class Agenda extends DrawerFragment implements ClassevivaAgenda,classeViv
 
         caldroidFragment.setCaldroidListener(listener);
 
-        ClassevivaAPI api = new ClassevivaAPI(this);
-        api.getAgenda(this, getActivity());
+        //ClassevivaCaller api = new ClassevivaCaller(this);
+        //api.getAgenda(this, getActivity());
 
         FragmentTransaction t = getFragmentManager().beginTransaction();
         t.replace(R.id.frameLayout, caldroidFragment);
@@ -200,7 +196,7 @@ public class Agenda extends DrawerFragment implements ClassevivaAgenda,classeViv
     }
 
 
-    @Override
+    /*@Override
     public void onAgendaReceive(ArrayList<Evento> agenda) {
         eventi = agenda;
         HashMap<String, Object> extraData = caldroidFragment.getExtraData();
@@ -211,7 +207,7 @@ public class Agenda extends DrawerFragment implements ClassevivaAgenda,classeViv
     @Override
     public void onPageLoaded(String html) {
 
-    }
+    }*/
 
     @Override
     public String getTitle() {

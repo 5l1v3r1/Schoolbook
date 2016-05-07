@@ -2,8 +2,6 @@ package com.example.marplex.schoolbook.utilities;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
-
 /**
  * Created by marco on 3/8/16.
  */
@@ -21,10 +19,14 @@ public class Credentials {
         return SharedPreferences.loadString(c, "user", "sessionID");
     }
 
+    public static void saveSession(Context c, String session){
+        SharedPreferences.saveString(c, "user", "sessionID", session);
+    }
+
     public static void saveCredentials(Context c, String name, String password, String session) {
         SharedPreferences.saveString(c, "user", "user", name);
         SharedPreferences.saveString(c, "user", "password", Cripter.criptString(password) );
-        SharedPreferences.saveString(c, "user", "sessionID", new Gson().toJson(session));
+        SharedPreferences.saveString(c, "user", "sessionID", session);
     }
 
 }
