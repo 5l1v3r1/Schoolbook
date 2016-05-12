@@ -1,10 +1,14 @@
 package com.example.marplex.schoolbook;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -14,14 +18,18 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.marplex.schoolbook.connections.ClassevivaCaller;
+import com.example.marplex.schoolbook.fragments.AboutFragment;
 import com.example.marplex.schoolbook.fragments.Agenda;
 import com.example.marplex.schoolbook.fragments.Dashboard;
 import com.example.marplex.schoolbook.fragments.Materie;
 import com.example.marplex.schoolbook.fragments.Voti;
 import com.example.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.example.marplex.schoolbook.interfaces.ClassevivaCallback;
+import com.example.marplex.schoolbook.services.NotificationService;
+import com.example.marplex.schoolbook.utilities.Events;
 import com.example.marplex.schoolbook.utilities.Votes;
 
 import java.util.ArrayList;
@@ -32,9 +40,9 @@ import butterknife.ButterKnife;
 public class DashboardActivity extends AppCompatActivity{
 
     @Bind(R.id.toolbar) public Toolbar toolbar;
+    @Bind(R.id.sliding_tabs) public TabLayout tabLayout;
     @Bind(R.id.nav_view) NavigationView navigationView;
     @Bind(R.id.drawer) DrawerLayout drawer;
-    @Bind(R.id.sliding_tabs) public TabLayout tabLayout;
 
     private boolean mCanSelect = false;
 
@@ -50,12 +58,16 @@ public class DashboardActivity extends AppCompatActivity{
         //When the activity start, automatically replace R.id.frame with the Dashboard fragment
         setContainerFragment(new Dashboard());
 
+        //Just start the IntentService for votes notification
+        startService(new Intent(getBaseContext(), NotificationService.class));
+
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
 
+                        //Used it to prevent drawer panel non smooth close
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -104,6 +116,13 @@ public class DashboardActivity extends AppCompatActivity{
                                     return true;
                                 case R.id.circolari:
                                     return true;
+                                case R.id.about:
+                                    //Change activity color
+                                    changeActivityColor(R.color.colorPrimary, R.color.colorPrimaryDark);
+
+                                    //Replace R.id.frame with the Agenda fragment
+                                    setContainerFragment(new AboutFragment());
+
                                 default:
                                     return true;
                             }
@@ -135,6 +154,32 @@ public class DashboardActivity extends AppCompatActivity{
             }
         }, this);
         caller.getVotes();
+
+        //Start downloading events from Classeviva
+        boolean canIupdate = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("setting_sync", true);
+        if(canIupdate) {
+            ClassevivaCaller callerAgenda = new ClassevivaCaller(new ClassevivaCallback() {
+                @Override
+                public void onResponse(final ArrayList list) {
+                    DashboardActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Events.saveEvents(DashboardActivity.this, list);
+                            mCanSelect = true;
+
+                            Snackbar.make(navigationView, "Finito", Snackbar.LENGTH_SHORT).show();
+
+                            //Refresh fragment
+                            setContainerFragment(new Dashboard());
+                        }
+                    });
+                }
+            }, this);
+            callerAgenda.getAgenda();
+            Snackbar.make(navigationView, "Sto aggiornando il tuo registro...", Snackbar.LENGTH_INDEFINITE).show();
+        }else{
+            mCanSelect = true;
+        }
     }
 
     /**
@@ -145,7 +190,7 @@ public class DashboardActivity extends AppCompatActivity{
      *
      */
     private void changeActivityColor(int colorPrimary, int colorPrimaryDark){
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= 21){
             //Statusbar color
             getWindow().setStatusBarColor(ContextCompat.getColor(DashboardActivity.this, colorPrimaryDark));
 
@@ -178,6 +223,12 @@ public class DashboardActivity extends AppCompatActivity{
 
         //Set toolbar title
         getSupportActionBar().setTitle(fragment.getTitle());
+    }
+
+    //Open the GitHub page
+    public void showGithub(View view){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Marplex/Schoolbook"));
+        startActivity(intent);
     }
 
     @Override

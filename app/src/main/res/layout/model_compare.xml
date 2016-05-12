@@ -81,8 +81,8 @@
                         android:layout_centerHorizontal="true" />
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:text="9"
                         android:id="@+id/txt_mediaMateria"
@@ -148,8 +148,8 @@
                         android:layout_centerHorizontal="true" />
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:text="9"
                         android:id="@+id/txt_mediaMateria2"

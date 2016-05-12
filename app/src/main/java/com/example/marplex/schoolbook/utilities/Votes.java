@@ -58,7 +58,7 @@ public class Votes {
 
         ArrayList<Voto> voti = new ArrayList<>();
         for(Voto voto : tmp){
-            if(("1234567890".contains(voto.voto.charAt(0) + ""))){
+            if(!voto.special){
                 if(voto.materia.equals(materia)){
                     voti.add(voto);
                 }
@@ -126,6 +126,14 @@ public class Votes {
         return 0;
     }
 
+    public static ArrayList<Voto> getIntruderVotes(ArrayList<Voto> savedList, ArrayList<Voto> newList){
+        ArrayList<Voto> tmp = new ArrayList<>();
+        for(Voto voto : newList){
+            if(savedList.contains(voto)) tmp.add(voto);
+        }
+        return tmp;
+    }
+
     public static int getColorByVote(double val){
         if(6<=val && val<=7){
             return Color.parseColor("#ffae00"); //Giallo
@@ -150,7 +158,6 @@ public class Votes {
             else continue;
         }
         return voti;
-
     }
 
     public static ArrayList<Voto> getVotesByPeriod(Context c, int period){

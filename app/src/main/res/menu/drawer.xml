@@ -30,5 +30,11 @@
             android:icon="@mipmap/ic_circolari"
             android:tint="#dbff2200"
             android:title="Circolari" />
+
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_info_white_24dp"
+            android:tint="#dbff2200"
+            android:title="About" />
     </group>
 </menu>

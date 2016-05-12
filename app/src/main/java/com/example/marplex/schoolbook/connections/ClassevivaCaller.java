@@ -6,7 +6,7 @@ import android.util.Log;
 import com.example.marplex.schoolbook.interfaces.ClassevivaAgenda;
 import com.example.marplex.schoolbook.interfaces.ClassevivaCallback;
 import com.example.marplex.schoolbook.interfaces.ClassevivaLoginCallback;
-import com.example.marplex.schoolbook.interfaces.ClassevivaVoti;
+import com.example.marplex.schoolbook.models.Evento;
 import com.example.marplex.schoolbook.models.Voto;
 import com.example.marplex.schoolbook.utilities.Credentials;
 import com.example.marplex.schoolbook.utilities.Cripter;
@@ -20,7 +20,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,7 +36,8 @@ import okhttp3.Response;
  */
 public class ClassevivaCaller {
 
-    private final String BASE_PATH = "https://infinite-harbor-75813.herokuapp.com/";
+    private final String BASE_PATH = "http://schoolbook.cloudno.de/";
+    private final String BASE_PATH2 = "https://infinite-harbor-75813.herokuapp.com/";
     protected final String TAG = "Classeviva Login";
 
     ClassevivaLoginCallback mClassevivaLoginCallback;
@@ -79,7 +83,9 @@ public class ClassevivaCaller {
         client.newCall(request).enqueue(callback);
     }
 
-    //Call Classeviva login page with saved or requested credentials
+    /**
+     * Call Classeviva login page with saved or requested credentials
+     */
     public void doLogin() {
         //Perform new HTTP call
         try {
@@ -106,31 +112,9 @@ public class ClassevivaCaller {
         }
     }
 
-    //Call Classeviva login page with saved credentials to retrieve a new session
-    public void newSession(final Method method) {
-        //Perform new HTTP call
-        try {
-            run(BASE_PATH + "PNIT0003/" + mUser + "/" + mPassword, new Callback() {
-                @Override public void onFailure(Call call, IOException e) { }
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    try {
-                        String json = response.body().string();
-                        JSONObject object = new JSONObject(json);
-
-                        boolean success = object.getString("status").equals("OK") ? true : false;
-                        if (success) Credentials.saveCredentials(c, mUser, mPassword, object.getString("sessionId"));
-
-                        method.invoke(ClassevivaCaller.this);
-                    }catch (JSONException e) { e.printStackTrace();  }
-                    catch (InvocationTargetException e) { e.printStackTrace();  }
-                    catch (IllegalAccessException e) { e.printStackTrace(); }
-                }
-            });
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-
-    //Call ClasseViva votes page with the current session
+    /**
+     * Call ClasseViva votes page with the current session
+     */
     public void getVotes(){
         //Perform new HTTP call
         try {
@@ -140,7 +124,7 @@ public class ClassevivaCaller {
                 @Override public void onResponse(Call call, Response response) throws IOException {
                     try {
                         String json = response.body().string();
-                        if(json.equals("{}")){
+                        if( json.equals("{}") || json.startsWith("<") ){
                             //Set credentials from storage
                             ClassevivaCaller.this.mUser = Credentials.getName(c);
                             ClassevivaCaller.this.mPassword = Cripter.decriptString(Credentials.getPassword(c));
@@ -166,7 +150,7 @@ public class ClassevivaCaller {
                                 String type = voteObject.getString("type");
                                 int period = voteObject.getInt("period");
                                 Voto vote = new Voto(voto, subject, date, type, period);
-                                System.out.println(new Gson().toJson(vote));
+                                vote.setSpecial(voteObject.getBoolean("special"));
                                 votes.add(vote);
                             }
                         }
@@ -186,17 +170,91 @@ public class ClassevivaCaller {
 
     /**
      * Make a request to classeviva for retrieving all events.
-     *
-     * @param callback  Interface which return the requested ArrayList<Evento> list
-     * @param c  Activity context
-     * @see ClassevivaVoti
-     *
      */
-    public void getAgenda(ClassevivaAgenda callback, Context c){
-        this.c = c;
-        this.agendaCallback = callback;
-        //new JSOUP(AGENDA).execute("https://web.spaggiari.eu/cvv/app/default/agenda_studenti.php?ope=get_events&gruppo_id=&start="
-        //        + (int) (System.currentTimeMillis()/1000 - 1728000) + "&end=" + (int) (System.currentTimeMillis()/1000 + 864000));
+    public void getAgenda(){
+        String session = Credentials.getSession(c);
+        String url = BASE_PATH + session +"/agenda";
+        try {
+            run(url, new Callback() {
+                @Override public void onFailure(Call call, IOException e) {  }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String json = response.body().string();
+                    if(!json.startsWith("[")){
+                        //Set credentials from storage
+                        ClassevivaCaller.this.mUser = Credentials.getName(c);
+                        ClassevivaCaller.this.mPassword = Cripter.decriptString(Credentials.getPassword(c));
+
+                        //Get a new session re-performing login
+                        try {
+                            newSession(ClassevivaCaller.class.getMethod("getAgenda", null));
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
+
+                        return;
+                    }
+                    ArrayList<Evento> events = new ArrayList<>();
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(json);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String start = jsonObject.getString("start");
+                            String dateToParse = start.substring(
+                                    0,
+                                    start.indexOf(" ")
+                            );
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date = format.parse(dateToParse);
+                            String title = jsonObject.getString("title");
+                            String text = jsonObject.getString("nota_2");
+                            String autore = jsonObject.getString("autore_desc");
+
+                            Evento event = new Evento(date, title, text, autore);
+                            events.add(event);
+                        }
+
+
+                        mCallback.onResponse(events);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Call Classeviva login page with saved credentials to retrieve a new session
+     */
+    public void newSession(final Method method) {
+        //Perform new HTTP call
+        try {
+            run(BASE_PATH + "PNIT0003/" + mUser + "/" + mPassword, new Callback() {
+                @Override public void onFailure(Call call, IOException e) { }
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        String json = response.body().string();
+                        JSONObject object = new JSONObject(json);
+
+                        boolean success = object.getString("status").equals("OK") ? true : false;
+                        if (success) Credentials.saveCredentials(c, mUser, mPassword, object.getString("sessionId"));
+
+                        method.invoke(ClassevivaCaller.this);
+                    }catch (JSONException e) { e.printStackTrace();  }
+                    catch (InvocationTargetException e) { e.printStackTrace();  }
+                    catch (IllegalAccessException e) { e.printStackTrace(); }
+                }
+            });
+        } catch (IOException e) { e.printStackTrace(); }
     }
 
     String getMateria(String materia){
@@ -209,7 +267,8 @@ public class ClassevivaCaller {
         else if(materia.contains("lingua e")) return "Italiano";
         else if(materia.contains("lingua")) return "Inglese";
         else if(materia.contains("matematica")) return "Matematica";
-        else if (materia.contains("rc")) return "Religione";
+        else if(materia.contains("rc")) return "Religione";
+        else if(materia.contains("applicate")) return "Scienze Applicate";
         else if(materia.contains("scienze")) return "Ginnastica";
         else if(materia.contains("storia")) return "Storia";
         else if(materia.contains("tecnologie e")) return "Tecnica";

@@ -20,7 +20,7 @@
         <item name="android:windowContentTransitions">true</item>
     </style>
 
-    <style name="AppThemeOrange" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeOrange" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryOrange</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>

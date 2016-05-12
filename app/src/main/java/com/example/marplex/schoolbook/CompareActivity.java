@@ -51,6 +51,8 @@ public class CompareActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(i!=0) {
                     mMainRecyclerView.setAdapter(new CompareAdapter(getApplicationContext(), Subjects.getComparedSubject(getApplicationContext(), list.get(i))));
+                }else{
+                    mMainRecyclerView.setAdapter(new CompareAdapter(getApplicationContext(), Subjects.getComparedSubjects(getApplicationContext())));
                 }
             }
 

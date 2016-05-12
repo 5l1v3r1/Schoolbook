@@ -1,13 +1,17 @@
 package com.example.marplex.schoolbook.models;
 
+import java.util.Date;
+
 /**
  * Created by marco on 1/29/16.
  */
 public class Evento {
-    public String data, titolo, testo;
-    public Evento(String data, String titolo, String testo){
-        this.data = data;
+    public String titolo, testo, autore;
+    public Date date;
+    public Evento(Date data, String titolo, String testo, String autore){
+        this.date = data;
         this.titolo = titolo;
         this.testo = testo;
+        this.autore = autore;
     }
 }

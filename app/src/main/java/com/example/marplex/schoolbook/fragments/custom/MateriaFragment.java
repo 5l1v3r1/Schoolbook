@@ -8,8 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
 import com.example.marplex.schoolbook.R;
@@ -72,21 +70,9 @@ public abstract class MateriaFragment extends PagerFragment {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (hideView) {
-                    Runnable listener = new Runnable() {
-                        @Override
-                        public void run() {
-                            mediaTotaleMaterie.setVisibility(View.GONE);
-                        }
-                    };
-                    mediaTotaleMaterie.animate().translationY(-mediaTotaleMaterie.getBottom()).setInterpolator(new AccelerateInterpolator()).withEndAction(listener).start();
+                    mediaTotaleMaterie.setVisibility(View.GONE);
                 } else {
-                    Runnable listener = new Runnable() {
-                        @Override
-                        public void run() {
-                            mediaTotaleMaterie.setVisibility(View.VISIBLE);
-                        }
-                    };
-                    mediaTotaleMaterie.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).withEndAction(listener).start();
+                    mediaTotaleMaterie.setVisibility(View.VISIBLE);
                 }
             }
 

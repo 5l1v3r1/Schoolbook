@@ -3,7 +3,6 @@ package com.example.marplex.schoolbook;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +22,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
-import se.simbio.encryption.Encryption;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -35,13 +33,9 @@ public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.red_bg) RelativeLayout reveal;
     @Bind(R.id.txt_loading) TextView mLoadingTextView;
     @Bind(R.id.progress) DilatingDotsProgressBar mProgress;
-    @Bind(R.id.name) TextInputLayout mNameLayout;
-    @Bind(R.id.pw) TextInputLayout mPwLayout;
 
     String mUser,mPass, mSession;
     String mName, mPw;
-
-    Encryption mEncryption;
 
     ClassevivaLoginCallback mCallback;
     ClassevivaCaller mLogin;
@@ -61,9 +55,6 @@ public class LoginActivity extends AppCompatActivity {
                 .alpha(1F)
                 .setDuration(500L)
                 .start();
-
-        // Create an instance of Encrytion
-        mEncryption = Encryption.getDefault("Key", "Salt", new byte[16]);
 
         // Load user's credentials with SharedPreferences help class
         mUser = Credentials.getName(this);

@@ -1,18 +1,28 @@
 package com.example.marplex.schoolbook.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.marplex.schoolbook.R;
+import com.example.marplex.schoolbook.SettingsActivity;
 import com.example.marplex.schoolbook.adapters.SectionPagerAdapter;
+import com.example.marplex.schoolbook.connections.ClassevivaCaller;
 import com.example.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.example.marplex.schoolbook.fragments.tabs.Home;
 import com.example.marplex.schoolbook.fragments.tabs.Reminds;
+import com.example.marplex.schoolbook.interfaces.ClassevivaCallback;
+import com.example.marplex.schoolbook.utilities.Votes;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,8 +47,33 @@ public class Dashboard extends DrawerFragment {
         /**
          * @see DrawerFragment
          */
-        setToolbarLayout(pager);
-
+        setToolbarLayout(pager, R.menu.menu_dashboard, new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.refresh:
+                        ClassevivaCaller caller = new ClassevivaCaller(new ClassevivaCallback() {
+                            @Override
+                            public void onResponse(final ArrayList list) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Votes.saveVotes(getActivity(), list);
+                                        Toast.makeText(getActivity(), "Finito", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }, getActivity());
+                        caller.getVotes();
+                        Toast.makeText(getActivity(), "Sto aggiornando il tuo registro...", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.settings:
+                        startActivity(new Intent(getActivity(), SettingsActivity.class));
+                        break;
+                }
+                return false;
+            }
+        });
         return rootView;
     }
 

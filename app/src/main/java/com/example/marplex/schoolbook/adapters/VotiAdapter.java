@@ -1,5 +1,6 @@
 package com.example.marplex.schoolbook.adapters;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +43,9 @@ public class VotiAdapter extends RecyclerView.Adapter <VotiAdapter.votiAdapterHo
         Voto voto = voti.get(position);
 
         viewHolder.voto.setText(voto.voto);
-        viewHolder.voto.setBackgroundColor(Votes.getColorByVote(Votes.getVoteByString(voto.voto)));
+        if(voto.special && !voto.voto.equals("-") && !voto.voto.equals("+")){
+            viewHolder.voto.setBackgroundColor(Color.parseColor("#3F51B5")); //Blu
+        } else viewHolder.voto.setBackgroundColor(Votes.getColorByVote(Votes.getVoteByString(voto.voto)));
 
         viewHolder.materia.setText(riceviTesto(voto.materia, voto.data, voto.tipo));
     }
