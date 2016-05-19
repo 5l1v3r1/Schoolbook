@@ -3,15 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="7dp"
+        app:cardElevation="5dp"
+        android:clickable="true"
         app:cardCornerRadius="5dp"
-        android:id="@+id/view2"
+        android:id="@+id/pbar_materiaSecondo"
+        android:foreground="?selectableItemBackground"
         android:layout_margin="7dp">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,7 +28,7 @@
                 app:cpb_background_progressbar_width="12dp"
                 app:cpb_progressbar_color="@color/colorPrimaryOrange"
                 app:cpb_progressbar_width="12dp"
-                android:id="@+id/view"
+                android:id="@+id/pbar_materiaPrimo"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
@@ -35,27 +38,27 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Matematica"
-                android:id="@+id/testoMateria"
-                android:layout_below="@+id/view"
-                android:layout_alignRight="@+id/view"
-                android:layout_alignEnd="@+id/view"
+                android:id="@+id/txt_materiaPrimoperiodo"
+                android:layout_below="@+id/pbar_materiaPrimo"
+                android:layout_alignRight="@+id/pbar_materiaPrimo"
+                android:layout_alignEnd="@+id/pbar_materiaPrimo"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:gravity="center"
                 android:paddingTop="5dp" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="9"
                 android:id="@+id/mediaMateria"
-                android:layout_alignTop="@+id/view"
-                android:layout_alignLeft="@+id/view"
-                android:layout_alignStart="@+id/view"
-                android:layout_alignBottom="@+id/view"
-                android:layout_alignRight="@+id/view"
-                android:layout_alignEnd="@+id/view"
+                android:layout_alignTop="@+id/pbar_materiaPrimo"
+                android:layout_alignLeft="@+id/pbar_materiaPrimo"
+                android:layout_alignStart="@+id/pbar_materiaPrimo"
+                android:layout_alignBottom="@+id/pbar_materiaPrimo"
+                android:layout_alignRight="@+id/pbar_materiaPrimo"
+                android:layout_alignEnd="@+id/pbar_materiaPrimo"
                 android:gravity="center"
                 android:textSize="25dp"
                 android:textColor="#5e5e5e" />
