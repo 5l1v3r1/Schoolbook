@@ -18,7 +18,6 @@ import com.example.marplex.schoolbook.adapters.SectionPagerAdapter;
 import com.example.marplex.schoolbook.connections.ClassevivaCaller;
 import com.example.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.example.marplex.schoolbook.fragments.tabs.Home;
-import com.example.marplex.schoolbook.fragments.tabs.Reminds;
 import com.example.marplex.schoolbook.interfaces.ClassevivaCallback;
 import com.example.marplex.schoolbook.utilities.Votes;
 
@@ -42,7 +41,7 @@ public class Dashboard extends DrawerFragment {
         /**
          * @see SectionPagerAdapter
          */
-        pager.setAdapter(new SectionPagerAdapter(this.getChildFragmentManager(), new Home(), new Reminds()));
+        pager.setAdapter(new SectionPagerAdapter(this.getChildFragmentManager(), new Home()));
 
         /**
          * @see DrawerFragment
@@ -74,6 +73,8 @@ public class Dashboard extends DrawerFragment {
                 return false;
             }
         });
+
+        setTabGone();
         return rootView;
     }
 

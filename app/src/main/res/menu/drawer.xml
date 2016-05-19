@@ -21,20 +21,29 @@
 
         <item
             android:id="@+id/agenda"
-            android:icon="@mipmap/ic_verifiche"
+            android:icon="@drawable/ic_assignment_white_24dp"
             android:tint="#e99139"
             android:title="Agenda" />
 
         <item
-            android:id="@+id/circolari"
-            android:icon="@mipmap/ic_circolari"
-            android:tint="#dbff2200"
-            android:title="Circolari" />
+            android:id="@+id/nav_subheader_impostazioni"
+            android:title="Impostazioni">
 
-        <item
-            android:id="@+id/about"
-            android:icon="@drawable/ic_info_white_24dp"
-            android:tint="#dbff2200"
-            android:title="About" />
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/settings"
+                        android:icon="@drawable/ic_settings_white_24dp"
+                        android:title="Impostazioni" />
+                    <item
+                        android:id="@+id/about"
+                        android:icon="@drawable/ic_info_white_24dp"
+                        android:title="About" />
+                </group>
+            </menu>
+
+
+        </item>
+
     </group>
 </menu>

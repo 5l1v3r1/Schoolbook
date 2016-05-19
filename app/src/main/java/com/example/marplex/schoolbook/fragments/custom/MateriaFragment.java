@@ -1,21 +1,28 @@
 package com.example.marplex.schoolbook.fragments.custom;
 
 
+import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.marplex.schoolbook.R;
 import com.example.marplex.schoolbook.adapters.MaterieAdapter;
+import com.example.marplex.schoolbook.adapters.VotesDialogAdapter;
 import com.example.marplex.schoolbook.models.Materia;
+import com.example.marplex.schoolbook.models.Voto;
 import com.example.marplex.schoolbook.utilities.MathUtils;
 import com.example.marplex.schoolbook.utilities.Subjects;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+import com.example.marplex.schoolbook.utilities.Votes;
 
 import java.util.ArrayList;
 
@@ -24,7 +31,7 @@ import java.util.ArrayList;
  */
 public abstract class MateriaFragment extends PagerFragment {
 
-    private FastScrollRecyclerView materieRecyclerList;
+    private RecyclerView materieRecyclerList;
     private TextView mediaTotaleMaterie;
 
     protected int mPeriod;
@@ -33,7 +40,7 @@ public abstract class MateriaFragment extends PagerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_materia_first_period, container, false);
 
-        materieRecyclerList = (FastScrollRecyclerView) rootView.findViewById(R.id.materieList);
+        materieRecyclerList = (RecyclerView) rootView.findViewById(R.id.materieList);
         mediaTotaleMaterie = (TextView) rootView.findViewById(R.id.mediaTotaleMaterie);
 
         materieRecyclerList.setHasFixedSize(true);
@@ -50,7 +57,13 @@ public abstract class MateriaFragment extends PagerFragment {
 
         ArrayList<Materia> mList = Subjects.getSubjects(getContext(), mPeriod);
 
-        MaterieAdapter adapter = new MaterieAdapter(mList);
+        MaterieAdapter adapter = new MaterieAdapter(mList, mPeriod, new MaterieAdapter.MaterieAdapterInterface() {
+            @Override
+            public void OnCardClick(String materia) {
+                viewVotesList(mPeriod, materia);
+            }
+        });
+
         materieRecyclerList.setAdapter(adapter);
 
         double defSum = 0;
@@ -88,6 +101,24 @@ public abstract class MateriaFragment extends PagerFragment {
         };
 
         materieRecyclerList.setOnScrollListener(onScrollListener);
+    }
+
+    private Dialog viewVotesList(int periodo, String materia){
+        final Dialog mBottomSheetDialog = new Dialog (getActivity(),R.style.MaterialDialogSheet);
+        ListView list = new ListView(getContext());
+        list.setDivider(null);
+        list.setBackgroundColor(Color.parseColor("#EEEEEE"));
+
+        ArrayList<Voto> votes = Votes.getVotesByMateria(getContext(), materia, periodo);
+        list.setAdapter(new VotesDialogAdapter(getContext(),R.layout.model_voto, votes));
+
+        mBottomSheetDialog.setContentView(list);
+        mBottomSheetDialog.setCancelable(true);
+        mBottomSheetDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        mBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+        mBottomSheetDialog.show();
+
+        return mBottomSheetDialog;
     }
 
     public abstract void init();

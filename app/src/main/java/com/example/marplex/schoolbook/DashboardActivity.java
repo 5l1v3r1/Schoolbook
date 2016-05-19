@@ -29,6 +29,7 @@ import com.example.marplex.schoolbook.fragments.Voti;
 import com.example.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.example.marplex.schoolbook.interfaces.ClassevivaCallback;
 import com.example.marplex.schoolbook.services.NotificationService;
+import com.example.marplex.schoolbook.utilities.Connection;
 import com.example.marplex.schoolbook.utilities.Events;
 import com.example.marplex.schoolbook.utilities.Votes;
 
@@ -114,15 +115,17 @@ public class DashboardActivity extends AppCompatActivity{
                                     setContainerFragment(new Agenda());
 
                                     return true;
-                                case R.id.circolari:
-                                    return true;
                                 case R.id.about:
                                     //Change activity color
                                     changeActivityColor(R.color.colorPrimary, R.color.colorPrimaryDark);
 
                                     //Replace R.id.frame with the Agenda fragment
                                     setContainerFragment(new AboutFragment());
-
+                                    return true;
+                                case R.id.settings:
+                                    //Open settings activity
+                                    startActivity(new Intent(DashboardActivity.this, SettingsActivity.class));
+                                    return true;
                                 default:
                                     return true;
                             }
@@ -137,48 +140,55 @@ public class DashboardActivity extends AppCompatActivity{
 
         navigationView.getMenu().getItem(0).setChecked(true);
 
-        //Start downloading votes from Classeviva
-        ClassevivaCaller caller = new ClassevivaCaller(new ClassevivaCallback() {
-            @Override
-            public void onResponse(final ArrayList list) {
-                DashboardActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                    Votes.saveVotes(DashboardActivity.this, list);
-                    mCanSelect = true;
-
-                    //Refresh fragment
-                    setContainerFragment(new Dashboard());
-                    }
-                });
-            }
-        }, this);
-        caller.getVotes();
-
-        //Start downloading events from Classeviva
         boolean canIupdate = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("setting_sync", true);
         if(canIupdate) {
-            ClassevivaCaller callerAgenda = new ClassevivaCaller(new ClassevivaCallback() {
-                @Override
-                public void onResponse(final ArrayList list) {
-                    DashboardActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Events.saveEvents(DashboardActivity.this, list);
-                            mCanSelect = true;
+            if(Connection.isNetworkAvailable(this)) {
+                //Start downloading votes from Classeviva
+                ClassevivaCaller caller = new ClassevivaCaller(new ClassevivaCallback() {
+                    @Override
+                    public void onResponse(final ArrayList list) {
+                        DashboardActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Votes.saveVotes(DashboardActivity.this, list);
+                                mCanSelect = true;
 
-                            Snackbar.make(navigationView, "Finito", Snackbar.LENGTH_SHORT).show();
+                                //Refresh fragment
+                                setContainerFragment(new Dashboard());
+                            }
+                        });
+                    }
+                }, this);
+                caller.getVotes();
 
-                            //Refresh fragment
-                            setContainerFragment(new Dashboard());
-                        }
-                    });
-                }
-            }, this);
-            callerAgenda.getAgenda();
-            Snackbar.make(navigationView, "Sto aggiornando il tuo registro...", Snackbar.LENGTH_INDEFINITE).show();
+                //Start downloading events from Classeviva
+                ClassevivaCaller callerAgenda = new ClassevivaCaller(new ClassevivaCallback() {
+                    @Override
+                    public void onResponse(final ArrayList list) {
+                        DashboardActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Events.saveEvents(DashboardActivity.this, list);
+                                mCanSelect = true;
+
+                                Snackbar.make(navigationView, "Finito", Snackbar.LENGTH_SHORT).show();
+
+                                //Refresh fragment
+                                setContainerFragment(new Dashboard());
+                            }
+                        });
+                    }
+                }, this);
+                callerAgenda.getAgenda();
+                Snackbar.make(navigationView, "Sto aggiornando il tuo registro...", Snackbar.LENGTH_INDEFINITE).show();
+            }else{
+                mCanSelect = true;
+            }
         }else{
             mCanSelect = true;
+
+            //Refresh fragment
+            setContainerFragment(new Dashboard());
         }
     }
 

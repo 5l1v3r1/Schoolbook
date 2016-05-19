@@ -216,7 +216,7 @@
                         app:rcReverse="false"
                         app:rcProgressColor="@color/colorPrimaryGreen"
                         app:rcSecondaryProgressColor="@color/colorPrimaryGreen"
-                        app:rcBackgroundColor="@color/caldroid_gray"
+                        app:rcBackgroundColor="@android:color/darker_gray"
                         android:id="@+id/pbar_objective" />
 
                     <TextView

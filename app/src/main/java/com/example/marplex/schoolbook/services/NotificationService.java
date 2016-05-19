@@ -64,6 +64,7 @@ public class NotificationService extends Service {
                 }
             }
         }, getApplicationContext());
+        mCaller.getVotes();
         new Thread(new Runnable(){
             public void run() {
                 while(true)
