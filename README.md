@@ -13,6 +13,6 @@ In developing:
 
 * Subject comparator
 
-You currently in the **[Developing Branch]**
+You currently in the **[Master Branch]**
 
 
