@@ -6,7 +6,7 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        applicationId "com.example.marplex.schoolbook"
+        applicationId "com.marco.marplex.schoolbook"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

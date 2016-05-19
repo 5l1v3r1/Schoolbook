@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.marplex.schoolbook">
+    package="com.marco.marplex.schoolbook">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name="com.marco.marplex.schoolbook.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -22,23 +22,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DashboardActivity"
+            android:name="com.marco.marplex.schoolbook.DashboardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".Materia"
+            android:name="com.marco.marplex.schoolbook.Materia"
             android:label="@string/title_activity_materia"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeGreen" />
         <activity
-            android:name=".CompareActivity"
+            android:name="com.marco.marplex.schoolbook.CompareActivity"
             android:label="@string/title_activity_compare"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeOrange" />
 
-        <service android:name=".services.NotificationService" />
+        <service android:name="com.marco.marplex.schoolbook.services.NotificationService" />
 
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name="com.marco.marplex.schoolbook.SettingsActivity"></activity>
     </application>
 
 </manifest>

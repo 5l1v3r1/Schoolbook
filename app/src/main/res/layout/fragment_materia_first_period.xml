@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.marplex.schoolbook.fragments.tabs.MateriaFirstPeriod">
+    tools:context="com.marco.marplex.schoolbook.fragments.tabs.MateriaFirstPeriod">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
