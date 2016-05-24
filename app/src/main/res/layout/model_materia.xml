@@ -15,55 +15,54 @@
         android:foreground="?selectableItemBackground"
         android:layout_margin="7dp">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp"
-            android:gravity="center">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:baselineAligned="false">
 
-            <com.mikhaellopez.circularprogressbar.CircularProgressBar
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                app:cpb_background_progressbar_color="#d7d7d7"
-                app:cpb_background_progressbar_width="12dp"
-                app:cpb_progressbar_color="@color/colorPrimaryOrange"
-                app:cpb_progressbar_width="12dp"
-                android:id="@+id/pbar_materiaPrimo"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:gravity="center">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Matematica"
-                android:id="@+id/txt_materiaPrimoperiodo"
-                android:layout_below="@+id/pbar_materiaPrimo"
-                android:layout_alignRight="@+id/pbar_materiaPrimo"
-                android:layout_alignEnd="@+id/pbar_materiaPrimo"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:gravity="center"
-                android:paddingTop="5dp" />
+                <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    app:cpb_background_progressbar_color="#d7d7d7"
+                    app:cpb_background_progressbar_width="12dp"
+                    app:cpb_progressbar_color="@color/colorPrimaryOrange"
+                    app:cpb_progressbar_width="12dp"
+                    android:id="@+id/pbar_materiaPrimo"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="9"
+                    android:id="@+id/mediaMateria"
+                    android:gravity="center"
+                    android:textSize="25dp"
+                    android:textColor="#5e5e5e"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="9"
-                android:id="@+id/mediaMateria"
-                android:layout_alignTop="@+id/pbar_materiaPrimo"
-                android:layout_alignLeft="@+id/pbar_materiaPrimo"
-                android:layout_alignStart="@+id/pbar_materiaPrimo"
-                android:layout_alignBottom="@+id/pbar_materiaPrimo"
-                android:layout_alignRight="@+id/pbar_materiaPrimo"
-                android:layout_alignEnd="@+id/pbar_materiaPrimo"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Matematica"
+                android:id="@+id/txt_materiaPrimoperiodo"
                 android:gravity="center"
-                android:textSize="25dp"
-                android:textColor="#5e5e5e" />
+                android:padding="10dp" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 </LinearLayout>

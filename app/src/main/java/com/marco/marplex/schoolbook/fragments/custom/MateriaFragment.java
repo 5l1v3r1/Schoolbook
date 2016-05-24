@@ -23,6 +23,7 @@ import com.marco.marplex.schoolbook.models.Voto;
 import com.marco.marplex.schoolbook.utilities.MathUtils;
 import com.marco.marplex.schoolbook.utilities.Subjects;
 import com.marco.marplex.schoolbook.utilities.Votes;
+import com.marco.marplex.schoolbook.views.GridRecyclerView;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ import java.util.ArrayList;
  */
 public abstract class MateriaFragment extends PagerFragment {
 
-    private RecyclerView materieRecyclerList;
+    private GridRecyclerView materieRecyclerList;
     private TextView mediaTotaleMaterie;
 
     protected int mPeriod;
@@ -40,11 +41,12 @@ public abstract class MateriaFragment extends PagerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_materia_first_period, container, false);
 
-        materieRecyclerList = (RecyclerView) rootView.findViewById(R.id.materieList);
+        materieRecyclerList = (GridRecyclerView) rootView.findViewById(R.id.materieList);
         mediaTotaleMaterie = (TextView) rootView.findViewById(R.id.mediaTotaleMaterie);
 
         materieRecyclerList.setHasFixedSize(true);
         materieRecyclerList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        materieRecyclerList.scheduleLayoutAnimation();
 
         init();
         setScrollListener();

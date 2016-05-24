@@ -34,7 +34,7 @@ public class NotificationService extends Service {
             public void onResponse(ArrayList list) {
                 ArrayList<Voto> savedVotes = Votes.getVotes(getApplicationContext());
                 //Check if the returned list isn't equal to the saved one.
-                if(!savedVotes.equals(list)){
+                if(Votes.isThereAnyVotes(getApplicationContext()) && !savedVotes.equals(list)){
                     ArrayList<Voto> intruders = Votes.getIntruderVotes(savedVotes, list);
                     int index = 0;
                     for(Voto voto : intruders){

@@ -50,6 +50,13 @@ public class SharedPreferences {
         return settings.getBoolean(key, false);
     }
 
+    public static void saveBoolean(Context c, String prefName, String key, boolean i) {
+        android.content.SharedPreferences settings = c.getSharedPreferences(prefName, 0);
+        android.content.SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(key, i);
+        editor.commit();
+    }
+
     public static void remove(Context c, String prefName, String key) {
         android.content.SharedPreferences settings = c.getSharedPreferences(prefName, 0);
         if (settings.contains(key)) {

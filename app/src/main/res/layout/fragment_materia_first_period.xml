@@ -24,7 +24,8 @@
             app:layout_scrollFlags="scroll|enterAlways"
             android:background="@color/colorPrimaryOrange" />
 
-        <android.support.v7.widget.RecyclerView
+        <com.marco.marplex.schoolbook.views.GridRecyclerView
+            android:layoutAnimation="@anim/grid_animation"
             android:id="@+id/materieList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

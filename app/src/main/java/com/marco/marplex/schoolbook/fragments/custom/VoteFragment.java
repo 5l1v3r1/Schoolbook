@@ -17,17 +17,16 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.marco.marplex.schoolbook.R;
 import com.marco.marplex.schoolbook.adapters.SimpleSectionedRecyclerViewAdapter;
 import com.marco.marplex.schoolbook.adapters.VotiAdapter;
 import com.marco.marplex.schoolbook.connections.ClassevivaCaller;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
-import com.marco.marplex.schoolbook.interfaces.ClassevivaVoti;
 import com.marco.marplex.schoolbook.models.Voto;
 import com.marco.marplex.schoolbook.utilities.SharedPreferences;
 import com.marco.marplex.schoolbook.utilities.Votes;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -55,8 +54,6 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
 
     private AppBarLayout abl;
 
-    private ClassevivaVoti mVotesListener;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_first_period, container, false);
@@ -68,7 +65,10 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
         mLlm = new LinearLayoutManager(getActivity());
         mList.setHasFixedSize(true);
         mList.setLayoutManager(mLlm);
-        mSwipe.setColorSchemeColors(R.color.green);
+        mSwipe.setColorSchemeResources(
+                R.color.colorPrimaryGreen,
+                R.color.colorPrimaryDarkGreen
+        );
 
         init();
 

@@ -32,7 +32,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="L&apos;applicazione è stata sviluppata da Marco Cimolai, studente del Kennedy della classe 1D."
+                        android:text="L&apos;applicazione è stata sviluppata da Marco Cimolai, studente dell'Istituto tecnico settore tecnologico J.F.Kennedy di Pordenone"
                         android:id="@+id/textView12"
                         android:gravity="center"
                         android:padding="10dp"

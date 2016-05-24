@@ -23,12 +23,14 @@ import android.view.View;
 import com.marco.marplex.schoolbook.connections.ClassevivaCaller;
 import com.marco.marplex.schoolbook.fragments.AboutFragment;
 import com.marco.marplex.schoolbook.fragments.Agenda;
+import com.marco.marplex.schoolbook.fragments.Circolari;
 import com.marco.marplex.schoolbook.fragments.Dashboard;
 import com.marco.marplex.schoolbook.fragments.Materie;
 import com.marco.marplex.schoolbook.fragments.Voti;
 import com.marco.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
 import com.marco.marplex.schoolbook.services.NotificationService;
+import com.marco.marplex.schoolbook.utilities.Comunications;
 import com.marco.marplex.schoolbook.utilities.Connection;
 import com.marco.marplex.schoolbook.utilities.Events;
 import com.marco.marplex.schoolbook.utilities.Votes;
@@ -42,7 +44,7 @@ public class DashboardActivity extends AppCompatActivity{
 
     @Bind(R.id.toolbar) public Toolbar toolbar;
     @Bind(R.id.sliding_tabs) public TabLayout tabLayout;
-    @Bind(R.id.nav_view) NavigationView navigationView;
+    @Bind(R.id.nav_view) public NavigationView navigationView;
     @Bind(R.id.drawer) DrawerLayout drawer;
 
     private boolean mCanSelect = false;
@@ -115,6 +117,15 @@ public class DashboardActivity extends AppCompatActivity{
                                     setContainerFragment(new Agenda());
 
                                     return true;
+                                case R.id.circolari:
+
+                                    //Change activity color
+                                    changeActivityColor(R.color.colorPrimaryRed, R.color.colorPrimaryDarkRed);
+
+                                    //Replace R.id.frame with the Agenda fragment
+                                    setContainerFragment(new Circolari());
+
+                                    return true;
                                 case R.id.about:
                                     //Change activity color
                                     changeActivityColor(R.color.colorPrimary, R.color.colorPrimaryDark);
@@ -171,6 +182,23 @@ public class DashboardActivity extends AppCompatActivity{
                                 Events.saveEvents(DashboardActivity.this, list);
                                 mCanSelect = true;
 
+                                //Refresh fragment
+                                setContainerFragment(new Dashboard());
+                            }
+                        });
+                    }
+                }, this);
+
+                //Start downloading comunications from Classeviva
+                ClassevivaCaller callerComunication = new ClassevivaCaller(new ClassevivaCallback() {
+                    @Override
+                    public void onResponse(final ArrayList list) {
+                        DashboardActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Comunications.saveComunications(DashboardActivity.this, list);
+                                mCanSelect = true;
+
                                 Snackbar.make(navigationView, "Finito", Snackbar.LENGTH_SHORT).show();
 
                                 //Refresh fragment
@@ -179,7 +207,8 @@ public class DashboardActivity extends AppCompatActivity{
                         });
                     }
                 }, this);
-                callerAgenda.getAgenda();
+
+                callerComunication.getSchoolComunication();
                 Snackbar.make(navigationView, "Sto aggiornando il tuo registro...", Snackbar.LENGTH_INDEFINITE).show();
             }else{
                 mCanSelect = true;
@@ -199,23 +228,23 @@ public class DashboardActivity extends AppCompatActivity{
      * @param colorPrimaryDark Activity primary dark color
      *
      */
-    private void changeActivityColor(int colorPrimary, int colorPrimaryDark){
+    public void changeActivityColor(int colorPrimary, int colorPrimaryDark){
         if (Build.VERSION.SDK_INT >= 21){
             //Statusbar color
             getWindow().setStatusBarColor(ContextCompat.getColor(DashboardActivity.this, colorPrimaryDark));
 
             //Navigation bar color
             getWindow().setNavigationBarColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
-
-            //Toolbar background color
-            toolbar.setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
-
-            //TabLayout background color
-            tabLayout.setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
-
-            //Navigation drawer's header background color
-            navigationView.getRootView().findViewById(R.id.header_bg).setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
         }
+
+        //Toolbar background color
+        toolbar.setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
+
+        //TabLayout background color
+        tabLayout.setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
+
+        //Navigation drawer's header background color
+        navigationView.getRootView().findViewById(R.id.header_bg).setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
     }
 
     /**
@@ -225,7 +254,7 @@ public class DashboardActivity extends AppCompatActivity{
      * @see DrawerFragment
      *
      */
-    private void setContainerFragment(DrawerFragment fragment){
+    public void setContainerFragment(DrawerFragment fragment){
         //Replace R.id.frame with fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame, fragment);
@@ -235,7 +264,7 @@ public class DashboardActivity extends AppCompatActivity{
         getSupportActionBar().setTitle(fragment.getTitle());
     }
 
-    //Open the GitHub page
+    //Open Schoolbook's GitHub page
     public void showGithub(View view){
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Marplex/Schoolbook"));
         startActivity(intent);

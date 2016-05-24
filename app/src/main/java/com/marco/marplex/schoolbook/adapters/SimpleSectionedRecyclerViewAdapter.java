@@ -104,16 +104,16 @@ public class SimpleSectionedRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                 @Override
                 public void onClick(View v) {
                     Bundle b = new Bundle();
+
                     Intent intent = new Intent(mContext, Materia.class);
+                    if(position==0) b.putString("materia", mSections.get(position).title.toString() );
+                    else b.putString("materia", mSections.get(position).title.toString());
+                    b.putInt("periodo", mPeriodo);
+                    intent.putExtras(b);
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         ActivityOptionsCompat options = ActivityOptionsCompat.
                                 makeSceneTransitionAnimation(mActivity, toolbar, "voteToolbar");
-
-                        if(position==0) b.putString("materia", mSections.get(position).title.toString() );
-                        else b.putString("materia", mSections.get(position).title.toString());
-                        b.putInt("periodo", mPeriodo);
-                        intent.putExtras(b);
-
                         mContext.startActivity(intent, options.toBundle());
                     }else{
                         mContext.startActivity(intent);

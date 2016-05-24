@@ -3,15 +3,15 @@ package com.marco.marplex.schoolbook.connections;
 import android.content.Context;
 import android.util.Log;
 
-import com.marco.marplex.schoolbook.interfaces.ClassevivaAgenda;
+import com.google.gson.Gson;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaLoginCallback;
+import com.marco.marplex.schoolbook.models.Comunication;
 import com.marco.marplex.schoolbook.models.Evento;
 import com.marco.marplex.schoolbook.models.Voto;
 import com.marco.marplex.schoolbook.utilities.Credentials;
 import com.marco.marplex.schoolbook.utilities.Cripter;
 import com.marco.marplex.schoolbook.utilities.SharedPreferences;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +24,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -45,8 +47,6 @@ public class ClassevivaCaller {
 
     String mUser, mPassword;
     Context c;
-
-    ClassevivaAgenda agendaCallback;
 
     OkHttpClient client;
 
@@ -133,27 +133,41 @@ public class ClassevivaCaller {
                             newSession(ClassevivaCaller.class.getMethod("getVotes", null));
                             return;
                         }
-                        JSONObject object = new JSONObject(json);
+
 
                         ArrayList<String> subjects = new ArrayList<>();
                         ArrayList<Voto> votes = new ArrayList<>();
+                        JSONObject object = new JSONObject(json){
+                            @Override
+                            public Iterator keys(){
+                                TreeSet<Object> sortedKeys = new TreeSet<Object>();
+                                Iterator keys = super.keys();
+                                while(keys.hasNext()){
+                                    sortedKeys.add(keys.next());
+                                }
+                                return sortedKeys.iterator();
+                            }
+                        };
 
-                        for(int i = 0; i<object.names().length(); i++){
-                            subjects.add(getMateria(object.names().getString(i)));
-                        }for(int i = 0; i<object.names().length(); i++){
-                            JSONArray array = object.getJSONArray(object.names().getString(i));
-                            for(int x = 0; x<array.length(); x++){
-                                JSONObject voteObject = array.getJSONObject(x);
+                        Iterator<String> keysIterator = object.keys();
+                        while (keysIterator.hasNext())
+                        {
+                            String materia = keysIterator.next();
+                            subjects.add(getMateria(materia));
+                            JSONArray valueObject = object.getJSONArray(materia);
+
+                            for(int x = 0; x<valueObject.length(); x++){
+                                JSONObject voteObject = valueObject.getJSONObject(x);
                                 String voto = voteObject.getString("vote");
-                                String subject = subjects.get(i);
                                 String date = voteObject.getString("date");
                                 String type = voteObject.getString("type");
                                 int period = voteObject.getInt("period");
-                                Voto vote = new Voto(voto, subject, date, type, period);
+                                Voto vote = new Voto(voto, getMateria(materia), date, type, period);
                                 vote.setSpecial(voteObject.getBoolean("special"));
                                 votes.add(vote);
                             }
                         }
+
                         SharedPreferences.saveString(c, "materie", "materie", new Gson().toJson(subjects));
                         mCallback.onResponse(votes);
                     } catch (JSONException e) {
@@ -222,6 +236,60 @@ public class ClassevivaCaller {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Make a request to classeviva for retrieving all school's comunication.
+     */
+    public void getSchoolComunication(){
+        String session = Credentials.getSession(c);
+        String url = BASE_PATH + session +"/circolari";
+        try {
+            run(url, new Callback() {
+                @Override public void onFailure(Call call, IOException e) {  }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String json = response.body().string();
+                    if(json.equals("[]")){
+                        //Set credentials from storage
+                        ClassevivaCaller.this.mUser = Credentials.getName(c);
+                        ClassevivaCaller.this.mPassword = Cripter.decriptString(Credentials.getPassword(c));
+
+                        //Get a new session re-performing login
+                        try {
+                            newSession(ClassevivaCaller.class.getMethod("getSchoolComunication", null));
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
+
+                        return;
+                    }
+                    ArrayList<Comunication> comunications = new ArrayList<>();
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(json);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            int id = jsonObject.getInt("id");
+                            String date = jsonObject.getString("date");
+                            String title = jsonObject.getString("title").replaceAll("\n","");
+                            String link = jsonObject.getString("url");
+
+                            comunications.add(new Comunication(id, title, date, link));
+                        }
+
+                        mCallback.onResponse(comunications);
+
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }

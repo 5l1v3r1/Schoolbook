@@ -41,6 +41,7 @@ public class AboutFragment extends DrawerFragment {
 
         //Prepare a libraries list
         List<Library> list = new ArrayList<>();
+        list.add(new Library("Ozodrukh", "CircularReveal", R.drawable.circularreveal, "https://github.com/ozodrukh/CircularReveal"));
         list.add(new Library("Simbiose", "Encryption", R.drawable.simbiose, "https://github.com/simbiose/Encryption"));
         list.add(new Library("Lopez Mikhael", "Circular Progress Bar", R.drawable.circular_progress, "https://github.com/lopspower/CircularProgressBar"));
         list.add(new Library("Prolific Interactive", "Material Calendar View", R.drawable.material_calendar_view, "https://github.com/prolificinteractive/material-calendarview"));

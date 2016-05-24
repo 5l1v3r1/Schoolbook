@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.marco.marplex.schoolbook.models.Obiettivo;
@@ -27,6 +29,7 @@ import com.marco.marplex.schoolbook.utilities.ObjectiveUtil;
 import com.marco.marplex.schoolbook.utilities.Votes;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -78,6 +81,12 @@ public class Materia extends AppCompatActivity{
         Bundle b = getIntent().getExtras();
         title = b.getString("materia");
         periodo = b.getInt("periodo");
+
+        if(b.getInt("obiettivo", -1) != -1){
+            int obiettivo = b.getInt("obiettivo");
+            showAndConfigureObjective(obiettivo);
+            ObjectiveUtil.setObiettivo(Materia.this, title, periodo, new Obiettivo(obiettivo));
+        }
 
         String materia = title.toUpperCase().substring(0,1)+title.toLowerCase().substring(1, title.length());
         getSupportActionBar().setTitle(materia);
@@ -201,7 +210,37 @@ public class Materia extends AppCompatActivity{
                 .start();
 
         double voteToGet = arrotondaRint( ( objective * ( nOfVotes + 1 ) ) - sum, 1);
-        mObjectiveTitleText.setText("Devi prendere almeno un " + voteToGet);
+        ArrayList<Double> votesToGet = new ArrayList<>();
+        int index = 1;
+        double savedVote = voteToGet;
+
+        if(voteToGet > 10) {
+
+            while (voteToGet > 10) {
+                votesToGet.add(10.0);
+                if(index > 8){
+                    Toast.makeText(this, "Impossibile recuperare questa materia", Toast.LENGTH_LONG).show();
+                    Log.d("sdsdsdsdsdsdsd", "showAndConfigureObjective: CIAO");
+                    break;
+                }
+                sum += 10;
+                voteToGet = arrotondaRint( ( objective * ( nOfVotes + index + 1 ) ) - sum, 1);
+                votesToGet.add(Math.abs(voteToGet));
+                index++;
+            }
+            if(index < 8) {
+                String text = new String();
+                for (int i = 0; i < votesToGet.size(); i++) {
+                    if (i == votesToGet.size() - 1) text += votesToGet.get(i);
+                    else text += votesToGet.get(i) + ", ";
+                }
+                mObjectiveTitleText.setText("Devi prendere questi voti: " + text);
+            }else{
+                mObjectiveTitleText.setText("Devi prendere almeno un " + savedVote);
+            }
+        }else {
+            mObjectiveTitleText.setText("Devi prendere almeno un " + savedVote);
+        }
     }
 
     private void setLayoutForDialog(Dialog dialog, View view){

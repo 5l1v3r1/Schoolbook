@@ -24,6 +24,7 @@ import com.marco.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
 import com.marco.marplex.schoolbook.models.Evento;
 import com.marco.marplex.schoolbook.utilities.Events;
+import com.marco.marplex.schoolbook.utilities.TTS;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -39,12 +40,14 @@ import io.codetail.animation.ViewAnimationUtils;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Agenda extends DrawerFragment implements ClassevivaCallback<Evento>{
+public class Agenda extends DrawerFragment implements ClassevivaCallback<Evento>, OnDateSelectedListener {
 
     @Bind(R.id.calendarView) MaterialCalendarView mCalendar;
 
     ArrayList<Evento> mEvents;
     ClassevivaCaller mCaller;
+
+    private AlertDialog dialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -54,6 +57,8 @@ public class Agenda extends DrawerFragment implements ClassevivaCallback<Evento>
         setTabGone();
         removeMenuItems();
 
+        boolean fromReminder = (getArguments() != null) ? getArguments().getBoolean("now", false) : false;
+
         if(Events.isThereAnyEvents(getContext())){
             populateCalendar(Events.getSavedEvents(getContext()));
         }else{
@@ -61,85 +66,18 @@ public class Agenda extends DrawerFragment implements ClassevivaCallback<Evento>
             mCaller.getAgenda();
         }
 
-        mCalendar.setOnDateChangedListener(new OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(@NonNull final MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                if(Events.getEventsByDate(mEvents, date.getDate()).size() == 0){}
-                else {
-                    final View view = View.inflate(getContext(), R.layout.agenda_dialog_custom, null);
+        mCalendar.setOnDateChangedListener(this);
 
-                    ListView list = (ListView) view.findViewById(R.id.list_events);
-                    Button okButton = (Button) view.findViewById(R.id.btn_save);
-                    final CardView card = (CardView) view.findViewById(R.id.reveal_view);
-
-                    final AlertDialog dialog = new AlertDialog.Builder(getContext())
-                            .setView(view)
-                            .create();
-
-                    list.setAdapter(new EventAdapter(getContext(), R.layout.model_event, Events.getEventsByDate(mEvents, date.getDate())));
-
-                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialog) {
-                            int cx = view.getRight() - (view.getRight() - (view.getWidth() / 2));
-                            int cy = view.getBottom() - (view.getBottom() - (view.getHeight() / 2));
-
-                            // get the final radius for the clipping circle
-                            int dx = Math.max(cx, card.getWidth() - cx);
-                            int dy = Math.max(cy, card.getHeight() - cy);
-                            float finalRadius = (float) Math.hypot(dx, dy);
-
-                            SupportAnimator animator =
-                                    ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
-                            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                            animator.setDuration(500);
-                            animator.start();
-                        }
-                    });
-
-                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                    dialog.show();
-
-                    okButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View myView) {
-                            int cx = view.getRight() - (view.getRight() - (view.getWidth() / 2));
-                            int cy = view.getBottom() - (view.getBottom() - (view.getHeight() / 2));
-
-                            // get the final radius for the clipping circle
-                            int dx = Math.max(cx, card.getWidth() - cx);
-                            int dy = Math.max(cy, card.getHeight() - cy);
-                            float finalRadius = (float) Math.hypot(dx, dy);
-
-                            SupportAnimator animator =
-                                    ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
-                            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                            animator.setDuration(1000);
-                            animator = animator.reverse();
-                            animator.addListener(new SupportAnimator.AnimatorListener() {
-                                @Override
-                                public void onAnimationEnd() {
-                                    dialog.cancel();
-                                }
-
-                                @Override
-                                public void onAnimationCancel() {
-                                }
-
-                                @Override
-                                public void onAnimationRepeat() {
-                                }
-
-                                @Override
-                                public void onAnimationStart() {
-                                }
-                            });
-                            animator.start();
-                        }
-                    });
-                }
+        if(fromReminder){
+            CalendarDay day = CalendarDay.today();
+            onDateSelected(mCalendar, day, true);
+            if(dialog == null) {
+                new TTS(getContext())
+                        .talk("Nessun evento pianificato per oggi");
             }
-        });
+        }
+
+        mCalendar.setDateSelected(CalendarDay.today(), true);
 
         return rootView;
     }
@@ -166,5 +104,83 @@ public class Agenda extends DrawerFragment implements ClassevivaCallback<Evento>
                 mCalendar.addDecorator(new CalendarDecorator(ContextCompat.getColor(getContext(), R.color.colorPrimaryTeal), collection));
             }
         });
+    }
+
+    @Override
+    public void onDateSelected(@NonNull final MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+        if(Events.getEventsByDate(mEvents, date.getDate()).size() == 0){}
+        else {
+            final View view = View.inflate(getContext(), R.layout.agenda_dialog_custom, null);
+
+            ListView list = (ListView) view.findViewById(R.id.list_events);
+            Button okButton = (Button) view.findViewById(R.id.btn_save);
+            final CardView card = (CardView) view.findViewById(R.id.reveal_view);
+
+            dialog = new AlertDialog.Builder(getContext())
+                    .setView(view)
+                    .create();
+
+            list.setAdapter(new EventAdapter(getContext(), R.layout.model_event, Events.getEventsByDate(mEvents, date.getDate())));
+
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    int cx = view.getRight() - (view.getRight() - (view.getWidth() / 2));
+                    int cy = view.getBottom() - (view.getBottom() - (view.getHeight() / 2));
+
+                    // get the final radius for the clipping circle
+                    int dx = Math.max(cx, card.getWidth() - cx);
+                    int dy = Math.max(cy, card.getHeight() - cy);
+                    float finalRadius = (float) Math.hypot(dx, dy);
+
+                    SupportAnimator animator =
+                            ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
+                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                    animator.setDuration(300);
+                    animator.start();
+                }
+            });
+
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.show();
+
+            okButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View myView) {
+                    int cx = view.getRight() - (view.getRight() - (view.getWidth() / 2));
+                    int cy = view.getBottom() - (view.getBottom() - (view.getHeight() / 2));
+
+                    // get the final radius for the clipping circle
+                    int dx = Math.max(cx, card.getWidth() - cx);
+                    int dy = Math.max(cy, card.getHeight() - cy);
+                    float finalRadius = (float) Math.hypot(dx, dy);
+
+                    SupportAnimator animator =
+                            ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
+                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                    animator.setDuration(300);
+                    animator = animator.reverse();
+                    animator.addListener(new SupportAnimator.AnimatorListener() {
+                        @Override
+                        public void onAnimationEnd() {
+                            dialog.cancel();
+                        }
+
+                        @Override
+                        public void onAnimationCancel() {
+                        }
+
+                        @Override
+                        public void onAnimationRepeat() {
+                        }
+
+                        @Override
+                        public void onAnimationStart() {
+                        }
+                    });
+                    animator.start();
+                }
+            });
+        }
     }
 }

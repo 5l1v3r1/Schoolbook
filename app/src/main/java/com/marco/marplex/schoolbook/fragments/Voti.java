@@ -66,5 +66,4 @@ public class Voti extends DrawerFragment {
         return "Voti";
     }
 
-
 }
