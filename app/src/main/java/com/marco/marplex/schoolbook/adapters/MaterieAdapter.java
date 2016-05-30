@@ -39,7 +39,7 @@ public class MaterieAdapter extends RecyclerView.Adapter <MaterieAdapter.materie
     }
 
     @Override
-    public void onBindViewHolder( materieAdapterHolder viewHolder, int position) {
+    public void onBindViewHolder(final materieAdapterHolder viewHolder, int position) {
         final Materia materia = materie.get(position);
 
         viewHolder.materia.setText(materia.testoMateria);
@@ -50,7 +50,7 @@ public class MaterieAdapter extends RecyclerView.Adapter <MaterieAdapter.materie
         viewHolder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.OnCardClick(materia.testoMateria);
+                listener.OnCardClick(view, viewHolder.bar, materia.testoMateria);
             }
         });
     }
@@ -91,6 +91,6 @@ public class MaterieAdapter extends RecyclerView.Adapter <MaterieAdapter.materie
         }
     }
     public interface MaterieAdapterInterface{
-        void OnCardClick(String materia);
+        void OnCardClick(View card, View progress, String materia);
     }
 }

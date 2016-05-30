@@ -4,6 +4,7 @@
 
     <item android:id="@+id/ordina" android:title="Ordina"
         android:orderInCategory="100" app:showAsAction="never" />
+
     <item android:id="@+id/elimina_filtro" android:title="Elimina filtro"
         android:orderInCategory="101" app:showAsAction="never" />
 

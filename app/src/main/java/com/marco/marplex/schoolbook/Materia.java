@@ -6,6 +6,8 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +37,11 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
+import lecho.lib.hellocharts.util.ChartUtils;
+import lecho.lib.hellocharts.view.LineChartView;
 
 public class Materia extends AppCompatActivity{
 
@@ -52,6 +59,8 @@ public class Materia extends AppCompatActivity{
 
     @Bind(R.id.pbar_materiaPrimo) CircularProgressBar progress;
     @Bind(R.id.fab_addObjective) FloatingActionButton mAddObjective;
+    @Bind(R.id.chart) LineChartView chart;
+    @Bind(R.id.nested) NestedScrollView scrollView;
 
     private double totalAverage;
     private int nOfVotes;
@@ -60,6 +69,7 @@ public class Materia extends AppCompatActivity{
 
     private int periodo;
     private String title;
+    private boolean isNormal = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +77,29 @@ public class Materia extends AppCompatActivity{
         setContentView(R.layout.activity_materia);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+
+        Bundle b = getIntent().getExtras();
+        scrollView.setSmoothScrollingEnabled(true);
+
+        scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                Log.d("TEST", "onScrollChange: "+scrollX+", "+scrollY+", "+oldScrollX+", "+oldScrollY);
+                if(oldScrollY-scrollY > 0 && !isNormal){
+                    mAddObjective.animate()
+                            .yBy(-130)
+                            .setDuration(400)
+                            .start();
+                    isNormal = true;
+                }else if(oldScrollY-scrollY < 0 && isNormal){
+                    mAddObjective.animate()
+                            .yBy(130)
+                            .setDuration(400)
+                            .start();
+                    isNormal = false;
+                }
+            }
+        });
 
         mAddObjective.setAlpha(0f);
         mAddObjective.setScaleX(0f);
@@ -78,7 +111,6 @@ public class Materia extends AppCompatActivity{
                 .setDuration(500)
                 .start();
 
-        Bundle b = getIntent().getExtras();
         title = b.getString("materia");
         periodo = b.getInt("periodo");
 
@@ -95,6 +127,35 @@ public class Materia extends AppCompatActivity{
 
         List<Voto> materiaVoti = Votes.getNumericalVotesByMateria(this, title, periodo);
         nOfVotes = materiaVoti.size();
+
+        //Chart
+        List<Line> lines = new ArrayList<Line>();
+        for (int i = 0; i < nOfVotes-1; ++i) {
+
+            List<PointValue> values = new ArrayList<PointValue>();
+            for (int j = 0; j < nOfVotes; ++j) {
+                values.add(new PointValue(j, (float)Votes.getNumericalVoteByString(materiaVoti.get(j).voto)));
+            }
+
+            Line line = new Line(values);
+            line.setColor(ContextCompat.getColor(this, R.color.colorPrimaryGreen));
+            line.setCubic(true);
+            line.setFilled(true);
+            line.setHasLabels(true);
+            line.setHasLabelsOnlyForSelected(false);
+            line.setHasLines(true);
+            line.setHasPoints(true);
+            line.setPointColor(ChartUtils.COLORS[(i + 1) % ChartUtils.COLORS.length]);
+            lines.add(line);
+        }
+
+        LineChartData data = new LineChartData(lines);
+
+        data.setAxisXBottom(null);
+        data.setAxisYLeft(null);
+
+        data.setBaseValue(Float.NEGATIVE_INFINITY);
+        chart.setLineChartData(data);
 
         double sumScritto = 0;
         int scrittoTimes = 0;
@@ -119,21 +180,18 @@ public class Materia extends AppCompatActivity{
         double scrittoAverage = sumScritto/scrittoTimes;
         double oraleAverage = sumOrale/oraleTimes;
 
-        scritto.setText("" + arrotondaRint(scrittoAverage, 1));
-        orale.setText("" + arrotondaRint(oraleAverage, 1));
-        media.setText("" + arrotondaRint(totalAverage, 1));
+        scritto.setText("" + arrotondaRint(scrittoAverage, 2));
+        orale.setText("" + arrotondaRint(oraleAverage, 2));
+        media.setText("" + arrotondaRint(totalAverage, 2));
 
         ObjectAnimator animator = new ObjectAnimator().ofFloat(progress, "progress", (float) totalAverage * 10);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.setDuration(1500).start();
 
         mCardView.setAlpha(0f);
-        mCardView.setY(mCardView.getBottom() + 70);
-        PropertyValuesHolder holderY = PropertyValuesHolder.ofFloat("y", 0);
         PropertyValuesHolder holderAlpha = PropertyValuesHolder.ofFloat("alpha", 1f);
-
-        new ObjectAnimator().ofPropertyValuesHolder(mCardView, holderY, holderAlpha)
-                .setDuration(600)
+        new ObjectAnimator().ofPropertyValuesHolder(mCardView, holderAlpha)
+                .setDuration(300)
                 .start();
 
         if(ObjectiveUtil.isObiettivoSaved(this, materia, periodo)){
@@ -148,10 +206,13 @@ public class Materia extends AppCompatActivity{
         ObjectiveUtil.removeObiettivo(this, title, periodo);
         mObjectiveCard.animate()
                 .alpha(0f)
-                .setDuration(600)
+                .setDuration(300)
                 .start();
 
         Snackbar.make(view, "Obiettivo eliminato", Snackbar.LENGTH_SHORT).show();
+
+        isNormal = true;
+
     }
 
     @OnClick(R.id.fab_addObjective)
@@ -183,11 +244,9 @@ public class Materia extends AppCompatActivity{
     private void showAndConfigureObjective(int obiettivo){
         if(mObjectiveCard.getVisibility() == View.GONE){
             mObjectiveCard.setAlpha(0f);
-            mObjectiveCard.setY(mObjectiveCard.getY() + mObjectiveCard.getHeight() + 70);
             mObjectiveCard.animate()
-                    .translationYBy(-70)
                     .alpha(1f)
-                    .setDuration(600)
+                    .setDuration(300)
                     .start();
         }
         mObjectiveCard.setAlpha(1f);
@@ -195,7 +254,7 @@ public class Materia extends AppCompatActivity{
 
 
         int objective = obiettivo;
-        mCurrentAverageText.setText(String.valueOf(arrotondaRint(totalAverage, 1)));
+        mCurrentAverageText.setText(String.valueOf(arrotondaRint(totalAverage, 2)));
         mObjecivetiveText.setText(obiettivo+"");
 
         mObjectiveProgressBar.setMax(100);
@@ -209,10 +268,12 @@ public class Materia extends AppCompatActivity{
                 .setDuration(1000)
                 .start();
 
-        double voteToGet = arrotondaRint( ( objective * ( nOfVotes + 1 ) ) - sum, 1);
+        double voteToGet = arrotondaRint( ( objective * ( nOfVotes + 1 ) ) - sum, 2);
         ArrayList<Double> votesToGet = new ArrayList<>();
         int index = 1;
         double savedVote = voteToGet;
+
+        double tmpSum = sum;
 
         if(voteToGet > 10) {
 
@@ -223,11 +284,13 @@ public class Materia extends AppCompatActivity{
                     Log.d("sdsdsdsdsdsdsd", "showAndConfigureObjective: CIAO");
                     break;
                 }
-                sum += 10;
-                voteToGet = arrotondaRint( ( objective * ( nOfVotes + index + 1 ) ) - sum, 1);
-                votesToGet.add(Math.abs(voteToGet));
+                tmpSum += votesToGet.get(votesToGet.size()-1);
+                voteToGet = arrotondaRint( ( objective * ( nOfVotes + index + 1) ) - tmpSum, 1);
                 index++;
             }
+            votesToGet.add(Math.abs(voteToGet));
+
+
             if(index < 8) {
                 String text = new String();
                 for (int i = 0; i < votesToGet.size(); i++) {
@@ -241,6 +304,8 @@ public class Materia extends AppCompatActivity{
         }else {
             mObjectiveTitleText.setText("Devi prendere almeno un " + savedVote);
         }
+
+        Log.d("sdsd", "showAndConfigureObjective: "+votesToGet);
     }
 
     private void setLayoutForDialog(Dialog dialog, View view){

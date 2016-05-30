@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import com.marco.marplex.schoolbook.R;
 import com.marco.marplex.schoolbook.adapters.ComunicationAdapter;
 import com.marco.marplex.schoolbook.connections.ClassevivaCaller;
-import com.marco.marplex.schoolbook.decorator.DividerItemDecoration;
 import com.marco.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
 import com.marco.marplex.schoolbook.models.Comunication;
@@ -65,7 +64,6 @@ public class Circolari extends DrawerFragment implements ClassevivaCallback<Comu
             );
         }else mCaller.getSchoolComunication();
 
-        mList.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         mList.setLayoutManager(new LinearLayoutManager(getContext()));
         mList.setHasFixedSize(true);
 

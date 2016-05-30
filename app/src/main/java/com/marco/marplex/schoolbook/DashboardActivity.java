@@ -26,6 +26,7 @@ import com.marco.marplex.schoolbook.fragments.Agenda;
 import com.marco.marplex.schoolbook.fragments.Circolari;
 import com.marco.marplex.schoolbook.fragments.Dashboard;
 import com.marco.marplex.schoolbook.fragments.Materie;
+import com.marco.marplex.schoolbook.fragments.NoteFragment;
 import com.marco.marplex.schoolbook.fragments.Voti;
 import com.marco.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
@@ -126,6 +127,14 @@ public class DashboardActivity extends AppCompatActivity{
                                     setContainerFragment(new Circolari());
 
                                     return true;
+                                case R.id.note:
+                                    //Change activity color
+                                    changeActivityColor(R.color.colorPrimaryAmber, R.color.colorPrimaryDarkAmber);
+
+                                    //Replace R.id.frame with the Agenda fragment
+                                    setContainerFragment(new NoteFragment());
+
+                                    return true;
                                 case R.id.about:
                                     //Change activity color
                                     changeActivityColor(R.color.colorPrimary, R.color.colorPrimaryDark);
@@ -188,6 +197,7 @@ public class DashboardActivity extends AppCompatActivity{
                         });
                     }
                 }, this);
+                callerAgenda.getAgenda();
 
                 //Start downloading comunications from Classeviva
                 ClassevivaCaller callerComunication = new ClassevivaCaller(new ClassevivaCallback() {

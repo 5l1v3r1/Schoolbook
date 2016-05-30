@@ -8,20 +8,19 @@
     android:clickable="true">
 
     <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?selectableItemBackground"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:id="@+id/cardView">
 
-        <RelativeLayout
+        <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:foreground="?selectableItemBackground"
-            android:focusable="true"
-            android:clickable="true"
+            android:orientation="vertical"
             android:padding="10dp">
 
             <TextView
@@ -30,23 +29,30 @@
                 android:text="Circolare numero 24"
                 android:textColor="#000"
                 android:textSize="20dp"
-                android:id="@+id/txt_circ_title"
-                android:layout_alignParentTop="true" />
+                android:textStyle="bold"
+                android:id="@+id/txt_note_prof" />
+
+            <TextView
+                android:text="L'allievo esce alle 16.00, diversamente dai compagni, perché sprovvisto di firma sul libretto."
+                android:layout_width="match_parent"
+                android:textSize="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/txt_note_nota" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
                 android:text="23/05/2016"
-                android:id="@+id/txt_circ_date"
-                android:layout_below="@+id/txt_circ_title"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
+                android:id="@+id/txt_note_date"
                 android:fontFamily="sans-serif-light"
-                android:gravity="right"
-                android:textAlignment="textEnd" />
+                android:gravity="right" />
 
-        </RelativeLayout>
+
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 

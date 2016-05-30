@@ -2,6 +2,7 @@ package com.marco.marplex.schoolbook.fragments.custom;
 
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.marco.marplex.schoolbook.ChartActivity;
 import com.marco.marplex.schoolbook.R;
 import com.marco.marplex.schoolbook.adapters.MaterieAdapter;
 import com.marco.marplex.schoolbook.adapters.VotesDialogAdapter;
@@ -55,13 +57,22 @@ public abstract class MateriaFragment extends PagerFragment {
         return rootView;
     }
 
+    @Override
+    public void showChart(){
+        Intent i = new Intent(getActivity(), ChartActivity.class);
+        i.putExtra("period", mPeriod);
+
+        startActivity(i);
+    }
+
     public void populateList(){
 
         ArrayList<Materia> mList = Subjects.getSubjects(getContext(), mPeriod);
 
         MaterieAdapter adapter = new MaterieAdapter(mList, mPeriod, new MaterieAdapter.MaterieAdapterInterface() {
+
             @Override
-            public void OnCardClick(String materia) {
+            public void OnCardClick(View card, View progress, String materia) {
                 viewVotesList(mPeriod, materia);
             }
         });
@@ -75,7 +86,7 @@ public abstract class MateriaFragment extends PagerFragment {
                 defSum += item.mediaMateria;
             }else NaNNumbers ++;
         }
-        mediaTotaleMaterie.setText("Media totale: " + MathUtils.rintRound( defSum / ( mList.size() - NaNNumbers ), 1));
+        mediaTotaleMaterie.setText("Media totale: " + MathUtils.rintRound( defSum / ( mList.size() - NaNNumbers ), 2));
     }
 
     private void setScrollListener(){

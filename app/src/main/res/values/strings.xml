@@ -11,6 +11,8 @@ Reminds ti aiuta nella tua organizzazione scolastica. <br/>Per esempio:<br/><ul>
     <string name="title_activity_materia">Materia</string>
     <string name="title_activity_compare">Compara materie</string>
 
+    <string name="mCardTransition">Card Transition</string>
+    <string name="mProgressTransition">Progress Transition</string>
 
     <string-array name="preference_every">
         <item>15 minuti</item>

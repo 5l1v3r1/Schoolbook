@@ -44,6 +44,9 @@ public class Materie extends DrawerFragment {
                 switch (item.getItemId()) {
                     case R.id.compara:
                         startActivity(new Intent(getActivity(), CompareActivity.class));
+                    case R.id.chart:
+                        ((SectionPagerAdapter)pager.getAdapter()).getRegisteredFragment(pager.getCurrentItem())
+                                .showChart();
                 }
                 return false;
             }

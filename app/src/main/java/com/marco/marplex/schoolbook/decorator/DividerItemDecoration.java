@@ -9,6 +9,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.TextView;
+
+import com.marco.marplex.schoolbook.R;
 
 
 //From https://gist.github.com/lapastillaroja/858caf1a82791b6c1a36
@@ -86,32 +89,47 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
         for (int i = mShowFirstDivider ? 0 : 1; i < childCount; i++) {
             View child = parent.getChildAt(i);
-            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+            try{
+                TextView txt = (TextView) child.findViewById(R.id.section_text);
+                txt.isEnabled();
+                //I used this way to find if we are in a section item
+                //It's goin to throw a catch if it's a null object
+            }catch (Exception e){
+                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
 
-            if (orientation == LinearLayoutManager.VERTICAL) {
-                top = child.getTop() - params.topMargin;
-                bottom = top + size;
-            } else { //horizontal
-                left = child.getLeft() - params.leftMargin;
-                right = left + size;
+                if (orientation == LinearLayoutManager.VERTICAL) {
+                    top = child.getTop() - params.topMargin;
+                    bottom = top + size;
+                } else { //horizontal
+                    left = child.getLeft() - params.leftMargin;
+                    right = left + size;
+                }
+                mDivider.setBounds(100, top, right, bottom);
+                mDivider.draw(c);
             }
-            mDivider.setBounds(left, top, right, bottom);
-            mDivider.draw(c);
+
         }
 
         // show last divider
         if (mShowLastDivider && childCount > 0) {
             View child = parent.getChildAt(childCount - 1);
-            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-            if (orientation == LinearLayoutManager.VERTICAL) {
-                top = child.getBottom() + params.bottomMargin;
-                bottom = top + size;
-            } else { // horizontal
-                left = child.getRight() + params.rightMargin;
-                right = left + size;
+            try{
+                TextView txt = (TextView) child.findViewById(R.id.section_text);
+                txt.isEnabled();
+                //I used this way to find if we are in a section item
+                //It's goin to throw a catch if it's a null object
+            }catch (Exception e) {
+                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+                if (orientation == LinearLayoutManager.VERTICAL) {
+                    top = child.getBottom() + params.bottomMargin;
+                    bottom = top + size;
+                } else { // horizontal
+                    left = child.getRight() + params.rightMargin;
+                    right = left + size;
+                }
+                mDivider.setBounds(100, top, right, bottom);
+                mDivider.draw(c);
             }
-            mDivider.setBounds(left, top, right, bottom);
-            mDivider.draw(c);
         }
     }
 

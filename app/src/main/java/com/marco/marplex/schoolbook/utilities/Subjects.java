@@ -30,7 +30,7 @@ public class Subjects {
                 sum += Votes.getNumericalVoteByString(voto.voto);
             }
 
-            double totalAverage = MathUtils.rintRound(sum/materiaVoti.size(), 1);
+            double totalAverage = MathUtils.rintRound(sum/materiaVoti.size(), 2);
             Materia mMateria = new Materia(totalAverage, materia);
             materieList.add(mMateria);
         }
@@ -64,8 +64,8 @@ public class Subjects {
                     sumTwo += Votes.getNumericalVoteByString(voto.voto);
                 }
 
-                double totalAverageOne = MathUtils.rintRound(sumOne / materiaVotiOne.size(), 1);
-                double totalAverageTwo = MathUtils.rintRound(sumTwo / materiaVotiTwo.size(), 1);
+                double totalAverageOne = MathUtils.rintRound(sumOne / materiaVotiOne.size(), 2);
+                double totalAverageTwo = MathUtils.rintRound(sumTwo / materiaVotiTwo.size(), 2);
 
                 Compare compare = new Compare(new Materia(totalAverageOne, materia), new Materia(totalAverageTwo, materia));
                 mCompareList.add(compare);

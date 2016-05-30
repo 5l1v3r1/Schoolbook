@@ -8,6 +8,7 @@ import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaLoginCallback;
 import com.marco.marplex.schoolbook.models.Comunication;
 import com.marco.marplex.schoolbook.models.Evento;
+import com.marco.marplex.schoolbook.models.Note;
 import com.marco.marplex.schoolbook.models.Voto;
 import com.marco.marplex.schoolbook.utilities.Credentials;
 import com.marco.marplex.schoolbook.utilities.Cripter;
@@ -33,13 +34,17 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.R.attr.id;
+
 /**
  * Created by marco on 1/27/16.
  */
 public class ClassevivaCaller {
 
     private final String BASE_PATH = "http://schoolbook.cloudno.de/";
-    private final String BASE_PATH2 = "https://infinite-harbor-75813.herokuapp.com/";
+    private final String BASE_PATH2 = "https://shielded-brushlands-74018.herokuapp.com/";
+
+    private String CURRENT_BASE_PATH;
     protected final String TAG = "Classeviva Login";
 
     ClassevivaLoginCallback mClassevivaLoginCallback;
@@ -64,23 +69,53 @@ public class ClassevivaCaller {
         this.mPassword = password;
         this.c = c;
         this.mClassevivaLoginCallback = classevivaLoginCallback;
-        client = new OkHttpClient();
+        this.CURRENT_BASE_PATH = BASE_PATH;
+        this.client = new OkHttpClient();
     }
 
     public ClassevivaCaller(ClassevivaCallback callback, Context context) {
         this.mCallback = callback;
         this.mUser = Credentials.getName(context);
         this.mPassword = Credentials.getPassword(context);
-        client = new OkHttpClient();
+        this.client = new OkHttpClient();
         this.c = context;
+        this.CURRENT_BASE_PATH = BASE_PATH;
     }
 
-    private void run(String url, Callback callback) throws IOException {
-        Request request = new Request.Builder()
+    private void run(String url, final Method fromWhere, final EndpointsCallback callback) throws IOException {
+        Log.d(TAG, "run: "+url);
+        final Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        client.newCall(request).enqueue(callback);
+        Callback switcherCallback = new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String body = response.body().string();
+
+                //If one server goes offline, use another one.
+                try {
+                    if (CURRENT_BASE_PATH.equals(BASE_PATH)) {
+                        if (body.startsWith("<") && !body.contains(".btn_confirm")) {
+                            CURRENT_BASE_PATH = BASE_PATH2;
+                            fromWhere.invoke(ClassevivaCaller.this);
+                        } else callback.onResponse(body);
+                    } else {
+                        if (body.startsWith("<") && !body.contains(".btn_confirm")) {
+                            CURRENT_BASE_PATH = BASE_PATH;
+                            fromWhere.invoke(ClassevivaCaller.this);
+                        } else callback.onResponse(body);
+                    }
+                }catch(Exception e){}
+            }
+        };
+
+        client.newCall(request).enqueue(switcherCallback);
     }
 
     /**
@@ -89,12 +124,11 @@ public class ClassevivaCaller {
     public void doLogin() {
         //Perform new HTTP call
         try {
-            run(BASE_PATH + "PNIT0003/" + mUser + "/" + mPassword, new Callback() {
-                @Override public void onFailure(Call call, IOException e) { }
+            run(CURRENT_BASE_PATH + "PNIT0003/" + mUser + "/" + mPassword, ClassevivaCaller.class.getMethod("doLogin", null),
+                    new EndpointsCallback() {
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(String json) {
                     try {
-                        String json = response.body().string();
                         Log.d(TAG, "onResponse: "+json);
                         JSONObject object = new JSONObject(json);
 
@@ -109,6 +143,8 @@ public class ClassevivaCaller {
             });
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 
@@ -119,17 +155,18 @@ public class ClassevivaCaller {
         //Perform new HTTP call
         try {
             String session = Credentials.getSession(c);
-            run(BASE_PATH + session + "/votes", new Callback() {
-                @Override public void onFailure(Call call, IOException e) { }
-                @Override public void onResponse(Call call, Response response) throws IOException {
+            run(CURRENT_BASE_PATH + session + "/votes", ClassevivaCaller.class.getMethod("getVotes", null),
+                    new EndpointsCallback() {
+                @Override public void onResponse(String json){
                     try {
-                        String json = response.body().string();
+                        Log.d(TAG, "onResponse: "+json);
                         if( json.equals("{}") || json.startsWith("<") ){
                             //Set credentials from storage
                             ClassevivaCaller.this.mUser = Credentials.getName(c);
                             ClassevivaCaller.this.mPassword = Cripter.decriptString(Credentials.getPassword(c));
 
                             //Get a new session re-performing login
+                            Log.d(TAG, "onResponse: new SESSION from Votes");
                             newSession(ClassevivaCaller.class.getMethod("getVotes", null));
                             return;
                         }
@@ -179,6 +216,8 @@ public class ClassevivaCaller {
             });
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 
@@ -187,14 +226,11 @@ public class ClassevivaCaller {
      */
     public void getAgenda(){
         String session = Credentials.getSession(c);
-        String url = BASE_PATH + session +"/agenda";
+        String url = CURRENT_BASE_PATH + session +"/agenda";
         try {
-            run(url, new Callback() {
-                @Override public void onFailure(Call call, IOException e) {  }
-
+            run(url, ClassevivaCaller.class.getMethod("getAgenda", null), new EndpointsCallback() {
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    String json = response.body().string();
+                public void onResponse(String json){
                     if(!json.startsWith("[")){
                         //Set credentials from storage
                         ClassevivaCaller.this.mUser = Credentials.getName(c);
@@ -230,7 +266,6 @@ public class ClassevivaCaller {
                             events.add(event);
                         }
 
-
                         mCallback.onResponse(events);
 
                     } catch (JSONException e) {
@@ -242,6 +277,8 @@ public class ClassevivaCaller {
             });
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 
@@ -250,14 +287,11 @@ public class ClassevivaCaller {
      */
     public void getSchoolComunication(){
         String session = Credentials.getSession(c);
-        String url = BASE_PATH + session +"/circolari";
+        String url = CURRENT_BASE_PATH + session +"/circolari";
         try {
-            run(url, new Callback() {
-                @Override public void onFailure(Call call, IOException e) {  }
-
+            run(url, ClassevivaCaller.class.getMethod("getSchoolComunication", null), new EndpointsCallback() {
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    String json = response.body().string();
+                public void onResponse(String json){
                     if(json.equals("[]")){
                         //Set credentials from storage
                         ClassevivaCaller.this.mUser = Credentials.getName(c);
@@ -296,6 +330,61 @@ public class ClassevivaCaller {
             });
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Make a request to classeviva for retrieving all user's notes.
+     */
+    public void getNotes(){
+        String session = Credentials.getSession(c);
+        String url = CURRENT_BASE_PATH + session +"/note";
+        try {
+            run(url, ClassevivaCaller.class.getMethod("getNotes", null), new EndpointsCallback() {
+                @Override
+                public void onResponse(String json){
+                    if(json.equals("[]")){
+                        //Set credentials from storage
+                        ClassevivaCaller.this.mUser = Credentials.getName(c);
+                        ClassevivaCaller.this.mPassword = Cripter.decriptString(Credentials.getPassword(c));
+
+                        //Get a new session re-performing login
+                        try {
+                            newSession(ClassevivaCaller.class.getMethod("getNotes", null));
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
+
+                        return;
+                    }
+                    ArrayList<Note> notes = new ArrayList<>();
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(json);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            String date = jsonObject.getString("date").replaceAll("\n","").replaceAll("-", "/");
+                            String prof = jsonObject.getString("prof").replaceAll("\n","");
+                            String note = jsonObject.getString("note").replaceAll("\n","");
+                            String type = jsonObject.getString("type").replaceAll("\n","");
+
+                            notes.add(new Note(prof, date, type, note));
+                        }
+
+                        mCallback.onResponse(notes);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 
@@ -305,12 +394,11 @@ public class ClassevivaCaller {
     public void newSession(final Method method) {
         //Perform new HTTP call
         try {
-            run(BASE_PATH + "PNIT0003/" + mUser + "/" + mPassword, new Callback() {
-                @Override public void onFailure(Call call, IOException e) { }
+            run(CURRENT_BASE_PATH + "PNIT0003/" + mUser + "/" + mPassword, ClassevivaCaller.class.getMethod("newSession", method.getClass()),
+                    new EndpointsCallback() {
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(String json){
                     try {
-                        String json = response.body().string();
                         JSONObject object = new JSONObject(json);
 
                         boolean success = object.getString("status").equals("OK") ? true : false;
@@ -322,7 +410,9 @@ public class ClassevivaCaller {
                     catch (IllegalAccessException e) { e.printStackTrace(); }
                 }
             });
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) { e.printStackTrace(); } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     String getMateria(String materia){
@@ -342,5 +432,9 @@ public class ClassevivaCaller {
         else if(materia.contains("tecnologie e")) return "Tecnica";
         else if(materia.contains("tecnologie") || materia.contains("informatica")) return "Informatica";
         else return materia;
+    }
+
+    private interface EndpointsCallback{
+        void onResponse(String json);
     }
 }

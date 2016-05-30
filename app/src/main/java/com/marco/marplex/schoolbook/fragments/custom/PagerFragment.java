@@ -11,5 +11,6 @@ abstract public class PagerFragment extends Fragment {
 
     public void eliminaOrdine(){};
     public void ordina(){};
+    public void showChart(){};
 
 }

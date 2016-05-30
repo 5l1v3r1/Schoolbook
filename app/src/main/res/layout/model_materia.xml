@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         app:cardElevation="5dp"
         android:clickable="true"
+        android:transitionName="@string/mCardTransition"
         app:cardCornerRadius="5dp"
         android:id="@+id/pbar_materiaSecondo"
         android:foreground="?selectableItemBackground"
@@ -34,6 +35,7 @@
                     app:cpb_background_progressbar_width="12dp"
                     app:cpb_progressbar_color="@color/colorPrimaryOrange"
                     app:cpb_progressbar_width="12dp"
+                    android:transitionName="@string/mProgressTransition"
                     android:id="@+id/pbar_materiaPrimo"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true" />

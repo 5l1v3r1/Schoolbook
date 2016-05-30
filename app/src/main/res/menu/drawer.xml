@@ -32,6 +32,12 @@
             android:title="Circolari" />
 
         <item
+            android:id="@+id/note"
+            android:icon="@drawable/ic_mood_bad_white_24dp"
+            android:tint="#e99139"
+            android:title="Note" />
+
+        <item
             android:id="@+id/nav_subheader_impostazioni"
             android:title="Impostazioni">
 
