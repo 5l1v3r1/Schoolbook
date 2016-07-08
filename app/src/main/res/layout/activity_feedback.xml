@@ -1,0 +1,127 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.marco.marplex.schoolbook.fragments.FeedbackActivity">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/app_bar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:layout_scrollFlags="scroll|enterAlways|snap" />
+
+                <android.support.v7.widget.CardView
+                    app:cardElevation="5dp"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:gravity="right"
+                        android:padding="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Giudizio"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:padding="5dp" />
+
+                        <RadioGroup
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/radio_feedback">
+
+                            <android.support.v7.widget.AppCompatRadioButton
+                                android:textColor="#000"
+                                android:layout_marginRight="5dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Buono"/>
+
+                            <android.support.v7.widget.AppCompatRadioButton
+                                android:textColor="#000"
+                                android:layout_width="wrap_content"
+                                android:layout_marginRight="5dp"
+                                android:layout_height="wrap_content"
+                                android:text="Ok"/>
+
+                            <android.support.v7.widget.AppCompatRadioButton
+                                android:textColor="#000"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Eccellente"/>
+
+                        </RadioGroup>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_marginTop="5dp"
+                            android:focusableInTouchMode="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
+
+                            <EditText
+                                android:id="@+id/input_bug"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:textColor="#000"
+                                android:hint="Eventuali bug o problemi"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Medium">
+
+                            </EditText>
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FINITO"
+                            android:textColor="@color/blue"
+                            style="?attr/borderlessButtonStyle"
+                            android:id="@+id/btn_send" />
+
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <TextView
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="La tua opinione su questa applicazione conta davvero tanto.\nMi aiuterà a migliorarla e a renderla adatta a qualsiasi tipologia di utente."
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+
+
+</LinearLayout>

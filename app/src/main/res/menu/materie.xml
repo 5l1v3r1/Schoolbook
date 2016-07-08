@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/chart" android:title="Grafico voti"
+    <!--<item android:id="@+id/chart" android:title="Grafico voti"
         android:icon="@drawable/ic_poll_white_24dp"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />-->
 
     <item android:id="@+id/compara"
         android:title="Compara"

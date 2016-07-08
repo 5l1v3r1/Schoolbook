@@ -14,6 +14,33 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <RelativeLayout
+                android:id="@+id/viewSwith"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:src="@drawable/ic_thumb_up"
+                    android:id="@+id/imageView4" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Bravo, non hai nessuna nota!"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textColor="#9e9e9e"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:layout_below="@+id/imageView4"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/textView" />
+
+            </RelativeLayout>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_note"
                 android:layout_width="match_parent"

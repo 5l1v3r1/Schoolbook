@@ -30,6 +30,7 @@ public class NoteFragment extends DrawerFragment implements ClassevivaCallback<N
 
     @Bind(R.id.rv_note) RecyclerView mList;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipe;
+    @Bind(R.id.viewSwith) View viewSwith;
 
     private View rootView;
 
@@ -48,6 +49,10 @@ public class NoteFragment extends DrawerFragment implements ClassevivaCallback<N
 
         mList.setHasFixedSize(true);
         mList.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        if(Notes.getSavedNotes(getContext()).size() == 0){
+            viewSwith.setVisibility(View.VISIBLE);
+        }else viewSwith.setVisibility(View.GONE);
 
         final ClassevivaCaller caller = new ClassevivaCaller(this, getContext());
 

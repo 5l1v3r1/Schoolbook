@@ -37,6 +37,43 @@ public class SimpleSectionedRecyclerViewAdapter extends RecyclerView.Adapter<Rec
     private SparseArray<Section> mSections = new SparseArray<Section>();
 
     public SimpleSectionedRecyclerViewAdapter(Context context, int sectionResourceId, int textResourceId,
+                                              RecyclerView.Adapter baseAdapter, int periodo) {
+
+        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mSectionResourceId = sectionResourceId;
+        mTextResourceId = textResourceId;
+        mBaseAdapter = baseAdapter;
+        mContext = context;
+        mPeriodo = periodo;
+
+        mBaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                mValid = mBaseAdapter.getItemCount()>0;
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount) {
+                mValid = mBaseAdapter.getItemCount()>0;
+                notifyItemRangeChanged(positionStart, itemCount);
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                mValid = mBaseAdapter.getItemCount()>0;
+                notifyItemRangeInserted(positionStart, itemCount);
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                mValid = mBaseAdapter.getItemCount()>0;
+                notifyItemRangeRemoved(positionStart, itemCount);
+            }
+        });
+    }
+
+    public SimpleSectionedRecyclerViewAdapter(Context context, int sectionResourceId, int textResourceId,
                                               RecyclerView.Adapter baseAdapter, int periodo, View toolbar, Activity activity) {
 
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -111,13 +148,15 @@ public class SimpleSectionedRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                     b.putInt("periodo", mPeriodo);
                     intent.putExtras(b);
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        ActivityOptionsCompat options = ActivityOptionsCompat.
-                                makeSceneTransitionAnimation(mActivity, toolbar, "voteToolbar");
-                        mContext.startActivity(intent, options.toBundle());
-                    }else{
-                        mContext.startActivity(intent);
-                    }
+                    if(toolbar != null) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                ActivityOptionsCompat options = ActivityOptionsCompat.
+                                        makeSceneTransitionAnimation(mActivity, toolbar, "voteToolbar");
+                                mContext.startActivity(intent, options.toBundle());
+                        } else {
+                            mContext.startActivity(intent);
+                        }
+                    }else mContext.startActivity(intent);
                 }
             });
         }else{

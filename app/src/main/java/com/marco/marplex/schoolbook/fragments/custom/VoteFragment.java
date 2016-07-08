@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -43,6 +44,7 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
     private View mRootView;
     private LinearLayoutManager mLlm;
     private ClassevivaCaller mApi;
+    private  Dialog subjectDialog, majorThanDialog, equalsToDialog, mDialog;
 
     private LayoutInflater mInflater;
 
@@ -62,7 +64,7 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
         abl = (AppBarLayout) getActivity().findViewById(R.id.app_bar_layout);
         mInflater = inflater;
 
-        mLlm = new LinearLayoutManager(getActivity());
+        mLlm = new LinearLayoutManager(getContext());
         mList.setHasFixedSize(true);
         mList.setLayoutManager(mLlm);
         mSwipe.setColorSchemeResources(
@@ -82,7 +84,7 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
                 }
             });
         }else{
-            final ArrayList<Voto> voti = Votes.getVotesByPeriod(getActivity(), mPeriod);
+            final ArrayList<Voto> voti = getData();
             populateRecyclerView(voti);
         }
 
@@ -96,9 +98,14 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
         return mRootView;
     }
 
+
+
+    public ArrayList<Voto> getData(){
+        return Votes.getVotesByPeriod(getContext(), mPeriod);
+    }
+
     //Abstract methods
     public abstract void init();
-    public abstract void ordina();
     public abstract void eliminaOrdine();
 
     protected void refreshContent(){
@@ -134,7 +141,7 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
 
         SimpleSectionedRecyclerViewAdapter.Section[] dummy = new SimpleSectionedRecyclerViewAdapter.Section[sections.size()];
         SimpleSectionedRecyclerViewAdapter mSectionedAdapter = new
-                SimpleSectionedRecyclerViewAdapter(getActivity(),R.layout.section,R.id.section_text,adapter, mPeriod, abl, getActivity());
+                SimpleSectionedRecyclerViewAdapter(getContext(),R.layout.section,R.id.section_text,adapter, mPeriod, abl, getActivity());
         mSectionedAdapter.setSections(sections.toArray(dummy));
 
         mList.setAdapter(mSectionedAdapter);
@@ -143,12 +150,12 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
 
     protected Dialog viewOrderDialog(AdapterView.OnItemClickListener clickListener){
         View view = mInflater.inflate(R.layout.ordina, null);
-        final Dialog mBottomSheetDialog = new Dialog (getActivity(),R.style.MaterialDialogSheet);
+        final Dialog mBottomSheetDialog = new Dialog (getContext(),R.style.MaterialDialogSheet);
         ListView Listamaterie = (ListView)view.findViewById( R.id.materie);
 
         Type type = new TypeToken<ArrayList<String>>(){}.getType();
-        materie = new Gson().fromJson(SharedPreferences.loadString(getActivity(), "materie", "materie"), type);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, materie.toArray(new String[materie.size()]));
+        materie = new Gson().fromJson(SharedPreferences.loadString(getContext(), "materie", "materie"), type);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, materie.toArray(new String[materie.size()]));
 
         Listamaterie.setAdapter(arrayAdapter);
 
@@ -164,12 +171,112 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
     }
 
     @Override
+    public void ordina(){
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.ordina, null, false);
+        mDialog = new Dialog (getContext(), R.style.MaterialDialogSheet);
+
+        setLayoutForDialog(mDialog, view);
+        String[] choices = new String[]{"Materia uguale a..", "Voto maggiore di..", "Voto uguale a.."};
+        ListView listView = (ListView)view.findViewById( R.id.materie);
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, choices);
+
+        listView.setAdapter(arrayAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                mDialog.cancel();
+                switch (i){
+                    case 0:
+                        subjectDialog = viewOrderDialog(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                ArrayList<Voto> voti = Votes.getVotesByMateria(getActivity(), materie.get(position), mPeriod);
+                                populateRecyclerView(voti);
+                                subjectDialog.hide();
+                            }
+                        });
+                        break;
+                    case 1:
+                        View majorView = mInflater.inflate(R.layout.ordina, null);
+                        majorThanDialog = new Dialog (getContext(), R.style.MaterialDialogSheet);
+
+                        final String[] choices2 = new String[10];
+                        for(int index = 1; index <= 10; index++) choices2[index-1] = index+"";
+
+                        ListView listView2 = (ListView)majorView.findViewById( R.id.materie);
+                        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, choices2);
+                        listView2.setAdapter(arrayAdapter2);
+                        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                int than = Integer.parseInt(choices2[i]);
+                                ArrayList<Voto> voti = Votes.getVotesByGreaterThan(getContext(), than, mPeriod);
+                                populateRecyclerView(voti);
+                                majorThanDialog.hide();
+                            }
+                        });
+
+                        majorView.findViewById(R.id.dialog_title).setVisibility(View.GONE);
+                        majorThanDialog.setContentView(majorView);
+                        majorThanDialog.setCancelable(true);
+                        majorThanDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        majorThanDialog.getWindow().setGravity(Gravity.BOTTOM);
+
+                        majorThanDialog.show();
+                        break;
+                    case 2:
+                        View equalsToView = mInflater.inflate(R.layout.ordina, null);
+                        equalsToDialog = new Dialog(getContext(), R.style.MaterialDialogSheet);
+
+                        final String[] choices1 = new String[10];
+                        for(int index = 1; index <= 10; index++) choices1[index-1] = index+"";
+                        for(int i1 = 0; i1 < choices1.length; i1++) System.out.println("LOL "+choices1[i1]);
+
+                        ListView listView1 = (ListView) equalsToView.findViewById( R.id.materie);
+                        ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, choices1);
+                        listView1.setAdapter(arrayAdapter1);
+                        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                int than = Integer.parseInt(choices1[i]);
+                                ArrayList<Voto> voti = Votes.getVotesByGrade(getContext(), than, mPeriod);
+                                populateRecyclerView(voti);
+                                equalsToDialog.hide();
+                            }
+                        });
+
+                        equalsToView.findViewById(R.id.dialog_title).setVisibility(View.GONE);
+                        equalsToDialog.setContentView(equalsToView);
+                        equalsToDialog.setCancelable(true);
+                        equalsToDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        equalsToDialog.getWindow().setGravity(Gravity.BOTTOM);
+
+                        equalsToDialog.show();
+
+                        break;
+                }
+            }
+        });
+    }
+
+    private void setLayoutForDialog(Dialog dialog, View view){
+        view.findViewById(R.id.dialog_title).setVisibility(View.VISIBLE);
+        ((TextView)view.findViewById(R.id.dialog_title)).setText("Vedi solo valutazioni con");
+        dialog.setContentView(view);
+        dialog.setCancelable(true);
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+        dialog.show();
+    }
+
+    @Override
     public String getPageTitle() {
         return null;
     }
 
     public boolean isDataSaved(){
-        return !( SharedPreferences.loadString(getActivity(), "datas", "voti") == null );
+        return !( SharedPreferences.loadString(getContext(), "datas", "voti") == null );
     }
 
 }

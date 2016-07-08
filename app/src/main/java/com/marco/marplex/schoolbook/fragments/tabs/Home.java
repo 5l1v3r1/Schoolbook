@@ -11,7 +11,10 @@ import android.view.ViewGroup;
 import com.marco.marplex.schoolbook.R;
 import com.marco.marplex.schoolbook.adapters.NotificationAdapter;
 import com.marco.marplex.schoolbook.fragments.custom.PagerFragment;
+import com.marco.marplex.schoolbook.models.Voto;
 import com.marco.marplex.schoolbook.utilities.Votes;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -19,6 +22,7 @@ import butterknife.ButterKnife;
 public class Home extends PagerFragment{
 
     @Bind(R.id.listaNotifiche) RecyclerView mLastVotesList;
+    @Bind(R.id.nothingHere) View nothingHere;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -28,10 +32,18 @@ public class Home extends PagerFragment{
         mLastVotesList.setHasFixedSize(true);
         mLastVotesList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        //Fill the list with votes recent of 5 days
-        if(Votes.isThereAnyVotes(getContext())) {
-            mLastVotesList.setAdapter(new NotificationAdapter(getContext(), Votes.getVotesByRecentDate(getContext(), 5)));
+        ArrayList<Voto> votes = Votes.getVotesByRecentDate(getContext(), 5);
+        if(votes == null || votes.size() == 0){
+            nothingHere.setVisibility(View.VISIBLE);
+        }else{
+            nothingHere.setVisibility(View.GONE);
+
+            //Fill the list with votes recent of 5 days
+            if(Votes.isThereAnyVotes(getContext())) {
+                mLastVotesList.setAdapter(new NotificationAdapter(getContext(), votes));
+            }
         }
+
         return rootView;
     }
 

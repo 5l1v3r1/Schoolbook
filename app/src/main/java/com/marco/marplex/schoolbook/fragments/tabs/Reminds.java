@@ -11,6 +11,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,9 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 
 import com.marco.marplex.schoolbook.R;
+import com.marco.marplex.schoolbook.adapters.SuggestsAdapter;
 import com.marco.marplex.schoolbook.fragments.custom.PagerFragment;
+import com.marco.marplex.schoolbook.models.Suggest;
 import com.marco.marplex.schoolbook.reminds.SpeechParser;
 import com.marco.marplex.schoolbook.utilities.SharedPreferences;
 import com.marco.marplex.schoolbook.views.BreathingActionButton;
@@ -53,7 +56,9 @@ public class Reminds extends PagerFragment implements RecognitionListener{
                 AlertDialog dialog = new AlertDialog.Builder(getContext())
                         .setTitle("Benvenuto")
                         .setMessage("Reminds ti aiuterà nella tua gestione scolastica. " +
-                                "Il nuovo assistente vocale ti renderà tutto più facile")
+                                "Il nuovo assistente vocale ti renderà tutto più facile." +
+                                " Ricordati che questa è una versiona ancora in fase di sviluppo." +
+                                "Ti chiediamo quindi di segnalare eventuali bug sulla pagina di GitHub. ")
                         .setPositiveButton("Scopri", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -125,6 +130,20 @@ public class Reminds extends PagerFragment implements RecognitionListener{
 
         mHearingText.setVisibility(View.GONE);
 
+
+        //Setup Recyclerview
+        mSuggests.setLayoutManager(new LinearLayoutManager(getContext()));
+        mSuggests.setHasFixedSize(true);
+
+        ArrayList<Suggest> suggests = new ArrayList();
+        suggests.add(new Suggest(R.drawable.exam, "Fammi vedere i miei voti"));
+        suggests.add(new Suggest(R.drawable.abacus, "Che media ho in inglese?"));
+        suggests.add(new Suggest(R.drawable.target, "Obiettivo inglese 9"));
+        suggests.add(new Suggest(R.drawable.calendar, "Eventi di oggi"));
+        suggests.add(new Suggest(R.drawable.list, "Quanti 7 ho?"));
+
+        mSuggests.setAdapter(new SuggestsAdapter(suggests, getContext()));
+
         return rootView;
 
     }
@@ -160,14 +179,16 @@ public class Reminds extends PagerFragment implements RecognitionListener{
 
     @Override public void onResults(Bundle bundle) {
 
-        mRecordButton.animate()
-                .alpha(0f)
-                .setDuration(150)
-                .start();
-
         //Stop the animations
-        mRecordButton.stopBreathing();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRecordButton.stopBreathing();
+            }
+        }, 1000);
+
         mHearingText.clearAnimation();
+
         //Set text visible
         mHearingText.setAlpha(1f);
         mHearingText.setVisibility(View.VISIBLE);
@@ -206,10 +227,6 @@ public class Reminds extends PagerFragment implements RecognitionListener{
 
         //Stop the animations
         mRecordButton.stopBreathing();
-        mRecordButton.animate()
-                .alpha(1f)
-                .setDuration(150)
-                .start();
         mHearingText.clearAnimation();
 
         //Reset starting values

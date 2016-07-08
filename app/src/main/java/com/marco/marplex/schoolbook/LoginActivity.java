@@ -14,7 +14,9 @@ import android.widget.TextView;
 
 import com.marco.marplex.schoolbook.connections.ClassevivaCaller;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaLoginCallback;
+import com.marco.marplex.schoolbook.utilities.Connection;
 import com.marco.marplex.schoolbook.utilities.Credentials;
+import com.marco.marplex.schoolbook.utilities.SharedPreferences;
 import com.marco.marplex.schoolbook.utilities.WindowUtil;
 import com.zl.reik.dilatingdotsprogressbar.DilatingDotsProgressBar;
 
@@ -67,11 +69,18 @@ public class LoginActivity extends AppCompatActivity {
             public void onLoginDone(boolean success) {
                 //If there's some error in login (Check if the <title> tag contains the login page title)
                 if(!success){
-                    animateReverseFab();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            animateReverseFab();
+                        }
+                    });
                 }else {
-                    //Start DashboardActivity
+                    //Start AppIntroActivity and DashboardActivity
                     Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+                    Intent i2 = new Intent(LoginActivity.this, AppIntroActivity.class);
                     startActivity(i);
+                    startActivity(i2);
                     finish();
                 }
             }
@@ -79,10 +88,33 @@ public class LoginActivity extends AppCompatActivity {
 
         //Check if the user already has saved his credentials
         if(mUser!=null && mPass!=null && mSession !=null){
-            //Start DashboardActivity
-            Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
-            startActivity(i);
-            finish();
+
+            //First of all, get a new session if it's possible
+            if(Connection.isNetworkAvailable(this)){
+                Thread separateThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        /*new ClassevivaCaller(new ClassevivaCallback() {
+                            @Override public void onResponse(ArrayList list) { }
+                        }, LoginActivity.this).newSession();*/
+                    }
+                });
+                separateThread.start();
+            }
+
+            if(!SharedPreferences.loadBoolean(this, "pref", "first")) {
+                //Start AppIntroActivity
+                SharedPreferences.saveBoolean(this, "pref", "first", true);
+                Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+                Intent i2 = new Intent(LoginActivity.this, AppIntroActivity.class);
+                startActivity(i);
+                startActivity(i2);
+                finish();
+            }else{
+                Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+                startActivity(i);
+                finish();
+            }
         }
 
         mFabLogin.setOnClickListener(new View.OnClickListener() {
@@ -142,6 +174,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startReveal(final RelativeLayout view, boolean reverse){
+
         //Change statusbar color
         if(!reverse) WindowUtil.changeStatusBarColor(LoginActivity.this, "#E91E63"); //Need to put string because resource link doesn't work
         else WindowUtil.changeStatusBarColor(LoginActivity.this, "#1976D2");

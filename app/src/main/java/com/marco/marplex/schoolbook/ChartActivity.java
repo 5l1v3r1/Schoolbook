@@ -38,7 +38,7 @@ public class ChartActivity extends AppCompatActivity {
 
         int numColumns = list.size();
 
-        // Column can have many subcolumns, here by default I use 1 subcolumn in each of 8 columns.
+        // Column can have many subcolumns, here by default I use 1 subcolumn in each column.
         List<Column> columns = new ArrayList<Column>();
         List<SubcolumnValue> values;
         List<AxisValue> axisValues = new ArrayList<AxisValue>();

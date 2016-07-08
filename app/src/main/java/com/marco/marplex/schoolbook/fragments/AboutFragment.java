@@ -26,11 +26,6 @@ public class AboutFragment extends DrawerFragment {
 
     private View mView;
 
-    public AboutFragment() {
-        // Required empty public constructor
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -49,7 +44,6 @@ public class AboutFragment extends DrawerFragment {
         list.add(new Library("Zachary Reik", "DilatingDotsProgressBar", R.drawable.github, "https://github.com/JustZak/DilatingDotsProgressBar"));
         list.add(new Library("Akexorcist", "RoundCornerProgressBar", R.drawable.roundprogress, "https://github.com/akexorcist/Android-RoundCornerProgressBar"));
         list.add(new Library("Square", "OkHttp", R.drawable.square, "http://square.github.io/okhttp/"));
-        list.add(new Library("AndroidDeveloperLB", "MaterialPreferenceLibrary", R.drawable.github, "https://github.com/AndroidDeveloperLB/MaterialPreferenceLibrary"));
 
         //Static list, add each model view with corresponding datas in the LinearLayout
         LinearLayout layout = (LinearLayout) mView.findViewById(R.id.lib_list);

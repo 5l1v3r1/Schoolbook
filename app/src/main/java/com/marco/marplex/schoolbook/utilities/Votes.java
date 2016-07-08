@@ -3,9 +3,9 @@ package com.marco.marplex.schoolbook.utilities;
 import android.content.Context;
 import android.graphics.Color;
 
-import com.marco.marplex.schoolbook.models.Voto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.marco.marplex.schoolbook.models.Voto;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -27,6 +27,36 @@ public class Votes {
             else continue;
         }
         return votoArrayList;
+    }
+
+    public static ArrayList<Voto> getVotesByGrade(Context c, int grade){
+        ArrayList<Voto> votes = Votes.getVotes(c);
+        ArrayList<Voto> voteSecond = new ArrayList();
+        for(Voto voto : votes){
+            if(Votes.getNumericalVoteByString(voto.voto) == grade) voteSecond.add(voto);
+            else continue;
+        }
+        return voteSecond;
+    }
+
+    public static ArrayList<Voto> getVotesByGreaterThan(Context c, int than, int period){
+        ArrayList<Voto> votes = Votes.getVotesByPeriod(c, period);
+        ArrayList<Voto> voteSecond = new ArrayList();
+        for(Voto voto : votes){
+            if(getNumericalVoteByString(voto.voto) > than) voteSecond.add(voto);
+            else continue;
+        }
+        return voteSecond;
+    }
+
+    public static ArrayList<Voto> getVotesByGrade(Context c, int grade, int period){
+        ArrayList<Voto> votes = Votes.getVotesByPeriod(c, period);
+        ArrayList<Voto> voteSecond = new ArrayList();
+        for(Voto voto : votes){
+            if(Votes.getNumericalVoteByString(voto.voto) == grade) voteSecond.add(voto);
+            else continue;
+        }
+        return voteSecond;
     }
 
     public static ArrayList<Voto> getVotesByRecentDate(Context c, int daysFromNow){
@@ -127,11 +157,18 @@ public class Votes {
     }
 
     public static ArrayList<Voto> getIntruderVotes(ArrayList<Voto> savedList, ArrayList<Voto> newList){
-        ArrayList<Voto> tmp = new ArrayList<>();
-        for(Voto voto : newList){
-            if(savedList.contains(voto)) tmp.add(voto);
+        int sizeSaved = savedList.size();
+        int sizeNew = newList.size();
+
+        int difference = sizeNew - sizeSaved;
+
+        ArrayList<Voto> tmpArray = new ArrayList();
+
+        for(int i = 0; i < difference; i++){
+            tmpArray.add(newList.get( ( (sizeNew - difference) + (i+1)  ) - 1 ));
         }
-        return tmp;
+
+        return tmpArray;
     }
 
     public static int getColorByVote(double val){

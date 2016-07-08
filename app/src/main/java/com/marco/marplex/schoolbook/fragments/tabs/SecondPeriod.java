@@ -1,9 +1,6 @@
 package com.marco.marplex.schoolbook.fragments.tabs;
 
-import android.app.Dialog;
 import android.support.v4.app.Fragment;
-import android.view.View;
-import android.widget.AdapterView;
 
 import com.marco.marplex.schoolbook.fragments.custom.VoteFragment;
 import com.marco.marplex.schoolbook.models.Voto;
@@ -16,23 +13,9 @@ import java.util.ArrayList;
  */
 public class SecondPeriod extends VoteFragment {
 
-    private Dialog mDialog = null;
-
     @Override
     public void init() {
         mPeriod = 2;
-    }
-
-    @Override
-    public void ordina(){
-        mDialog = viewOrderDialog(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ArrayList<Voto> voti = Votes.getVotesByMateria(getActivity(), materie.get(position), mPeriod);
-                populateRecyclerView(voti);
-                mDialog.hide();
-            }
-        });
     }
 
     @Override

@@ -43,6 +43,12 @@ public class Subjects {
         return new Gson().fromJson(SharedPreferences.loadString(c, "materie", "materie"), type);
     }
 
+    public static ArrayList<String> getNormalSubjects(Context c){
+        Type type = new TypeToken<ArrayList<String>>(){}.getType();
+        return new Gson().fromJson(SharedPreferences.loadString(c, "materie", "materieNormal"), type);
+    }
+
+
     public static ArrayList<Compare> getComparedSubject(Context context, String sub){
 
         ArrayList<Compare> mCompareList = new ArrayList<>();

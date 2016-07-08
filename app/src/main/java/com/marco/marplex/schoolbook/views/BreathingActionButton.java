@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
+import android.view.View;
 
 /**
  * Created by marco on 5/23/16.
@@ -32,6 +33,7 @@ public class BreathingActionButton extends FloatingActionButton {
         scaleX = scaleY = 1.2f;
         setScaleX(1f);
         setScaleY(1f);
+        setAlpha(1f);
         isBreathing = true;
         startBreathAnimation();
         setClickable(false);
@@ -42,7 +44,8 @@ public class BreathingActionButton extends FloatingActionButton {
         scaleX = scaleY = 1f;
         setScaleX(1f);
         setScaleY(1f);
-        setAlpha(1f);
+        setAlpha(0f);
+        setVisibility(View.VISIBLE);
         setClickable(true);
     }
 

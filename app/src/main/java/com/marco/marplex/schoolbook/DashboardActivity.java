@@ -1,12 +1,13 @@
 package com.marco.marplex.schoolbook;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -19,21 +20,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.marco.marplex.schoolbook.connections.ClassevivaCaller;
 import com.marco.marplex.schoolbook.fragments.AboutFragment;
 import com.marco.marplex.schoolbook.fragments.Agenda;
+import com.marco.marplex.schoolbook.fragments.ArgumentsFragment;
 import com.marco.marplex.schoolbook.fragments.Circolari;
 import com.marco.marplex.schoolbook.fragments.Dashboard;
+import com.marco.marplex.schoolbook.fragments.FeedbackActivity;
 import com.marco.marplex.schoolbook.fragments.Materie;
 import com.marco.marplex.schoolbook.fragments.NoteFragment;
 import com.marco.marplex.schoolbook.fragments.Voti;
 import com.marco.marplex.schoolbook.fragments.custom.DrawerFragment;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
-import com.marco.marplex.schoolbook.services.NotificationService;
+import com.marco.marplex.schoolbook.receivers.NotificationEventReceiver;
+import com.marco.marplex.schoolbook.services.NotificationIntentService;
 import com.marco.marplex.schoolbook.utilities.Comunications;
 import com.marco.marplex.schoolbook.utilities.Connection;
 import com.marco.marplex.schoolbook.utilities.Events;
+import com.marco.marplex.schoolbook.utilities.Notes;
+import com.marco.marplex.schoolbook.utilities.SharedPreferences;
 import com.marco.marplex.schoolbook.utilities.Votes;
 
 import java.util.ArrayList;
@@ -62,8 +69,51 @@ public class DashboardActivity extends AppCompatActivity{
         //When the activity start, automatically replace R.id.frame with the Dashboard fragment
         setContainerFragment(new Dashboard());
 
-        //Just start the IntentService for votes notification
-        startService(new Intent(getBaseContext(), NotificationService.class));
+        //Set username and school at the drawer header
+        View drawerHeader = navigationView.getHeaderView(0);
+
+        //Find views
+        final TextView txtSchool = (TextView) drawerHeader.findViewById(R.id.txt_school);
+        final TextView txtUsername = (TextView) drawerHeader.findViewById(R.id.txt_username);
+
+        //Bind datas
+        if(SharedPreferences.loadString(this, "datas", "userName") == null) {
+            ClassevivaCaller caller = new ClassevivaCaller(new ClassevivaCallback<String[]>() {
+                @Override
+                public void onResponse(ArrayList<String[]> list) {
+                    String[] array = list.get(0);
+
+                    final String school = array[0];
+                    final String user = array[1];
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            txtSchool.setText(school);
+                            txtUsername.setText(user);
+                        }
+                    });
+
+                    SharedPreferences.saveString(DashboardActivity.this, "datas", "userName", user);
+                    SharedPreferences.saveString(DashboardActivity.this, "datas", "userSchool", school);
+                }
+            }, this);
+            caller.getUser();
+        }else{
+            //Load from local
+            String user = SharedPreferences.loadString(this, "datas", "userName");
+            String school = SharedPreferences.loadString(this, "datas", "userSchool");
+
+            txtSchool.setText(school);
+            txtUsername.setText(user);
+        }
+
+        //Just start the IntentService for votes notification is it's not already started
+        if(!isMyServiceRunning(NotificationIntentService.class)){
+            if(SharedPreferences.loadBoolean(this, "pref", "setting_notification")){
+                NotificationEventReceiver.setupAlarm(getApplicationContext());
+            }
+        }
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -105,8 +155,17 @@ public class DashboardActivity extends AppCompatActivity{
                                     //Change activity color
                                     changeActivityColor(R.color.colorPrimaryOrange, R.color.colorPrimaryDarkOrange);
 
-                                    //Replace R.id.frame with the Voti fragment
+                                    //Replace R.id.frame with the Materie fragment
                                     setContainerFragment(new Materie());
+
+                                    return true;
+                                case R.id.argomenti:
+
+                                    //Change activity color
+                                    changeActivityColor(R.color.colorPrimaryPurple, R.color.colorPrimaryDarkPurple);
+
+                                    //Replace R.id.frame with the ArgumentsFragment fragment
+                                    setContainerFragment(new ArgumentsFragment());
 
                                     return true;
                                 case R.id.agenda:
@@ -123,7 +182,7 @@ public class DashboardActivity extends AppCompatActivity{
                                     //Change activity color
                                     changeActivityColor(R.color.colorPrimaryRed, R.color.colorPrimaryDarkRed);
 
-                                    //Replace R.id.frame with the Agenda fragment
+                                    //Replace R.id.frame with the Circolari fragment
                                     setContainerFragment(new Circolari());
 
                                     return true;
@@ -131,7 +190,7 @@ public class DashboardActivity extends AppCompatActivity{
                                     //Change activity color
                                     changeActivityColor(R.color.colorPrimaryAmber, R.color.colorPrimaryDarkAmber);
 
-                                    //Replace R.id.frame with the Agenda fragment
+                                    //Replace R.id.frame with the NoteFragment fragment
                                     setContainerFragment(new NoteFragment());
 
                                     return true;
@@ -139,8 +198,15 @@ public class DashboardActivity extends AppCompatActivity{
                                     //Change activity color
                                     changeActivityColor(R.color.colorPrimary, R.color.colorPrimaryDark);
 
-                                    //Replace R.id.frame with the Agenda fragment
+                                    //Replace R.id.frame with the AboutFragment fragment
                                     setContainerFragment(new AboutFragment());
+                                    return true;
+                                case R.id.feedback:
+                                    //Change activity color
+                                    changeActivityColor(R.color.colorPrimary, R.color.colorPrimaryDark);
+
+                                    //Start FeedbackActivity activity
+                                    startActivity(new Intent(DashboardActivity.this, FeedbackActivity.class));
                                     return true;
                                 case R.id.settings:
                                     //Open settings activity
@@ -160,11 +226,11 @@ public class DashboardActivity extends AppCompatActivity{
 
         navigationView.getMenu().getItem(0).setChecked(true);
 
-        boolean canIupdate = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("setting_sync", true);
+        boolean canIupdate = SharedPreferences.loadBoolean(this, "pref", "setting_sync");
         if(canIupdate) {
             if(Connection.isNetworkAvailable(this)) {
                 //Start downloading votes from Classeviva
-                ClassevivaCaller caller = new ClassevivaCaller(new ClassevivaCallback() {
+                ClassevivaCaller callerVotes = new ClassevivaCaller(new ClassevivaCallback() {
                     @Override
                     public void onResponse(final ArrayList list) {
                         DashboardActivity.this.runOnUiThread(new Runnable() {
@@ -172,14 +238,11 @@ public class DashboardActivity extends AppCompatActivity{
                             public void run() {
                                 Votes.saveVotes(DashboardActivity.this, list);
                                 mCanSelect = true;
-
-                                //Refresh fragment
-                                setContainerFragment(new Dashboard());
                             }
                         });
                     }
                 }, this);
-                caller.getVotes();
+                callerVotes.getVotes();
 
                 //Start downloading events from Classeviva
                 ClassevivaCaller callerAgenda = new ClassevivaCaller(new ClassevivaCallback() {
@@ -190,9 +253,6 @@ public class DashboardActivity extends AppCompatActivity{
                             public void run() {
                                 Events.saveEvents(DashboardActivity.this, list);
                                 mCanSelect = true;
-
-                                //Refresh fragment
-                                setContainerFragment(new Dashboard());
                             }
                         });
                     }
@@ -208,6 +268,22 @@ public class DashboardActivity extends AppCompatActivity{
                             public void run() {
                                 Comunications.saveComunications(DashboardActivity.this, list);
                                 mCanSelect = true;
+                            }
+                        });
+                    }
+                }, this);
+
+                callerComunication.getSchoolComunication();
+
+                //Start downloading notes from Classeviva
+                ClassevivaCaller callerNotes = new ClassevivaCaller(new ClassevivaCallback() {
+                    @Override
+                    public void onResponse(final ArrayList list) {
+                        DashboardActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Notes.saveNotes(DashboardActivity.this, list);
+                                mCanSelect = true;
 
                                 Snackbar.make(navigationView, "Finito", Snackbar.LENGTH_SHORT).show();
 
@@ -218,7 +294,7 @@ public class DashboardActivity extends AppCompatActivity{
                     }
                 }, this);
 
-                callerComunication.getSchoolComunication();
+                callerNotes.getNotes();
                 Snackbar.make(navigationView, "Sto aggiornando il tuo registro...", Snackbar.LENGTH_INDEFINITE).show();
             }else{
                 mCanSelect = true;
@@ -254,7 +330,7 @@ public class DashboardActivity extends AppCompatActivity{
         tabLayout.setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
 
         //Navigation drawer's header background color
-        navigationView.getRootView().findViewById(R.id.header_bg).setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
+        //navigationView.getRootView().findViewById(R.id.header_bg).setBackgroundColor(ContextCompat.getColor(DashboardActivity.this, colorPrimary));
     }
 
     /**
@@ -279,6 +355,35 @@ public class DashboardActivity extends AppCompatActivity{
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Marplex/Schoolbook"));
         startActivity(intent);
     }
+
+    //Open Schoolbook's PlayStore page
+    public void showPlayStore(View view){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.marco.marplex.schoolbook"));
+        startActivity(intent);
+    }
+
+    public void shareApp(View view){
+        String message = "Che ne dici di dare un'occhiata a Schoolbook? Un nuovo registro elettronico non ufficiale per Classeviva, in Material Design, Open Source e con tante funzionalità."
+                + "\n Scaricalo qui https://goo.gl/OeeRuU";
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT, message);
+
+        startActivity(Intent.createChooser(share, "Condividi con"));
+    }
+
+
+    //From http://stackoverflow.com/a/5921190
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

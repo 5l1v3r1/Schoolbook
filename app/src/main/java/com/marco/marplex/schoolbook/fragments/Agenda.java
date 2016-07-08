@@ -108,79 +108,70 @@ public class Agenda extends DrawerFragment implements ClassevivaCallback<Evento>
 
     @Override
     public void onDateSelected(@NonNull final MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-        if(Events.getEventsByDate(mEvents, date.getDate()).size() == 0){}
-        else {
-            final View view = View.inflate(getContext(), R.layout.agenda_dialog_custom, null);
+        if(mEvents != null){
+            if(Events.getEventsByDate(mEvents, date.getDate()).size() != 0){
+                final View view = View.inflate(getContext(), R.layout.agenda_dialog_custom, null);
 
-            ListView list = (ListView) view.findViewById(R.id.list_events);
-            Button okButton = (Button) view.findViewById(R.id.btn_save);
-            final CardView card = (CardView) view.findViewById(R.id.reveal_view);
+                ListView list = (ListView) view.findViewById(R.id.list_events);
+                Button okButton = (Button) view.findViewById(R.id.btn_save);
+                final CardView card = (CardView) view.findViewById(R.id.reveal_view);
 
-            dialog = new AlertDialog.Builder(getContext())
-                    .setView(view)
-                    .create();
+                dialog = new AlertDialog.Builder(getContext())
+                        .setView(view)
+                        .create();
 
-            list.setAdapter(new EventAdapter(getContext(), R.layout.model_event, Events.getEventsByDate(mEvents, date.getDate())));
+                list.setAdapter(new EventAdapter(getContext(), R.layout.model_event, Events.getEventsByDate(mEvents, date.getDate())));
 
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    int cx = view.getRight() - (view.getRight() - (view.getWidth() / 2));
-                    int cy = view.getBottom() - (view.getBottom() - (view.getHeight() / 2));
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        int cx = view.getRight() - (view.getRight() - (view.getWidth() / 2));
+                        int cy = view.getBottom() - (view.getBottom() - (view.getHeight() / 2));
 
-                    // get the final radius for the clipping circle
-                    int dx = Math.max(cx, card.getWidth() - cx);
-                    int dy = Math.max(cy, card.getHeight() - cy);
-                    float finalRadius = (float) Math.hypot(dx, dy);
+                        // get the final radius for the clipping circle
+                        int dx = Math.max(cx, card.getWidth() - cx);
+                        int dy = Math.max(cy, card.getHeight() - cy);
+                        float finalRadius = (float) Math.hypot(dx, dy);
 
-                    SupportAnimator animator =
-                            ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
-                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                    animator.setDuration(300);
-                    animator.start();
-                }
-            });
+                        SupportAnimator animator =
+                                ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
+                        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                        animator.setDuration(300);
+                        animator.start();
+                    }
+                });
 
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            dialog.show();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                dialog.show();
 
-            okButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View myView) {
-                    int cx = view.getRight() - (view.getRight() - (view.getWidth() / 2));
-                    int cy = view.getBottom() - (view.getBottom() - (view.getHeight() / 2));
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View myView) {
+                        int cx = view.getRight() - (view.getRight() - (view.getWidth() / 2));
+                        int cy = view.getBottom() - (view.getBottom() - (view.getHeight() / 2));
 
-                    // get the final radius for the clipping circle
-                    int dx = Math.max(cx, card.getWidth() - cx);
-                    int dy = Math.max(cy, card.getHeight() - cy);
-                    float finalRadius = (float) Math.hypot(dx, dy);
+                        // get the final radius for the clipping circle
+                        int dx = Math.max(cx, card.getWidth() - cx);
+                        int dy = Math.max(cy, card.getHeight() - cy);
+                        float finalRadius = (float) Math.hypot(dx, dy);
 
-                    SupportAnimator animator =
-                            ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
-                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                    animator.setDuration(300);
-                    animator = animator.reverse();
-                    animator.addListener(new SupportAnimator.AnimatorListener() {
-                        @Override
-                        public void onAnimationEnd() {
-                            dialog.cancel();
-                        }
-
-                        @Override
-                        public void onAnimationCancel() {
-                        }
-
-                        @Override
-                        public void onAnimationRepeat() {
-                        }
-
-                        @Override
-                        public void onAnimationStart() {
-                        }
-                    });
-                    animator.start();
-                }
-            });
+                        SupportAnimator animator =
+                                ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
+                        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                        animator.setDuration(300);
+                        animator = animator.reverse();
+                        animator.addListener(new SupportAnimator.AnimatorListener() {
+                            @Override public void onAnimationEnd() {
+                                dialog.cancel();
+                            }
+                            @Override public void onAnimationCancel(){}
+                            @Override public void onAnimationRepeat(){}
+                            @Override public void onAnimationStart(){}
+                        });
+                        animator.start();
+                    }
+                });
+            }
         }
     }
 }

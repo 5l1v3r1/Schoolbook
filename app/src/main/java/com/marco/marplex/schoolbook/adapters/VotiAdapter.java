@@ -1,7 +1,6 @@
 package com.marco.marplex.schoolbook.adapters;
 
 import android.graphics.Color;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,18 +48,6 @@ public class VotiAdapter extends RecyclerView.Adapter <VotiAdapter.votiAdapterHo
         } else viewHolder.voto.setBackgroundColor(Votes.getColorByVote(Votes.getVoteByString(voto.voto)));
 
         viewHolder.materia.setText(riceviTesto(voto.materia, voto.data, voto.tipo));
-
-        viewHolder.itemView.setAlpha(0f);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                viewHolder.itemView.animate()
-                        .alpha(1f)
-                        .setDuration(100)
-                        .start();
-            }
-        }, 50);
 
     }
 

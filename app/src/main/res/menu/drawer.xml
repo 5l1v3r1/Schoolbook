@@ -20,6 +20,12 @@
             android:title="Materie" />
 
         <item
+            android:id="@+id/argomenti"
+            android:icon="@drawable/ic_art_track_white_24dp"
+            android:tint="#e9d439"
+            android:title="Argomenti" />
+
+        <item
             android:id="@+id/agenda"
             android:icon="@drawable/ic_event_note_white_24dp"
             android:tint="#e99139"
@@ -51,6 +57,12 @@
                         android:id="@+id/about"
                         android:icon="@drawable/ic_info_white_24dp"
                         android:title="About" />
+
+                    <item
+                        android:id="@+id/feedback"
+                        android:icon="@drawable/ic_feedback"
+                        android:title="Feedback" />
+
                 </group>
             </menu>
 

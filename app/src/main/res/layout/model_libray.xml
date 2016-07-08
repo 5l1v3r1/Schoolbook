@@ -38,7 +38,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Simbiose"
             android:id="@+id/txt_creator_library"
-            android:textSize="26dp"
+            android:textSize="20dp"
             android:layout_alignTop="@+id/img_icon"
             android:layout_toRightOf="@+id/img_icon"
             android:layout_toEndOf="@+id/img_icon"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:text="che ha sviluppato"
             android:id="@+id/textView16"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:gravity="bottom"
             android:layout_below="@+id/txt_creator_library"
             android:layout_alignLeft="@+id/txt_creator_library"
@@ -64,6 +64,6 @@
             android:layout_below="@+id/textView16"
             android:layout_toRightOf="@+id/img_icon"
             android:layout_toEndOf="@+id/img_icon"
-            android:textSize="20dp" />
+            android:textSize="14dp" />
     </LinearLayout>
 </RelativeLayout>

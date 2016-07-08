@@ -22,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.marco.marplex.schoolbook.models.Obiettivo;
@@ -37,6 +36,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import lecho.lib.hellocharts.gesture.ContainerScrollType;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
@@ -80,6 +80,9 @@ public class Materia extends AppCompatActivity{
 
         Bundle b = getIntent().getExtras();
         scrollView.setSmoothScrollingEnabled(true);
+        chart.setContainerScrollEnabled(false, ContainerScrollType.HORIZONTAL);
+        chart.setContainerScrollEnabled(false, ContainerScrollType.VERTICAL);
+        chart.setZoomEnabled(false);
 
         scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
@@ -134,7 +137,7 @@ public class Materia extends AppCompatActivity{
 
             List<PointValue> values = new ArrayList<PointValue>();
             for (int j = 0; j < nOfVotes; ++j) {
-                values.add(new PointValue(j, (float)Votes.getNumericalVoteByString(materiaVoti.get(j).voto)));
+                values.add(new PointValue(j, (float)Votes.getNumericalVoteByString(materiaVoti.get(j).voto)).setLabel(materiaVoti.get(j).voto));
             }
 
             Line line = new Line(values);
@@ -150,11 +153,10 @@ public class Materia extends AppCompatActivity{
         }
 
         LineChartData data = new LineChartData(lines);
-
         data.setAxisXBottom(null);
         data.setAxisYLeft(null);
 
-        data.setBaseValue(Float.NEGATIVE_INFINITY);
+        data.setBaseValue(1);
         chart.setLineChartData(data);
 
         double sumScritto = 0;
@@ -280,8 +282,7 @@ public class Materia extends AppCompatActivity{
             while (voteToGet > 10) {
                 votesToGet.add(10.0);
                 if(index > 8){
-                    Toast.makeText(this, "Impossibile recuperare questa materia", Toast.LENGTH_LONG).show();
-                    Log.d("sdsdsdsdsdsdsd", "showAndConfigureObjective: CIAO");
+                    Snackbar.make(mAddObjective, "Impossibile raggiungere questo obbiettivo.", Snackbar.LENGTH_SHORT).show();
                     break;
                 }
                 tmpSum += votesToGet.get(votesToGet.size()-1);
@@ -304,8 +305,6 @@ public class Materia extends AppCompatActivity{
         }else {
             mObjectiveTitleText.setText("Devi prendere almeno un " + savedVote);
         }
-
-        Log.d("sdsd", "showAndConfigureObjective: "+votesToGet);
     }
 
     private void setLayoutForDialog(Dialog dialog, View view){

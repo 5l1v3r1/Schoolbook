@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimary">#2196f3</color>
     <color name="colorPrimaryDark">#1976d2</color>
 
     <color name="colorPrimaryGreen">#8bc34a</color>
@@ -17,6 +17,9 @@
 
     <color name="colorPrimaryAmber">#FFC107</color>
     <color name="colorPrimaryDarkAmber">#FFA000</color>
+    
+    <color name="colorPrimaryPurple">#9C27B0</color>
+    <color name="colorPrimaryDarkPurple">#7B1FA2</color>
 
     <color name="colorAccent">#03A9F4</color>
     <color name="white">#FFFFFF</color>

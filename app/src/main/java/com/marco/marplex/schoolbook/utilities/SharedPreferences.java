@@ -57,6 +57,10 @@ public class SharedPreferences {
         editor.commit();
     }
 
+    public static boolean keyExist(Context c, String prefName, String key){
+        return c.getSharedPreferences(prefName, 0).contains(key);
+    }
+
     public static void remove(Context c, String prefName, String key) {
         android.content.SharedPreferences settings = c.getSharedPreferences(prefName, 0);
         if (settings.contains(key)) {
