@@ -30,6 +30,7 @@ Pull requests are welcome.
 
 ## License
 Schoolbook is released under Apache License Version 2.0
+
     Copyright 2016 Marco Cimolai
 
     Licensed under the Apache License, Version 2.0 (the "License");
