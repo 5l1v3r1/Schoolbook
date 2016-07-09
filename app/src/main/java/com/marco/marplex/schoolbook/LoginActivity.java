@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Bind(R.id.input_codice_utente) EditText mUtente;
     @Bind(R.id.input_password) EditText mPassword;
+    @Bind(R.id.input_codice_scuola) EditText mSchoolCode;
     @Bind(R.id.fabLogin) FloatingActionButton mFabLogin;
     @Bind(R.id.login_title) TextView mTitle;
     @Bind(R.id.red_bg) RelativeLayout reveal;
@@ -37,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.progress) DilatingDotsProgressBar mProgress;
 
     String mUser,mPass, mSession;
-    String mName, mPw;
+    String mName, mPw, mCode;
 
     ClassevivaLoginCallback mCallback;
     ClassevivaCaller mLogin;
@@ -125,9 +126,10 @@ public class LoginActivity extends AppCompatActivity {
                 //Name and pw now have the relative edittexts values
                 mName = mUtente.getText().toString();
                 mPw = mPassword.getText().toString();
+                mCode = mSchoolCode.getText().toString();
 
                 //Create an instance of ClassevivaCaller
-                mLogin = new ClassevivaCaller(mName, mPw, mCallback, LoginActivity.this);
+                mLogin = new ClassevivaCaller(mName, mPw, mCode, mCallback, LoginActivity.this);
                 //Perform login which return its  value in the callback
                 mLogin.doLogin();
 

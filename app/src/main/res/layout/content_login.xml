@@ -79,6 +79,27 @@
 
                     </android.support.design.widget.TextInputLayout>
 
+                    <android.support.design.widget.TextInputLayout
+                        android:theme="@style/FloatingEditText"
+                        android:id="@+id/code"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/input_codice_scuola"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="Codice scuola"
+                            android:text="PNIT0003"
+                            android:textColor="@color/white"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textSize="30dp">
+
+                        </EditText>
+
+                    </android.support.design.widget.TextInputLayout>
+
                 </LinearLayout>
             </RelativeLayout>
 

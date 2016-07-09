@@ -49,7 +49,7 @@ public class ClassevivaCaller {
     ClassevivaLoginCallback mClassevivaLoginCallback;
     ClassevivaCallback mCallback;
 
-    String mUser, mPassword;
+    String mUser, mPassword, mCode;
     Context c;
 
     OkHttpClient client;
@@ -65,9 +65,10 @@ public class ClassevivaCaller {
      * @param c  Activity context
      *
      */
-    public ClassevivaCaller(String username, String password, ClassevivaLoginCallback classevivaLoginCallback, Context c){
+    public ClassevivaCaller(String username, String password, String code, ClassevivaLoginCallback classevivaLoginCallback, Context c){
         this.mUser = username;
         this.mPassword = password;
+        this.mCode = code;
         this.c = c;
         this.mClassevivaLoginCallback = classevivaLoginCallback;
         this.client = new OkHttpClient();
@@ -76,6 +77,7 @@ public class ClassevivaCaller {
     public ClassevivaCaller(ClassevivaCallback callback, Context context) {
         this.mCallback = callback;
         this.mUser = Credentials.getName(context);
+        this.mCode = Credentials.getCode(context);
         this.mPassword = Credentials.getPassword(context);
         this.client = new OkHttpClient();
         this.c = context;
@@ -108,7 +110,7 @@ public class ClassevivaCaller {
     public void doLogin() {
         //Perform new HTTP call
         try {
-            run(BASE_PATH + "PNIT0003/" + mUser + "/" + mPassword,
+            run(BASE_PATH + mCode + "/" + mUser + "/" + mPassword,
                     new EndpointsCallback() {
                 @Override
                 public void onResponse(String json) {
@@ -117,7 +119,7 @@ public class ClassevivaCaller {
                         JSONObject object = new JSONObject(json);
                         success = object.getString("status").equals("OK") ? true : false;
 
-                        if(success) Credentials.saveCredentials(c, mUser, mPassword, object.getString("sessionId"));
+                        if(success) Credentials.saveCredentials(c, mUser, mPassword, mCode, object.getString("sessionId"));
 
                     }catch (JSONException e){ //Value cannot be converted to a JSONObject
                         success = false;
@@ -471,7 +473,7 @@ public class ClassevivaCaller {
 
         //Perform new HTTP call
         try {
-            run(BASE_PATH + "PNIT0003/" + mUser + "/" + mPassword,
+            run(BASE_PATH + mCode + "/" + mUser + "/" + mPassword,
                     new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
@@ -479,7 +481,7 @@ public class ClassevivaCaller {
                         JSONObject object = new JSONObject(json);
 
                         boolean success = object.getString("status").equals("OK") ? true : false;
-                        if (success) Credentials.saveCredentials(c, mUser, mPassword, object.getString("sessionId"));
+                        if (success) Credentials.saveCredentials(c, mUser, mPassword, mCode,  object.getString("sessionId"));
 
                         method.invoke(ClassevivaCaller.this);
                     }catch (JSONException e) { e.printStackTrace();  }
@@ -497,7 +499,7 @@ public class ClassevivaCaller {
 
         //Perform new HTTP call
         try {
-            run(BASE_PATH + "PNIT0003/" + mUser + "/" + mPassword,
+            run(BASE_PATH + mCode + "/" + mUser + "/" + mPassword,
                     new EndpointsCallback() {
                         @Override
                         public void onResponse(String json){
@@ -505,7 +507,7 @@ public class ClassevivaCaller {
                                 JSONObject object = new JSONObject(json);
 
                                 boolean success = object.getString("status").equals("OK") ? true : false;
-                                if (success) Credentials.saveCredentials(c, mUser, mPassword, object.getString("sessionId"));
+                                if (success) Credentials.saveCredentials(c, mUser, mPassword, mCode, object.getString("sessionId"));
 
                                 mCallback.onResponse(null);
                                 System.out.println("New SESSION");
