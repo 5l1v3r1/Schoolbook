@@ -24,14 +24,12 @@ public class VoteDialogActivity extends AppCompatActivity {
 
         setTitle(Votes.getVotesByGrade(this, intent.getIntExtra("vote", 8)).size() + " voti");
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame, new VoteFragment() {
+        VoteFragment fragment = new VoteFragment() {
             @Override public void init() {
                 //Find the current period
                 if(Votes.getVotesByPeriod(getContext(), 2) == null || Votes.getVotesByPeriod(getContext(), 2).size() == 0){
                     mPeriod = 1;
                 }else mPeriod = 2;
-
                 mSwipe.setEnabled(false);
             }
             @Override public void ordina() {  }
@@ -40,7 +38,10 @@ public class VoteDialogActivity extends AppCompatActivity {
             @Override public ArrayList<Voto> getData(){
                 return Votes.getVotesByGrade(getContext(), intent.getIntExtra("vote", 8));
             }
-        });
+        };
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame, fragment);
         transaction.commit();
     }
 }
