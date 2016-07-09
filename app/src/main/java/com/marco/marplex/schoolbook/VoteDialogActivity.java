@@ -21,27 +21,34 @@ public class VoteDialogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vote_dialog);
 
         intent = getIntent();
+        DialogVoteFragment fragment = new DialogVoteFragment();
+        Bundle b = new Bundle();
+        b.putInt("vote", intent.getIntExtra("vote", 8));
+        fragment.setArguments(b);
 
         setTitle(Votes.getVotesByGrade(this, intent.getIntExtra("vote", 8)).size() + " voti");
-
-        VoteFragment fragment = new VoteFragment() {
-            @Override public void init() {
-                //Find the current period
-                if(Votes.getVotesByPeriod(getContext(), 2) == null || Votes.getVotesByPeriod(getContext(), 2).size() == 0){
-                    mPeriod = 1;
-                }else mPeriod = 2;
-                mSwipe.setEnabled(false);
-            }
-            @Override public void ordina() {  }
-            @Override public void eliminaOrdine() { }
-            @Override public void onResponse(ArrayList<Voto> list) { mSwipe.setRefreshing(false); }
-            @Override public ArrayList<Voto> getData(){
-                return Votes.getVotesByGrade(getContext(), intent.getIntExtra("vote", 8));
-            }
-        };
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame, fragment);
         transaction.commit();
+    }
+}
+
+class DialogVoteFragment extends VoteFragment{
+
+    @Override public void init() {
+        //Find the current period
+        if(Votes.getVotesByPeriod(getContext(), 2) == null || Votes.getVotesByPeriod(getContext(), 2).size() == 0){
+            mPeriod = 1;
+        }else mPeriod = 2;
+        mSwipe.setEnabled(false);
+    }
+    @Override public void ordina() {  }
+    @Override public void eliminaOrdine() { }
+    @Override public void onResponse(ArrayList<Voto> list) { mSwipe.setRefreshing(false); }
+    @Override public ArrayList<Voto> getData(){
+        int grade = getArguments().getInt("vote", 8);
+
+        return Votes.getVotesByGrade(getContext(), grade);
     }
 }
