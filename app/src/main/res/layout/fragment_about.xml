@@ -1,0 +1,260 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.marco.marplex.schoolbook.fragments.AboutFragment">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="0dp"
+                android:layout_marginTop="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="L&apos;applicazione è stata sviluppata da Marco Cimolai, studente dell'Istituto tecnico settore tecnologico J.F.Kennedy di Pordenone"
+                        android:id="@+id/textView12"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:layout_toRightOf="@+id/imageView2"
+                        android:layout_toEndOf="@+id/imageView2"
+                        android:layout_alignParentTop="true"
+                        android:textIsSelectable="false"
+                        android:textSize="16sp"
+                        android:textColor="#424242" />
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="300dp"
+                        android:id="@+id/imageView2"
+                        android:src="@mipmap/ic_launcher"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:padding="10dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignBottom="@+id/textView12"
+                        android:scaleType="center" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:onClick="showPlayStore"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="0dp"
+                android:layout_marginTop="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Se hai tempo, vota l'app sul PlayStore e suggerisci nuove aggiunte che vorresti vedere in futuro!"
+                        android:id="@+id/textView50"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:layout_toRightOf="@+id/imageView88"
+                        android:layout_alignParentTop="true"
+                        android:textSize="16sp"
+                        android:textColor="#424242" />
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imageView88"
+                        android:src="@drawable/favorite"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:padding="10dp"
+                        android:layout_alignBottom="@+id/textView50"
+                        android:layout_alignParentTop="true"
+                        android:scaleType="fitCenter" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                android:onClick="showGithub"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="0dp"
+                android:layout_marginTop="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Schoolbook è open source! L&apos;intero codice lo puoi trovare su GitHub. Qualsiasi aggiunta o modifica che apporterai all'applicazione sarà benvenuta."
+                        android:id="@+id/textView13"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:layout_toRightOf="@+id/imageView3"
+                        android:layout_toEndOf="@+id/imageView3"
+                        android:layout_alignParentTop="true"
+                        android:textSize="16sp"
+                        android:textColor="#424242" />
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="300dp"
+                        android:id="@+id/imageView3"
+                        android:src="@drawable/github"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:padding="10dp"
+                        android:layout_alignBottom="@+id/textView13"
+                        android:layout_alignParentTop="true" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:onClick="shareApp"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="0dp"
+                android:layout_marginTop="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Condividi Schoolbook ai tuoi amici o compagni di classe. Aiuta anche tu a far crescere questa applicazione!"
+                        android:id="@+id/textView65"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:layout_alignParentTop="true"
+                        android:textIsSelectable="false"
+                        android:textSize="16sp"
+                        android:textColor="#424242" />
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="0dp"
+                android:layout_marginTop="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Arguments, Intro and Reminds' icons are made by Madebyoliver and Freepik from www.flaticon.com"
+                        android:id="@+id/textView15"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:layout_toRightOf="@+id/imageView4"
+                        android:layout_toEndOf="@+id/imageView4"
+                        android:layout_alignParentTop="true"
+                        android:textSize="16sp"
+                        android:textColor="#424242" />
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imageView4"
+                        android:src="@drawable/flask"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:padding="10dp"
+                        android:layout_alignBottom="@+id/textView15"
+                        android:layout_alignParentTop="true"
+                        android:scaleType="fitCenter" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="0dp"
+                android:layout_marginTop="10dp">
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Grazie anche a"
+                        android:textSize="20dp"
+                        android:padding="10dp"
+                        android:textColor="@color/colorPrimary"
+                        android:gravity="center"
+                        android:id="@+id/textView14" />
+
+                    <LinearLayout
+                        android:id="@+id/lib_list"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</FrameLayout>

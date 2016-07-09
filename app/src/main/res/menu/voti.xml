@@ -2,8 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/ordina" android:title="Ordina"
+    <item android:id="@+id/ordina" android:title="Filtra"
         android:orderInCategory="100" app:showAsAction="never" />
+
     <item android:id="@+id/elimina_filtro" android:title="Elimina filtro"
         android:orderInCategory="101" app:showAsAction="never" />
 

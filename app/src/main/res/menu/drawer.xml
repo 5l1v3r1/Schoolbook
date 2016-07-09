@@ -9,26 +9,65 @@
 
         <item
             android:id="@+id/voti"
-            android:icon="@mipmap/ic_voti"
+            android:icon="@drawable/ic_school_white_24dp"
             android:tint="#d130cc4f"
             android:title="Voti" />
 
         <item
             android:id="@+id/materie"
-            android:icon="@mipmap/ic_verifiche"
+            android:icon="@drawable/ic_format_list_bulleted_white_24dp"
             android:tint="#e9d439"
             android:title="Materie" />
 
         <item
+            android:id="@+id/argomenti"
+            android:icon="@drawable/ic_art_track_white_24dp"
+            android:tint="#e9d439"
+            android:title="Argomenti" />
+
+        <item
             android:id="@+id/agenda"
-            android:icon="@mipmap/ic_verifiche"
+            android:icon="@drawable/ic_event_note_white_24dp"
             android:tint="#e99139"
             android:title="Agenda" />
 
         <item
             android:id="@+id/circolari"
-            android:icon="@mipmap/ic_circolari"
-            android:tint="#dbff2200"
+            android:icon="@drawable/ic_assignment_white_24dp"
+            android:tint="#e99139"
             android:title="Circolari" />
+
+        <item
+            android:id="@+id/note"
+            android:icon="@drawable/ic_mood_bad_white_24dp"
+            android:tint="#e99139"
+            android:title="Note" />
+
+        <item
+            android:id="@+id/nav_subheader_impostazioni"
+            android:title="Impostazioni">
+
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/settings"
+                        android:icon="@drawable/ic_settings_white_24dp"
+                        android:title="Impostazioni" />
+                    <item
+                        android:id="@+id/about"
+                        android:icon="@drawable/ic_info_white_24dp"
+                        android:title="About" />
+
+                    <item
+                        android:id="@+id/feedback"
+                        android:icon="@drawable/ic_feedback"
+                        android:title="Feedback" />
+
+                </group>
+            </menu>
+
+
+        </item>
+
     </group>
 </menu>
