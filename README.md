@@ -1,4 +1,5 @@
 ![Header image](art/header.png)
+[![Build Status](https://travis-ci.org/Marplex/Schoolbook.svg?branch=dev)](https://travis-ci.org/Marplex/Schoolbook)
 # Welcome to Schoolbook
 Schoolbook is an app that simplify your school organization.
 It connects with ClasseViva online register and shows your datas *beautifully* and *simply*.
