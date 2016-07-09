@@ -10,14 +10,12 @@ import com.marco.marplex.schoolbook.utilities.Votes;
 
 public class VoteDialogActivity extends AppCompatActivity {
 
-    Intent intent;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vote_dialog);
 
-        intent = getIntent();
+        Intent intent = getIntent();
         DialogVoteFragment fragment = new DialogVoteFragment();
         Bundle b = new Bundle();
         b.putInt("vote", intent.getIntExtra("vote", 8));
