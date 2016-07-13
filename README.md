@@ -25,6 +25,7 @@ It connects with ClasseViva online register and shows your datas *beautifully* a
 * Reminds will help you with your homeworks, prepare your schoolbag and organize your day for tests
 * Votes' analysis and statistics tools
 * Classroom's online chat
+* Add a diary where you can add notes and homeworks
 * File section
 
 ##Contributing
