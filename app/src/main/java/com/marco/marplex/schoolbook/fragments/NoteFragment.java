@@ -50,7 +50,7 @@ public class NoteFragment extends DrawerFragment implements ClassevivaCallback<N
         mList.setHasFixedSize(true);
         mList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if(Notes.getSavedNotes(getContext()).size() == 0){
+        if(Notes.getSavedNotes(getContext()) == null || Notes.getSavedNotes(getContext()).size() == 0){
             viewSwith.setVisibility(View.VISIBLE);
         }else viewSwith.setVisibility(View.GONE);
 

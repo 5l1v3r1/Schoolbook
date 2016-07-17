@@ -90,7 +90,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:textColor="#000"
-                                android:hint="Eventuali bug o problemi"
+                                android:hint="Suggerisci nuove aggiunte o riporta bug e problemi che hai riscontrato"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium">
 
                             </EditText>

@@ -1,7 +1,6 @@
 package com.marco.marplex.schoolbook.connections;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
@@ -49,7 +48,7 @@ public class ClassevivaCaller {
     ClassevivaLoginCallback mClassevivaLoginCallback;
     ClassevivaCallback mCallback;
 
-    String mUser, mPassword, mCode;
+    String mUser, mPassword;
     Context c;
 
     OkHttpClient client;
@@ -65,10 +64,9 @@ public class ClassevivaCaller {
      * @param c  Activity context
      *
      */
-    public ClassevivaCaller(String username, String password, String code, ClassevivaLoginCallback classevivaLoginCallback, Context c){
+    public ClassevivaCaller(String username, String password, ClassevivaLoginCallback classevivaLoginCallback, Context c){
         this.mUser = username;
         this.mPassword = password;
-        this.mCode = code;
         this.c = c;
         this.mClassevivaLoginCallback = classevivaLoginCallback;
         this.client = new OkHttpClient();
@@ -77,7 +75,6 @@ public class ClassevivaCaller {
     public ClassevivaCaller(ClassevivaCallback callback, Context context) {
         this.mCallback = callback;
         this.mUser = Credentials.getName(context);
-        this.mCode = Credentials.getCode(context);
         this.mPassword = Credentials.getPassword(context);
         this.client = new OkHttpClient();
         this.c = context;
@@ -110,18 +107,19 @@ public class ClassevivaCaller {
     public void doLogin() {
         //Perform new HTTP call
         try {
-            run(BASE_PATH + mCode + "/" + mUser + "/" + mPassword,
+            run(BASE_PATH + mUser + "/" + mPassword + "/login",
                     new EndpointsCallback() {
                 @Override
                 public void onResponse(String json) {
                     boolean success;
                     try {
                         JSONObject object = new JSONObject(json);
-                        success = object.getString("status").equals("OK") ? true : false;
+                        success = object.getString("status").equals("OK");
 
-                        if(success) Credentials.saveCredentials(c, mUser, mPassword, mCode, object.getString("sessionId"));
+                        if(success) Credentials.saveCredentials(c, mUser, mPassword, object.getString("sessionId"));
 
-                    }catch (JSONException e){ //Value cannot be converted to a JSONObject
+                    }catch (JSONException e){
+                        //Value cannot be converted to a JSONObject
                         success = false;
                     }
 
@@ -144,15 +142,7 @@ public class ClassevivaCaller {
                     new EndpointsCallback() {
                 @Override public void onResponse(String json){
                     try {
-                        if( json.equals("{}") || json.startsWith("<") ){
-                            //Set credentials from storage
-                            ClassevivaCaller.this.mUser = Credentials.getName(c);
-                            ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
-
-                            //Get a new session re-performing login
-                            newSession(ClassevivaCaller.class.getMethod("getVotes", null));
-                            return;
-                        }
+                        if(!checkStatus(json, ClassevivaCaller.class.getMethod("getVotes", null))) return;
 
                         ArrayList<String> subjects = new ArrayList<>();
                         ArrayList<String> subjectsNormal = new ArrayList<>();
@@ -214,23 +204,11 @@ public class ClassevivaCaller {
             run(url, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
-                    if(!json.startsWith("[")){
-                        //Set credentials from storage
-                        ClassevivaCaller.this.mUser = Credentials.getName(c);
-                        ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
-
-                        //Get a new session re-performing login
-                        try {
-                            newSession(ClassevivaCaller.class.getMethod("getAgenda", null));
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
-
-                        return;
-                    }
-                    ArrayList<Evento> events = new ArrayList<>();
-
                     try {
+                        if(!checkStatus(json, ClassevivaCaller.class.getMethod("getAgenda", null))) return;
+
+                        ArrayList<Evento> events = new ArrayList<>();
+
                         JSONArray jsonArray = new JSONArray(json);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -255,6 +233,8 @@ public class ClassevivaCaller {
                         e.printStackTrace();
                     } catch (ParseException e) {
                         e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -273,30 +253,18 @@ public class ClassevivaCaller {
             run(url, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
-                    if(json.equals("[]")){
-                        //Set credentials from storage
-                        ClassevivaCaller.this.mUser = Credentials.getName(c);
-                        ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
-
-                        //Get a new session re-performing login
-                        try {
-                            newSession(ClassevivaCaller.class.getMethod("getSchoolComunication", null));
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
-
-                        return;
-                    }
-                    ArrayList<Comunication> comunications = new ArrayList<>();
-
                     try {
+                        if(!checkStatus(json, ClassevivaCaller.class.getMethod("getSchoolComunication", null))) return;
+
+                        ArrayList<Comunication> comunications = new ArrayList<>();
+
                         JSONArray jsonArray = new JSONArray(json);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
                             int id = jsonObject.getInt("id");
                             String date = jsonObject.getString("date");
-                            String title = jsonObject.getString("title").replaceAll("\n","");
+                            String title = jsonObject.getString("title");
                             String link = jsonObject.getString("url");
 
                             comunications.add(new Comunication(id, title, date, link));
@@ -305,6 +273,8 @@ public class ClassevivaCaller {
                         mCallback.onResponse(comunications);
 
                     } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
                         e.printStackTrace();
                     }
                 }
@@ -324,31 +294,18 @@ public class ClassevivaCaller {
             run(url, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
-                    if(json.contains("Session error")){
-                        //Set credentials from storage
-                        ClassevivaCaller.this.mUser = Credentials.getName(c);
-                        ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
-
-                        //Get a new session re-performing login
-                        try {
-                            newSession(ClassevivaCaller.class.getMethod("getNotes", null));
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
-
-                        return;
-                    }
-                    ArrayList<Note> notes = new ArrayList<>();
-
                     try {
+                        if(!checkStatus(json, ClassevivaCaller.class.getMethod("getNotes", null))) return;
+                        ArrayList<Note> notes = new ArrayList<>();
+
                         JSONArray jsonArray = new JSONArray(json);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                            String date = jsonObject.getString("date").replaceAll("\n","").replaceAll("-", "/");
-                            String prof = jsonObject.getString("prof").replaceAll("\n","");
-                            String note = jsonObject.getString("note").replaceAll("\n","");
-                            String type = jsonObject.getString("type").replaceAll("\n","");
+                            String date = jsonObject.getString("date").replaceAll("-", "/");
+                            String prof = jsonObject.getString("prof");
+                            String note = jsonObject.getString("note");
+                            String type = jsonObject.getString("type");
 
                             notes.add(new Note(prof, date, type, note));
                         }
@@ -356,6 +313,8 @@ public class ClassevivaCaller {
                         mCallback.onResponse(notes);
 
                     } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
                         e.printStackTrace();
                     }
                 }
@@ -375,30 +334,16 @@ public class ClassevivaCaller {
             run(url, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
-                    if(json.contains("Session error")){
-                        //Set credentials from storage
-                        ClassevivaCaller.this.mUser = Credentials.getName(c);
-                        ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
-
-                        //Get a new session re-performing login
-                        try {
-                            newSession(ClassevivaCaller.class.getMethod("getArguments", null));
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
-
-                        return;
-                    }
-
-                    ArrayList<Argument> argumentArray = new ArrayList();
-
                     try {
+                        if(!checkStatus(json, ClassevivaCaller.class.getMethod("getArguments", null))) return;
+                        ArrayList<Argument> argumentArray = new ArrayList();
+
                         JSONArray jsonArray = new JSONArray(json);
                         for(int i = 0; i < jsonArray.length(); i++){
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String teacher = jsonObject.getString("teacher").replaceAll("\n", "");
-                            String date = jsonObject.getString("date").replaceAll("-","/");
-                            String content = jsonObject.getString("content").replaceAll("\n", "");
+                            String teacher = jsonObject.getString("teacher");
+                            String date = jsonObject.getString("date");
+                            String content = jsonObject.getString("content");
 
                             Argument argument = new Argument(date, teacher, content);
                             argumentArray.add(argument);
@@ -407,6 +352,8 @@ public class ClassevivaCaller {
                         mCallback.onResponse(argumentArray);
 
                     } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
                         e.printStackTrace();
                     }
                 }
@@ -426,28 +373,13 @@ public class ClassevivaCaller {
             run(url, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
-                    if(json.contains("error")){
-                        //Set credentials from storage
-                        ClassevivaCaller.this.mUser = Credentials.getName(c);
-                        ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
-
-                        //Get a new session re-performing login
-                        try {
-                            newSession(ClassevivaCaller.class.getMethod("getUser", null));
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
-
-                        return;
-                    }
-                    ArrayList<String[]> userArray = new ArrayList<>();
-
                     try {
+                        if(!checkStatus(json, ClassevivaCaller.class.getMethod("getUser", null))) return;
+                        ArrayList<String[]> userArray = new ArrayList<>();
+
                         JSONObject jsonObject = new JSONObject(json);
                         String school = jsonObject.getString("school");
                         String user = WordUtils.capitalize(jsonObject.getString("name").toLowerCase());
-                        Log.d(TAG, "onResponse: "+school);
-                        Log.d(TAG, "onResponse: "+user);
                         String[] array = new String[]{
                                 school,
                                 user
@@ -457,6 +389,8 @@ public class ClassevivaCaller {
                         mCallback.onResponse(userArray);
 
                     } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
                         e.printStackTrace();
                     }
                 }
@@ -473,7 +407,7 @@ public class ClassevivaCaller {
 
         //Perform new HTTP call
         try {
-            run(BASE_PATH + mCode + "/" + mUser + "/" + mPassword,
+            run(BASE_PATH + mUser + "/" + mPassword + "/login",
                     new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
@@ -481,7 +415,7 @@ public class ClassevivaCaller {
                         JSONObject object = new JSONObject(json);
 
                         boolean success = object.getString("status").equals("OK") ? true : false;
-                        if (success) Credentials.saveCredentials(c, mUser, mPassword, mCode,  object.getString("sessionId"));
+                        if (success) Credentials.saveCredentials(c, mUser, mPassword,  object.getString("sessionId"));
 
                         method.invoke(ClassevivaCaller.this);
                     }catch (JSONException e) { e.printStackTrace();  }
@@ -499,7 +433,7 @@ public class ClassevivaCaller {
 
         //Perform new HTTP call
         try {
-            run(BASE_PATH + mCode + "/" + mUser + "/" + mPassword,
+            run(BASE_PATH + mUser + "/" + mPassword + "/login",
                     new EndpointsCallback() {
                         @Override
                         public void onResponse(String json){
@@ -507,14 +441,34 @@ public class ClassevivaCaller {
                                 JSONObject object = new JSONObject(json);
 
                                 boolean success = object.getString("status").equals("OK") ? true : false;
-                                if (success) Credentials.saveCredentials(c, mUser, mPassword, mCode, object.getString("sessionId"));
+                                if (success) Credentials.saveCredentials(c, mUser, mPassword, object.getString("sessionId"));
 
                                 mCallback.onResponse(null);
-                                System.out.println("New SESSION");
                             }catch (JSONException e) { e.printStackTrace();  }
                         }
                     });
         } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    /**
+     * Check if the status of the response is good.
+     * Otherwise, get a new session and a new request.
+     *
+     * @param body The response text
+     * @param method The method to call after the new session
+     * @return Returns true if status isn't "error"
+     */
+    private boolean checkStatus(String body, Method method){
+        if(body.equals("{\"status\":\"error\"}")){
+            //Set credentials from storage
+            ClassevivaCaller.this.mUser = Credentials.getName(c);
+            ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
+
+            //Get a new session re-performing login
+            newSession(method);
+
+            return false;
+        }else return true;
     }
 
     String getMateria(String materia){

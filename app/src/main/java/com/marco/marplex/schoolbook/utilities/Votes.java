@@ -62,22 +62,25 @@ public class Votes {
     public static ArrayList<Voto> getVotesByRecentDate(Context c, int daysFromNow){
         ArrayList<Voto> votes = Votes.getVotes(c);
         ArrayList<Voto> tmp = new ArrayList<>();
-        for(Voto voto : votes){
-            String date;
-            if(voto.periodo == 1) date = voto.data + "/" + (new GregorianCalendar().get(Calendar.YEAR)-1);
-            else date = voto.data + "/" + (new GregorianCalendar().get(Calendar.YEAR));
+        if(votes != null) {
+            for (Voto voto : votes) {
+                String date;
+                if (voto.periodo == 1)
+                    date = voto.data + "/" + (new GregorianCalendar().get(Calendar.YEAR) - 1);
+                else date = voto.data + "/" + (new GregorianCalendar().get(Calendar.YEAR));
 
-            try {
-                Date voteDate = new SimpleDateFormat("dd/MM/yyy").parse(date);
-                Date currentDate = new Date();
-                Calendar beforeDate = Calendar.getInstance();
+                try {
+                    Date voteDate = new SimpleDateFormat("dd/MM/yyy").parse(date);
+                    Date currentDate = new Date();
+                    Calendar beforeDate = Calendar.getInstance();
 
-                beforeDate.add(Calendar.DAY_OF_MONTH, -daysFromNow);
-                if(voteDate.before(currentDate) && voteDate.after(beforeDate.getTime())){
-                    tmp.add(voto);
-                }else continue;
-            } catch (ParseException e) {
-                e.printStackTrace();
+                    beforeDate.add(Calendar.DAY_OF_MONTH, -daysFromNow);
+                    if (voteDate.before(currentDate) && voteDate.after(beforeDate.getTime())) {
+                        tmp.add(voto);
+                    } else continue;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return tmp;

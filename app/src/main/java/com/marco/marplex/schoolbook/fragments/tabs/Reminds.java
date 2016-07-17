@@ -5,7 +5,6 @@ import android.animation.Animator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -81,10 +80,6 @@ public class Reminds extends PagerFragment implements RecognitionListener{
         mHearingText.setVisibility(View.VISIBLE);
         mHearingText.setAlpha(0f);
 
-        //Animations
-        mRecordButton.startBreathing();
-        startAlphaAnimation();
-
         //Recording
         recognizer = SpeechRecognizer.createSpeechRecognizer(getContext());
         recognizer.setRecognitionListener(this);
@@ -94,15 +89,6 @@ public class Reminds extends PagerFragment implements RecognitionListener{
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "it-IT");
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,5);
         recognizer.startListening(intent);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(mRecordButton.isBreathing())
-                recognizer.stopListening();
-                reset(false);
-            }
-        }, 5500);
 
     }
 
@@ -153,11 +139,17 @@ public class Reminds extends PagerFragment implements RecognitionListener{
     }
 
     @Override public void onReadyForSpeech(Bundle bundle) { }
-    @Override public void onBeginningOfSpeech() { }
+    @Override public void onBeginningOfSpeech() {
+        //Start animations
+        mRecordButton.startBreathing();
+        startAlphaAnimation();
+    }
     @Override public void onRmsChanged(float v) { }
     @Override public void onBufferReceived(byte[] bytes) { }
     @Override public void onPartialResults(Bundle bundle) { }
-    @Override public void onEvent(int i, Bundle bundle) { }
+    @Override public void onEvent(int i, Bundle bundle) {
+
+    }
     @Override public void onError(int i) {
         switch (i) {
             case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
@@ -175,18 +167,11 @@ public class Reminds extends PagerFragment implements RecognitionListener{
         }
     }
 
-    @Override public void onEndOfSpeech() { }
+    @Override public void onEndOfSpeech() {
+
+    }
 
     @Override public void onResults(Bundle bundle) {
-
-        //Stop the animations
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRecordButton.stopBreathing();
-            }
-        }, 1000);
-
         mHearingText.clearAnimation();
 
         //Set text visible
@@ -208,19 +193,16 @@ public class Reminds extends PagerFragment implements RecognitionListener{
         final SpeechParser parser = new SpeechParser(txt, datas, this);
 
         android.os.Handler handler = new android.os.Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(!parser.parseAndGo()){
-                    reset(true);
-                }else{
-                    reset(false);
-                }
-                recognizer.stopListening();
-                recognizer.cancel();
-                recognizer.destroy();
-            }
-        }, 800);
+        if(!parser.parseAndGo()){
+            reset(true);
+        }else{
+            reset(false);
+        }
+
+        recognizer.stopListening();
+        recognizer.cancel();
+        recognizer.destroy();
+
     }
 
     private void reset(boolean slideDownText){
@@ -232,7 +214,7 @@ public class Reminds extends PagerFragment implements RecognitionListener{
         //Reset starting values
         alpha = 1f;
 
-        mHearingText.setVisibility(View.INVISIBLE);
+        mHearingText.setVisibility(View.GONE);
         mHearingText.setAlpha(1f);
 
         float y = rootView.findViewById(R.id.txt_hearing).getTranslationY();

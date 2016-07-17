@@ -87,7 +87,7 @@ public class ArgumentActivity extends AppCompatActivity {
             ClassevivaCaller caller = new ClassevivaCaller(callback, this);
 
             String subject = Subjects.getNormalSubjects(this).get(Subjects.getSubjects(this).indexOf(i.getStringExtra("argument")))
-                    .replaceAll(" ","%20");
+                    .toUpperCase().replaceAll(" ","%20");
             caller.withSubject(subject);
 
             caller.getArguments();

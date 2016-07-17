@@ -44,7 +44,7 @@ public class BreathingActionButton extends FloatingActionButton {
         scaleX = scaleY = 1f;
         setScaleX(1f);
         setScaleY(1f);
-        setAlpha(0f);
+        setAlpha(1f);
         setVisibility(View.VISIBLE);
         setClickable(true);
     }

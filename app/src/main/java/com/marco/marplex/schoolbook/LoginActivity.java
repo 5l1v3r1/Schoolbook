@@ -30,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Bind(R.id.input_codice_utente) EditText mUtente;
     @Bind(R.id.input_password) EditText mPassword;
-    @Bind(R.id.input_codice_scuola) EditText mSchoolCode;
     @Bind(R.id.fabLogin) FloatingActionButton mFabLogin;
     @Bind(R.id.login_title) TextView mTitle;
     @Bind(R.id.red_bg) RelativeLayout reveal;
@@ -38,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.progress) DilatingDotsProgressBar mProgress;
 
     String mUser,mPass, mSession;
-    String mName, mPw, mCode;
+    String mName, mPw;
 
     ClassevivaLoginCallback mCallback;
     ClassevivaCaller mLogin;
@@ -77,6 +76,11 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 }else {
+                    SharedPreferences.saveBoolean(LoginActivity.this, "pref", "first", true);
+                    //Settings enabled by default
+                    SharedPreferences.saveBoolean(LoginActivity.this, "pref", "setting_notification", true);
+                    SharedPreferences.saveBoolean(LoginActivity.this, "pref", "setting_sync", true);
+
                     //Start AppIntroActivity and DashboardActivity
                     Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                     Intent i2 = new Intent(LoginActivity.this, AppIntroActivity.class);
@@ -104,8 +108,12 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             if(!SharedPreferences.loadBoolean(this, "pref", "first")) {
-                //Start AppIntroActivity
                 SharedPreferences.saveBoolean(this, "pref", "first", true);
+                //Settings enabled by default
+                SharedPreferences.saveBoolean(this, "pref", "setting_notification", true);
+                SharedPreferences.saveBoolean(this, "pref", "setting_sync", true);
+
+                //Start AppIntroActivity
                 Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                 Intent i2 = new Intent(LoginActivity.this, AppIntroActivity.class);
                 startActivity(i);
@@ -124,12 +132,11 @@ public class LoginActivity extends AppCompatActivity {
                 animateFab();
 
                 //Name and pw now have the relative edittexts values
-                mName = mUtente.getText().toString();
+                mName = mUtente.getText().toString().toUpperCase();
                 mPw = mPassword.getText().toString();
-                mCode = mSchoolCode.getText().toString();
 
                 //Create an instance of ClassevivaCaller
-                mLogin = new ClassevivaCaller(mName, mPw, mCode, mCallback, LoginActivity.this);
+                mLogin = new ClassevivaCaller(mName, mPw, mCallback, LoginActivity.this);
                 //Perform login which return its  value in the callback
                 mLogin.doLogin();
 

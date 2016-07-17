@@ -14,7 +14,7 @@ public class AppIntroActivity extends IntroActivity {
 
         setButtonBackVisible(true);
         setButtonNextVisible(true);
-        setButtonCtaVisible(true);
+        setButtonCtaVisible(false);
         setButtonCtaTintMode(BUTTON_CTA_TINT_MODE_TEXT);
 
         addSlide(new SimpleSlide.Builder()
