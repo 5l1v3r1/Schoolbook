@@ -1,0 +1,33 @@
+body, html{
+  background-color: white;
+  height: 100%;
+  width:100%;
+}
+.paper-line{
+  position: fixed;
+  background-color: #03A9F4;
+  height: 189px;
+  width: 734px;
+  box-shadow: black 0px 0px 6px;
+  transform: rotate(-45deg);
+  margin-left: -187px;
+  top: 87px;
+}
+body (or container-div) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.center-parent{
+  position: relative;
+}
+.center-child{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.center-bottom-child{
+}
+h1{
+  color: #03A9F4;
+}

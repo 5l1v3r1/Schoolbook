@@ -1,102 +1,130 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html>
   <head>
-    <meta charset="UTF-8">
-    <title>Schoolbook by Marplex</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="js/jquery.color.min.js"></script>
+    <meta charset="utf-8">
+    <title>Schoolbook</title>
   </head>
   <body>
-    <section class="page-header">
-      <h1 class="project-name">Schoolbook</h1>
-      <h2 class="project-tagline">Schoolbook, an open source Classeviva register.</h2>
-      <a href="https://github.com/Marplex/Schoolbook" class="btn">View on GitHub</a>
-      <a href="https://github.com/Marplex/Schoolbook/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/Marplex/Schoolbook/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+    <a href="https://github.com/Marplex/Schoolbook"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+    <div class="container">
 
-    <section class="main-content">
-      <p><img src="art/header.png" alt="Header image"></p>
+      <!-- MAIN FIRST SCREEN -->
+      <main class="center center-parent" style="margin-bottom:50px">
+        <div class="row center-child">
+          <div class="col s12 ">
+            <img src="img/logo.png" width="150px"/>
+            <h1><strong class="bold">Schoolbook</strong></h1>
+            <h1><span class="thin">Un registro elettronico open source non ufficiale per Classeviva</span></h1>
+            <h5></h4>
+          </div>
+        </div>
+      </main>
 
-<p><a href="https://travis-ci.org/Marplex/Schoolbook"><img src="https://travis-ci.org/Marplex/Schoolbook.svg?branch=master" alt="Build Status"></a></p>
+      <div class="row center" style="margin-top: -150px">
+        <a href="https://play.google.com/store/apps/details?id=com.marco.marplex.schoolbook"><img src="img/play_store.png" width="250px" alt="" /></a>
+      </div>
 
-<h1>
-<a id="welcome-to-schoolbook" class="anchor" href="#welcome-to-schoolbook" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome to Schoolbook</h1>
+      <!-- EXPLORE SCHOOLBOOK
+      <main style="top: 150px" class="center-parent">
 
-<p>Schoolbook is an app that simplify your school organization.
-It connects with ClasseViva online register and shows your datas <em>beautifully</em> and <em>simply</em>.</p>
+        <div class="row card-panel blue center" style="margin-left: -30%; margin-right: -30%; margin-bottom:10%">
+          <h5 class="white-text">Scopri Schoolbook</h5>
+        </div>
 
-<h2>
-<a id="schoolbook-supports" class="anchor" href="#schoolbook-supports" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Schoolbook supports:</h2>
+        <div class="center-child">
+          <div class="row">
 
-<ul>
-<li>Calendar</li>
-<li>Votes</li>
-<li>Subjects</li>
-<li>Comunications</li>
-<li>Notes</li>
-<li>Arguments</li>
-</ul>
+            <div class="col s12 m6 l6">
+              <div class="card">
+                <div class="card-image">
+                  <img src="img/background.png">
+                  <span class="card-title black-text">Voti</span>
+                </div>
+                <div class="card-content">
+                  <p>I am a very simple card. I am good at containing small bits of information.
+                  I am convenient because I require little markup to use effectively.</p>
+                </div>
+              </div>
+            </div>
 
-<h2>
-<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+            <div class="col s12 m6 l6">
+              <div class="row center">
+                <div class="col s12 m6 m6">
+                  <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">grade</i></a>
+                  <p>Voti</p>
+                </div>
+                <div class="col s12 m6 m6">
+                  <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">list</i></a>
+                  <p>Materie</p>
+                </div>
+              </div>
+              <div class="row center">
+                <div class="col s12 m4 m4">
+                  <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">today</i></a>
+                  <p>Agenda</p>
+                </div>
+                <div class="col s12 m4 m4">
+                  <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">dashboard</i></a>
+                  <p>Dashboard</p>
+                </div>
+                <div class="col s12 m4 m4">
+                  <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">view_stream</i></a>
+                  <p>Argomenti</p>
+                </div>
+              </div>
+              <div class="row center">
+                <div class="col s12 m6 m6">
+                  <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">assignment</i></a>
+                  <p>Circolari</p>
+                </div>
+                <div class="col s12 m6 m6">
+                  <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">thumbs_up_down</i></a>
+                  <p>Note</p>
+                </div>
+              </div>
+            </div>
 
-<ul>
-<li>Dashboard with last school events</li>
-<li>Reminds assistant (Currently in developing)</li>
-<li>Filter your grades by subject and votes</li>
-<li>Rich detail of subjects with medium, charts and objectives</li>
-<li>Compare the subjects of the first period with those of the second</li>
-<li>Download and view PDF comunications</li>
-</ul>
+          </div>
+        </div>
+      </main>-->
 
-<h2>
-<a id="future-additions" class="anchor" href="#future-additions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Future additions</h2>
+      <script type="text/javascript">
+        //Set height parameter in window's height to each <main> tags
+        $('main').height($( window ).height());
+        $(window).resize(function(){
+          $('main').height($( window ).height());
+        });
 
-<ul>
-<li>Reminds will help you with your homeworks, prepare your schoolbag and organize your day for tests</li>
-<li>Votes' analysis and statistics tools</li>
-<li>Classroom's online chat</li>
-<li>Add a diary where you can add notes and homeworks</li>
-<li>File section</li>
-</ul>
+        //Video click control
+        $("#videoExplore").click(function() {
+          if(this.paused)
+            this.play();
+          else
+            this.pause();
+        });
 
-<h2>
-<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributing</h2>
+        //Body animations
+        $('body').on('color1', function () {
+          $(this).animate({backgroundColor:'#FAFAFA'}, 10000, function(){
+            $(this).trigger('color2');
+          });
+        });
+        $('body').on('color2', function () {
+          $(this).animate({backgroundColor:'#FFFDE7'}, 10000, function(){
+            $(this).trigger('color1');
+          });
+        });
 
-<p>Pull requests are welcome.</p>
-
-<h2>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
-
-<p>Schoolbook is released under Apache License Version 2.0</p>
-
-<pre><code>Copyright 2016 Marco Cimolai
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-</code></pre>
-
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/Marplex/Schoolbook">Schoolbook</a> is maintained by <a href="https://github.com/Marplex">Marplex</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
-
-  
+        $("body").trigger("color2");
+      </script>
+    </div>
   </body>
 </html>
