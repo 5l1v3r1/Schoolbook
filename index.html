@@ -17,7 +17,7 @@
     <div class="container">
 
       <!-- MAIN FIRST SCREEN -->
-      <main class="center center-parent" style="margin-bottom:50px">
+      <main class="center center-parent">
         <div class="row center-child">
           <div class="col s12 ">
             <img src="img/logo.png" width="150px"/>
@@ -28,8 +28,8 @@
         </div>
       </main>
 
-      <div class="row center" style="margin-top: -200px">
-        <a href="https://play.google.com/store/apps/details?id=com.marco.marplex.schoolbook"><img src="img/play_store.png" width="250px" id="playStore" /></a>
+      <div class="row center">
+        <a href="https://play.google.com/store/apps/details?id=com.marco.marplex.schoolbook"><img src="img/play_store.png" width="250px" alt="" /></a>
       </div>
 
       <!-- EXPLORE SCHOOLBOOK
@@ -98,9 +98,9 @@
 
       <script type="text/javascript">
         //Set height parameter in window's height to each <main> tags
-        $('main').height($( window ).height());
+        $('main').height($( window ).height() - 150);
         $(window).resize(function(){
-          $('main').height($( window ).height());
+          $('main').height($( window ).height() - 150);
         });
 
         //Video click control
@@ -109,14 +109,6 @@
             this.play();
           else
             this.pause();
-        });
-        
-        //Play Store link
-        $("#playStore").click(function (){
-          location.href='https://play.google.com/store/apps/details?id=com.marco.marplex.schoolbook';
-        });
-        $("#playStore").hover(function () {
-          $("#playStore").css('cursor', 'pointer');
         });
 
         //Body animations
