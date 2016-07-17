@@ -28,8 +28,8 @@
         </div>
       </main>
 
-      <div class="row center" style="margin-top: -150px">
-        <a href="https://play.google.com/store/apps/details?id=com.marco.marplex.schoolbook"><img src="img/play_store.png" width="250px" alt="" /></a>
+      <div class="row center" style="margin-top: -200px">
+        <a href="https://play.google.com/store/apps/details?id=com.marco.marplex.schoolbook"><img src="img/play_store.png" width="250px" id="playStore" /></a>
       </div>
 
       <!-- EXPLORE SCHOOLBOOK
@@ -109,6 +109,14 @@
             this.play();
           else
             this.pause();
+        });
+        
+        //Play Store link
+        $("#playStore").click(function {
+          location.href='https://play.google.com/store/apps/details?id=com.marco.marplex.schoolbook';
+        });
+        $("#playStore").hover(function {
+          $("#playStore").css('cursor', 'pointer');
         });
 
         //Body animations
