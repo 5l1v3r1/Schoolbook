@@ -56,7 +56,7 @@
 
         <activity android:name=".ChartActivity" />
         <activity android:name=".ArgumentActivity" />
-        <activity android:name=".fragments.FeedbackActivity" />
+        <activity android:name=".FeedbackActivity" />
         <activity
             android:name=".AppIntroActivity"
             android:theme="@style/Theme.Intro" />

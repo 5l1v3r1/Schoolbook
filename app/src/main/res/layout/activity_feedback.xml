@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.marco.marplex.schoolbook.fragments.FeedbackActivity">
+    tools:context=".FeedbackActivity">
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -116,6 +116,22 @@
                 android:layout_height="wrap_content"
                 android:text="La tua opinione su questa applicazione conta davvero tanto.\nMi aiuterà a migliorarla e a renderla adatta a qualsiasi tipologia di utente."
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <TextView
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="NOTA BENE"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <TextView
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Il tuo feedback ANONIMO verrà verificato e reso pubblico alla comunità di GitHub. Puoi vedere tutta la lista andando sulla pagina GitHub di Schoolbook."
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
 
         </LinearLayout>
 

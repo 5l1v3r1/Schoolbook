@@ -1,4 +1,4 @@
-package com.marco.marplex.schoolbook.fragments;
+package com.marco.marplex.schoolbook;
 
 
 import android.app.ProgressDialog;
@@ -13,7 +13,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.marco.marplex.schoolbook.R;
 import com.marco.marplex.schoolbook.utilities.Connection;
 
 import java.io.IOException;
@@ -60,7 +59,7 @@ public class FeedbackActivity extends AppCompatActivity {
             dialog.setIndeterminate(true);
 
             final Request request = new Request.Builder()
-                    .url("http://marcoweb12.altervista.org/schoolbook/addFeedback.php?rate=" + rate + "&bugs=" + bugText.replaceAll(" ", "+"))
+                    .url("http://marcoweb12.altervista.org/schoolbook/addFeedback.php?rate=" + rate + "&bugs=" + bugText.replaceAll(" ", "%20"))
                     .build();
 
             Callback callback = new Callback() {

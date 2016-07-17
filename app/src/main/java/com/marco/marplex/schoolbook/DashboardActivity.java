@@ -28,7 +28,6 @@ import com.marco.marplex.schoolbook.fragments.Agenda;
 import com.marco.marplex.schoolbook.fragments.ArgumentsFragment;
 import com.marco.marplex.schoolbook.fragments.Circolari;
 import com.marco.marplex.schoolbook.fragments.Dashboard;
-import com.marco.marplex.schoolbook.fragments.FeedbackActivity;
 import com.marco.marplex.schoolbook.fragments.Materie;
 import com.marco.marplex.schoolbook.fragments.NoteFragment;
 import com.marco.marplex.schoolbook.fragments.Voti;
