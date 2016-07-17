@@ -1,6 +1,6 @@
 ![Header image](art/header.png)
 
-[![Build Status](https://travis-ci.org/Marplex/Schoolbook.svg?branch=dev)](https://travis-ci.org/Marplex/Schoolbook) [![See feedback](art/feedback_button.png)](http://goo.gl/vGcoUg)
+[![Build Status](https://travis-ci.org/Marplex/Schoolbook.svg?branch=master)](https://travis-ci.org/Marplex/Schoolbook)
 # Welcome to Schoolbook
 Schoolbook is an app that simplify your school organization.
 It connects with ClasseViva online register and shows your datas *beautifully* and *simply*.
@@ -25,6 +25,7 @@ It connects with ClasseViva online register and shows your datas *beautifully* a
 * Reminds will help you with your homeworks, prepare your schoolbag and organize your day for tests
 * Votes' analysis and statistics tools
 * Classroom's online chat
+* Add a diary where you can add notes and homeworks
 * File section
 
 ##Contributing
@@ -32,9 +33,9 @@ Pull requests are welcome.
 
 ## License
 Schoolbook is released under Apache License Version 2.0
-    
+
     Copyright 2016 Marco Cimolai
-    
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
