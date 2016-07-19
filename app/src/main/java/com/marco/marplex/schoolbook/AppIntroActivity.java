@@ -12,14 +12,14 @@ public class AppIntroActivity extends IntroActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setButtonBackVisible(true);
+        setButtonBackVisible(false);
         setButtonNextVisible(true);
         setButtonCtaVisible(false);
         setButtonCtaTintMode(BUTTON_CTA_TINT_MODE_TEXT);
 
         addSlide(new SimpleSlide.Builder()
                 .title("Benvenuto su Schoolbook")
-                .description("Il tuo moderno registro elettronico per Classeviva di Spaggiari Infoschool. ")
+                .description("Il tuo moderno registro elettronico non ufficiale per Classeviva di Spaggiari Infoschool.")
                 .image(R.mipmap.ic_launcher)
                 .background(R.color.colorPrimaryAmber)
                 .backgroundDark(R.color.colorPrimaryDarkAmber)

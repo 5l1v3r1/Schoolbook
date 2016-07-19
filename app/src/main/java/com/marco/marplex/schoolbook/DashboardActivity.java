@@ -286,8 +286,12 @@ public class DashboardActivity extends AppCompatActivity{
 
                                 Snackbar.make(navigationView, "Finito", Snackbar.LENGTH_SHORT).show();
 
+
                                 //Refresh fragment
-                                setContainerFragment(new Dashboard());
+                                if(SharedPreferences.loadBoolean(DashboardActivity.this, "pref", "first"))
+                                    setContainerFragment(new Dashboard());
+
+                                SharedPreferences.saveBoolean(DashboardActivity.this, "pref", "first", true);
                             }
                         });
                     }
@@ -300,9 +304,6 @@ public class DashboardActivity extends AppCompatActivity{
             }
         }else{
             mCanSelect = true;
-
-            //Refresh fragment
-            setContainerFragment(new Dashboard());
         }
     }
 

@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 }else {
-                    SharedPreferences.saveBoolean(LoginActivity.this, "pref", "first", true);
+
                     //Settings enabled by default
                     SharedPreferences.saveBoolean(LoginActivity.this, "pref", "setting_notification", true);
                     SharedPreferences.saveBoolean(LoginActivity.this, "pref", "setting_sync", true);
@@ -107,23 +107,10 @@ public class LoginActivity extends AppCompatActivity {
                 separateThread.start();
             }
 
-            if(!SharedPreferences.loadBoolean(this, "pref", "first")) {
-                SharedPreferences.saveBoolean(this, "pref", "first", true);
-                //Settings enabled by default
-                SharedPreferences.saveBoolean(this, "pref", "setting_notification", true);
-                SharedPreferences.saveBoolean(this, "pref", "setting_sync", true);
-
-                //Start AppIntroActivity
-                Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
-                Intent i2 = new Intent(LoginActivity.this, AppIntroActivity.class);
-                startActivity(i);
-                startActivity(i2);
-                finish();
-            }else{
-                Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
-                startActivity(i);
-                finish();
-            }
+            //Start AppIntroActivity
+            Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+            startActivity(i);
+            finish();
         }
 
         mFabLogin.setOnClickListener(new View.OnClickListener() {
