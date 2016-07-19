@@ -486,6 +486,7 @@ public class ClassevivaCaller {
         else if(materia.contains("scienze")) return "Ginnastica";
         else if(materia.contains("storia")) return "Storia";
         else if(materia.contains("tecnologie e")) return "Tecnica";
+        else if(materia.contains("geografia")) return "Geografia";
         else if(materia.contains("tecnologie") || materia.contains("informatica")) return "Informatica";
         else return materia;
     }

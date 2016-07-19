@@ -59,6 +59,7 @@ public class ArgumentsFragment extends DrawerFragment {
             else if(subject.equals("Storia")) icon = R.drawable.history;
             else if(subject.equals("Tecnica")) icon = R.drawable.compass;
             else if(subject.equals("Informatica")) icon = R.drawable.laptop;
+            else if(subject.equals("Geografia")) icon = R.drawable.worldwide;
             else icon = R.drawable.notebook;
 
             Argument argument = new Argument(icon, subject);
