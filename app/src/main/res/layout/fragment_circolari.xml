@@ -4,11 +4,6 @@
     android:layout_height="match_parent"
     tools:context="com.marco.marplex.schoolbook.fragments.Circolari">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,15 +36,21 @@
                     android:layout_centerHorizontal="true" />
             </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_circolari"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_refresh_layout"
                 android:layout_width="match_parent"
-                android:scrollbars="vertical"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_circolari"
+                    android:layout_width="match_parent"
+                    android:scrollbars="vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_height="match_parent" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
 
         </LinearLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
 
 </FrameLayout>

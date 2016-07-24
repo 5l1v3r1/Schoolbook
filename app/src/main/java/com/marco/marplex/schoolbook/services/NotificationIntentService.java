@@ -89,7 +89,7 @@ public class NotificationIntentService extends IntentService {
                 }
             }
         }, getApplicationContext());
-        mCaller.getVotes();
+        mCaller.getLocalParsedVotes();
     }
 
 }

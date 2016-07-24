@@ -1,6 +1,7 @@
 package com.marco.marplex.schoolbook.connections;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.marco.marplex.schoolbook.interfaces.ClassevivaCallback;
@@ -18,6 +19,9 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +30,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
 import java.util.TreeSet;
 
 import okhttp3.Call;
@@ -42,8 +49,15 @@ import static com.marco.marplex.schoolbook.utilities.Credentials.getPassword;
  */
 public class ClassevivaCaller {
 
-    private final String BASE_PATH = "http://schoolbook-marplex.rhcloud.com/";
+    private final String[] servers = new String[]{
+        "http://schoolbook1.altervista.org/",
+        "http://schoolbook2.altervista.org/",
+        "http://schoolbook3.altervista.org/",
+        "http://schoolbook.x10.mx/"
+    };
+
     protected final String TAG = "Classeviva Login";
+    private final String userAgent = "Mozilla/5.0 (compatible;  MSIE 7.01; Windows NT 5.0)";
 
     ClassevivaLoginCallback mClassevivaLoginCallback;
     ClassevivaCallback mCallback;
@@ -84,13 +98,54 @@ public class ClassevivaCaller {
         this.subject = subject;
     }
 
-    private void run(String url, final EndpointsCallback callback) throws IOException {
+    private void run(final HashMap<String, String> parameters, final EndpointsCallback callback) throws IOException {
+
+        int max = servers.length - 1;
+        int randomNumber = new Random().nextInt(max + 1);
+        String url = mergeUrl(servers[randomNumber], parameters);
 
         final Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        Callback switcherCallback = new Callback() {
+        final Callback switcherCallback = new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                try {
+                    run(parameters, callback);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String body = response.body().string();
+                if (body.startsWith("{") || body.startsWith("[")) callback.onResponse(body);
+                else {
+                    try {
+                        run(parameters, callback);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        client.newCall(request).enqueue(switcherCallback);
+    }
+
+    private void run(String url, final EndpointsCallback callback) throws IOException {
+
+        String session = Credentials.getSession(c);
+        final Request request = new Request.Builder()
+                .url(url)
+                .header("Set-Cookie", "PHPSESSID="+session)
+                .header("Cookie", "PHPSESSID="+session)
+                .header("User-Agent", userAgent)
+                .build();
+
+        final Callback switcherCallback = new Callback() {
             @Override public void onFailure(Call call, IOException e) {}
             @Override public void onResponse(Call call, Response response) throws IOException {
                 String body = response.body().string();
@@ -107,7 +162,11 @@ public class ClassevivaCaller {
     public void doLogin() {
         //Perform new HTTP call
         try {
-            run(BASE_PATH + mUser + "/" + mPassword + "/login",
+            HashMap<String, String> parameters = new HashMap<>();
+            parameters.put("usercode", mUser);
+            parameters.put("password", mPassword);
+            parameters.put("login", "true");
+            run(parameters,
                     new EndpointsCallback() {
                 @Override
                 public void onResponse(String json) {
@@ -138,7 +197,10 @@ public class ClassevivaCaller {
         //Perform new HTTP call
         try {
             String session = Credentials.getSession(c);
-            run(BASE_PATH + session + "/votes",
+            HashMap<String, String> parameters = new HashMap<>();
+            parameters.put("session", session);
+            parameters.put("votes", "true");
+            run(parameters,
                     new EndpointsCallback() {
                 @Override public void onResponse(String json){
                     try {
@@ -195,13 +257,91 @@ public class ClassevivaCaller {
     }
 
     /**
+     * Call classeviva votes page and parse html in local (for notifications)
+     */
+    public void getLocalParsedVotes(){
+
+        try {
+            run("https://web.spaggiari.eu/cvv/app/default/genitori_voti.php", new EndpointsCallback() {
+                @Override
+                public void onResponse(String html) {
+                    Document doc = Jsoup.parse(html);
+                    //Check for expired sesion
+                    if(doc.title().equals("La Scuola del futuro, oggi")){
+                        Log.d(TAG, "getLocalParsedVotes: Ops, new session!");
+                        try {
+                        //Set credentials from storage
+                        ClassevivaCaller.this.mUser = Credentials.getName(c);
+                        ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
+                        //Get a new session re-performing login
+                        newSession(ClassevivaCaller.class.getMethod("getLocalParsedVotes", null));
+                        } catch (NoSuchMethodException e) {e.printStackTrace();}
+                        return;
+                    }
+
+                    //Part of code which fill the votoList with all retrieved votes
+                    String subject = null;
+                    ArrayList<Voto> votes = new ArrayList();
+                    ArrayList<String> subjects = new ArrayList();
+                    ArrayList<String> subjectsNormal = new ArrayList();
+                    int index = 0;
+                    for(Element tr : doc.select("#data_table_2 tr")){
+                        if(index > 2){
+                            String date, vote, type = null;
+                            int period = -1;
+                            boolean special, alreadyAssigned = false;
+                            if(tr.select("td").first().hasClass("registro")){
+                                subject = tr.select("td").get(1).text().replaceAll("\n","");
+                                subjects.add(getMateria(subject));
+                                subjectsNormal.add(subject.substring(0, subject.length()-2));
+                            }else{
+                                //Use the latest subject and find the period
+                                period = tr.select("td").first().text().contains("1") ? 1 : 2;
+                                type = "Scritto/Grafico";
+                                alreadyAssigned = true;
+                            }
+
+                            for(Element td : tr.select("td.registro_voti_dettaglio_voto_piccolo")){
+                                date = td.child(0).text().replaceAll("\n","");
+                                if(date != ""){
+                                    vote = td.child(1).child(0).text();
+                                    special = td.child(1).hasClass("f_reg_voto_dettaglio") ? true : false;
+                                    if(!alreadyAssigned){
+                                        period = td.hasClass("q1") ? 1 : 2;
+                                        if(td.hasClass("voto_1")) type = "Scritto/Grafico";
+                                        else if(td.hasClass("voto_2")) type = "Orale";
+                                        else if(td.hasClass("voto_3")) type = "Pratico";
+                                    }
+
+                                    Voto voto = new Voto(vote, getMateria(subject), date, type, period);
+                                    votes.add(voto);
+                                }
+                            }
+                        }
+                        index++;
+                    }
+
+                    //Save subject in shared preferences and call the interface
+                    SharedPreferences.saveString(c, "materie", "materie", new Gson().toJson(subjects));
+                    SharedPreferences.saveString(c, "materie", "materieNormal", new Gson().toJson(subjectsNormal));
+                    mCallback.onResponse(votes);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Make a request to classeviva for retrieving all events.
      */
     public void getAgenda(){
         String session = Credentials.getSession(c);
-        String url = BASE_PATH + session +"/agenda";
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("session", session);
+        parameters.put("agenda", "true");
         try {
-            run(url, new EndpointsCallback() {
+            run(parameters, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
                     try {
@@ -248,9 +388,11 @@ public class ClassevivaCaller {
      */
     public void getSchoolComunication(){
         String session = Credentials.getSession(c);
-        String url = BASE_PATH + session +"/circolari";
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("session", session);
+        parameters.put("circolari", "true");
         try {
-            run(url, new EndpointsCallback() {
+            run(parameters, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
                     try {
@@ -264,7 +406,7 @@ public class ClassevivaCaller {
 
                             int id = jsonObject.getInt("id");
                             String date = jsonObject.getString("date");
-                            String title = jsonObject.getString("title");
+                            String title = jsonObject.getString("title").replaceAll("&quot;", " ");
                             String link = jsonObject.getString("url");
 
                             comunications.add(new Comunication(id, title, date, link));
@@ -289,9 +431,11 @@ public class ClassevivaCaller {
      */
     public void getNotes(){
         String session = Credentials.getSession(c);
-        String url = BASE_PATH + session +"/note";
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("session", session);
+        parameters.put("note", "true");
         try {
-            run(url, new EndpointsCallback() {
+            run(parameters, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
                     try {
@@ -329,9 +473,12 @@ public class ClassevivaCaller {
      */
     public void getArguments(){
         String session = Credentials.getSession(c);
-        String url = BASE_PATH + session + "/" + subject;
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("session", session);
+        parameters.put("subject", subject);
+        parameters.put("materia", "true");
         try {
-            run(url, new EndpointsCallback() {
+            run(parameters, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
                     try {
@@ -368,9 +515,13 @@ public class ClassevivaCaller {
      */
     public void getUser(){
         String session = Credentials.getSession(c);
-        String url = BASE_PATH + session;
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("session", session);
+        parameters.put("info", "true");
+        //Perform new HTTP call
         try {
-            run(url, new EndpointsCallback() {
+            run(parameters, new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
                     try {
@@ -378,7 +529,7 @@ public class ClassevivaCaller {
                         ArrayList<String[]> userArray = new ArrayList<>();
 
                         JSONObject jsonObject = new JSONObject(json);
-                        String school = jsonObject.getString("school");
+                        String school = jsonObject.getString("scuola");
                         String user = WordUtils.capitalize(jsonObject.getString("name").toLowerCase());
                         String[] array = new String[]{
                                 school,
@@ -406,8 +557,12 @@ public class ClassevivaCaller {
     public void newSession(final Method method) {
 
         //Perform new HTTP call
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("usercode", mUser);
+        parameters.put("password", mPassword);
+        parameters.put("login", "true");
         try {
-            run(BASE_PATH + mUser + "/" + mPassword + "/login",
+            run(parameters,
                     new EndpointsCallback() {
                 @Override
                 public void onResponse(String json){
@@ -432,8 +587,12 @@ public class ClassevivaCaller {
         mPassword = Cripter.decriptString(getPassword(c));
 
         //Perform new HTTP call
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("usercode", mUser);
+        parameters.put("password", mPassword);
+        parameters.put("login", "true");
         try {
-            run(BASE_PATH + mUser + "/" + mPassword + "/login",
+            run(parameters,
                     new EndpointsCallback() {
                         @Override
                         public void onResponse(String json){
@@ -460,6 +619,7 @@ public class ClassevivaCaller {
      */
     private boolean checkStatus(String body, Method method){
         if(body.equals("{\"status\":\"error\"}")){
+            System.out.println("NEW SESSION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             //Set credentials from storage
             ClassevivaCaller.this.mUser = Credentials.getName(c);
             ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
@@ -489,6 +649,17 @@ public class ClassevivaCaller {
         else if(materia.contains("geografia")) return "Geografia";
         else if(materia.contains("tecnologie") || materia.contains("informatica")) return "Informatica";
         else return materia;
+    }
+
+    private String mergeUrl(String url, HashMap<String, String> parameters){
+        String mergedUrl = url + "?";
+        for(Map.Entry<String, String> entry : parameters.entrySet()){
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            mergedUrl += key + "=" + value + "&";
+        }
+        return mergedUrl;
     }
 
     private interface EndpointsCallback{

@@ -17,4 +17,9 @@ public class Voto {
     public void setSpecial(boolean special){
         this.special = special;
     }
+
+    @Override
+    public String toString(){
+        return materia + " | " + voto + " | " + data + " | " + periodo;
+    }
 }
