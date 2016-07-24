@@ -364,7 +364,7 @@ public class DashboardActivity extends AppCompatActivity{
 
     public void shareApp(View view){
         String message = "Che ne dici di dare un'occhiata a Schoolbook? Un nuovo registro elettronico non ufficiale per Classeviva, in Material Design, Open Source e con tante funzionalità."
-                + "\n Scaricalo qui https://goo.gl/OeeRuU";
+                + "\n Scaricalo qui schbook.x10.mx";
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
         share.putExtra(Intent.EXTRA_TEXT, message);

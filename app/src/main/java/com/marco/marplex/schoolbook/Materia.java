@@ -179,12 +179,16 @@ public class Materia extends AppCompatActivity{
         }
 
         totalAverage = sum/materiaVoti.size();
+        if(Double.isNaN(totalAverage)) chart.setVisibility(View.GONE);
         double scrittoAverage = sumScritto/scrittoTimes;
         double oraleAverage = sumOrale/oraleTimes;
 
-        scritto.setText("" + arrotondaRint(scrittoAverage, 2));
-        orale.setText("" + arrotondaRint(oraleAverage, 2));
-        media.setText("" + arrotondaRint(totalAverage, 2));
+        String scrittoText = Double.isNaN(arrotondaRint(scrittoAverage, 2)) ? "-" : arrotondaRint(scrittoAverage, 2)+"";
+        String oraleText = Double.isNaN(arrotondaRint(oraleAverage, 2)) ? "-" : arrotondaRint(oraleAverage, 2)+"";
+        String mediaText = Double.isNaN(arrotondaRint(totalAverage, 2)) ? "-" : arrotondaRint(totalAverage, 2)+"";
+        scritto.setText(scrittoText);
+        orale.setText(oraleText);
+        media.setText(mediaText);
 
         ObjectAnimator animator = new ObjectAnimator().ofFloat(progress, "progress", (float) totalAverage * 10);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());

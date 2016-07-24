@@ -57,6 +57,18 @@ public class SharedPreferences {
         editor.commit();
     }
 
+    public static void saveInt(Context c, String prefName, String key, int i) {
+        android.content.SharedPreferences settings = c.getSharedPreferences(prefName, 0);
+        android.content.SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(key, i);
+        editor.commit();
+    }
+
+    public static int loadInt(Context c, String prefName, String key) {
+        android.content.SharedPreferences settings = c.getSharedPreferences(prefName, 0);
+        return settings.getInt(key, -1);
+    }
+
     public static boolean keyExist(Context c, String prefName, String key){
         return c.getSharedPreferences(prefName, 0).contains(key);
     }
