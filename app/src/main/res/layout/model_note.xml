@@ -27,14 +27,12 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Circolare numero 24"
                 android:textColor="#000"
                 android:textSize="20dp"
                 android:textStyle="bold"
                 android:id="@+id/txt_note_prof" />
 
             <TextView
-                android:text="L'allievo esce alle 16.00, diversamente dai compagni, perché sprovvisto di firma sul libretto."
                 android:layout_width="match_parent"
                 android:textSize="20dp"
                 android:layout_height="wrap_content"
@@ -47,7 +45,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
-                android:text="23/05/2016"
                 android:id="@+id/txt_note_date"
                 android:fontFamily="sans-serif-light"
                 android:gravity="right" />

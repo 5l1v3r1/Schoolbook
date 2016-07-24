@@ -9,6 +9,30 @@ public class SettingsActivity extends BaseSettingActivity {
     @Override
     public void onInit() {
         addHeader(new SettingHeader(
+                "Generale",
+                new SettingInput(
+                        "Cifre decimali dopo il voto",
+                        InputType.DIALOG,
+                        "setting_digits",
+                        "2",
+                        new String[]{
+                                "0", "1", "2"
+                        }
+                )
+        ));
+        addHeader(new SettingHeader(
+                "Aspetto",
+                new SettingInput(
+                        "Tema",
+                        InputType.DIALOG,
+                        "setting_theme",
+                        "Chiaro",
+                        new String[]{
+                                "Chiaro", "Scuro"
+                        }
+                )
+        ));
+        addHeader(new SettingHeader(
                 "Sincronizzazione",
                 new SettingInput(
                         "Aggiornamento automatico",

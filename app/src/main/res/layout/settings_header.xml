@@ -25,7 +25,7 @@
             android:textColor="@color/colorPrimary"
             android:textStyle="normal|bold" />
 
-        <ListView
+        <com.marco.marplex.schoolbook.views.StaticHeightListView
             android:id="@+id/inputContainer"
             android:drawSelectorOnTop="true"
             android:layout_width="match_parent"

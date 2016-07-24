@@ -36,6 +36,7 @@ public class AboutFragment extends DrawerFragment {
 
         //Prepare a libraries list
         List<Library> list = new ArrayList<>();
+        list.add(new Library("Simone Bortolin", "Classeviva PHP ServerSide API", R.drawable.github, "none"));
         list.add(new Library("Ozodrukh", "CircularReveal", R.drawable.circularreveal, "https://github.com/ozodrukh/CircularReveal"));
         list.add(new Library("Simbiose", "Encryption", R.drawable.simbiose, "https://github.com/simbiose/Encryption"));
         list.add(new Library("Lopez Mikhael", "Circular Progress Bar", R.drawable.circular_progress, "https://github.com/lopspower/CircularProgressBar"));
@@ -62,8 +63,10 @@ public class AboutFragment extends DrawerFragment {
             convertView.findViewById(R.id.lib_model_container).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(library.url));
-                    startActivity(intent);
+                    if(library.url != "none") {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(library.url));
+                        startActivity(intent);
+                    }
                 }
             });
 

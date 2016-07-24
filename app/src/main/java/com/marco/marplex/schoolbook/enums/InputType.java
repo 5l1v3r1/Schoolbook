@@ -5,5 +5,8 @@ package com.marco.marplex.schoolbook.enums;
  */
 
 public enum InputType {
-    SWITCH
+    SWITCH,
+    DIALOG,
+    SETTING_DIALOG,
+    COLOR
 }

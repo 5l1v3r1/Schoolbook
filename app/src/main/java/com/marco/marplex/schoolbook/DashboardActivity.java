@@ -59,6 +59,14 @@ public class DashboardActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String theme = SharedPreferences.loadString(this, "pref", "setting_theme");
+        if(theme.equals("Chiaro"))
+            setTheme(R.style.AppTheme);
+        else if(theme.equals("Scuro")){
+            setTheme(R.style.AppThemeBlack);
+        }
+
         setContentView(R.layout.activity_dashboard);
         ButterKnife.bind(this);
 

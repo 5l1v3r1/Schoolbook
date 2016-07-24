@@ -1,17 +1,18 @@
 package com.marco.marplex.schoolbook;
 
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.marco.marplex.schoolbook.adapters.SettingInputAdapter;
 import com.marco.marplex.schoolbook.models.SettingHeader;
+import com.marco.marplex.schoolbook.views.StaticHeightListView;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,10 @@ public abstract class BaseSettingActivity extends AppCompatActivity {
         container.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         container.setOrientation(LinearLayout.VERTICAL);
 
+        NestedScrollView scrollView = new NestedScrollView(this);
+        scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        scrollView.addView(container);
+
         headers = new ArrayList();
         onInit();
 
@@ -43,17 +48,16 @@ public abstract class BaseSettingActivity extends AppCompatActivity {
             headerCard.setLayoutParams(params);
 
             TextView headerTitle = (TextView) headerCard.findViewById(R.id.headerTitle);
-            ListView inputsContainer = (ListView) headerCard.findViewById(R.id.inputContainer);
+            StaticHeightListView inputsContainer = (StaticHeightListView) headerCard.findViewById(R.id.inputContainer);
 
             headerTitle.setText(header.title);
 
-            System.out.println("For header "+ header.title+": "+header.inputs.size());
             inputsContainer.setAdapter(new SettingInputAdapter(this, header.inputs));
 
             container.addView(headerCard);
         }
 
-        setContentView(container);
+        setContentView(scrollView);
     }
 
     @Override

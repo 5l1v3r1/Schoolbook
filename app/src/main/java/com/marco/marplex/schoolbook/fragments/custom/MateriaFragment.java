@@ -23,6 +23,7 @@ import com.marco.marplex.schoolbook.adapters.VotesDialogAdapter;
 import com.marco.marplex.schoolbook.models.Materia;
 import com.marco.marplex.schoolbook.models.Voto;
 import com.marco.marplex.schoolbook.utilities.MathUtils;
+import com.marco.marplex.schoolbook.utilities.SharedPreferences;
 import com.marco.marplex.schoolbook.utilities.Subjects;
 import com.marco.marplex.schoolbook.utilities.Votes;
 import com.marco.marplex.schoolbook.views.GridRecyclerView;
@@ -86,7 +87,8 @@ public abstract class MateriaFragment extends PagerFragment {
                 defSum += item.mediaMateria;
             }else NaNNumbers ++;
         }
-        mediaTotaleMaterie.setText("Media totale: " + MathUtils.rintRound( defSum / ( mList.size() - NaNNumbers ), 2));
+        int decimalDigits = Integer.parseInt(SharedPreferences.loadString(getContext(), "pref", "setting_digits"));
+        mediaTotaleMaterie.setText("Media totale: " + MathUtils.rintRound( defSum / ( mList.size() - NaNNumbers ), decimalDigits));
     }
 
     private void setScrollListener(){

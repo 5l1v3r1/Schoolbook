@@ -10,10 +10,11 @@ public class SettingInput {
     public String inputTitle;
     public InputType type;
     public String key;
-    public boolean defaultValue;
+    public Object defaultValue;
     public String depends;
+    public String[] dialogValues;
 
-    public SettingInput(String inputTitle, InputType type, String key, boolean defaultValue) {
+    public SettingInput(String inputTitle, InputType type, String key, Object defaultValue) {
         this.inputTitle = inputTitle;
         this.type = type;
         this.key = key;
@@ -31,5 +32,20 @@ public class SettingInput {
         this.inputTitle = inputTitle;
         this.type = type;
         this.key = key;
+    }
+
+    public SettingInput(String inputTitle, InputType type, String key, Object defaultValue, String[] dialogValues) {
+        this.inputTitle = inputTitle;
+        this.type = type;
+        this.key = key;
+        this.defaultValue = defaultValue;
+        this.dialogValues = dialogValues;
+    }
+
+    public SettingInput(String inputTitle, InputType type, String key, String[] dialogValues) {
+        this.inputTitle = inputTitle;
+        this.type = type;
+        this.key = key;
+        this.dialogValues = dialogValues;
     }
 }

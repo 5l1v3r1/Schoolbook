@@ -40,8 +40,8 @@ public class ArgumentsActivityAdapter extends ArrayAdapter<Argument>{
         content = (TextView) convertView.findViewById(R.id.txt_argument_content);
 
         teacher.setText(getItem(position).teacher);
-        content.setText(getItem(position).date);
-        date.setText(getItem(position).content);
+        content.setText(getItem(position).content);
+        date.setText(getItem(position).date);
 
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_bottom);
         convertView.startAnimation(animation);

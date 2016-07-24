@@ -18,14 +18,15 @@
         android:layout_toLeftOf="@+id/switchCompat"
         android:layout_toStartOf="@+id/switchCompat" />
 
-    <android.support.v7.widget.SwitchCompat
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="right|center_vertical"
         android:layout_alignParentTop="true"
+        android:textStyle="bold"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/switchCompat"
+        android:id="@+id/previewText"
         android:layout_marginLeft="5dp"
         android:layout_alignBottom="@+id/settingsInputTitle" />
 

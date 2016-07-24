@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_parentObjective"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:fitsSystemWindows="true"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="com.marco.marplex.schoolbook.Materia">
 
     <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
@@ -57,7 +58,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="La tua media"
-                        android:id="@+id/textView11"
+                        android:id="@+id/textView99"
                         android:textSize="20dp"
                         android:background="@color/colorPrimaryGreen"
                         android:textColor="#fff"
@@ -275,20 +276,146 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/ipoteticCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="5dp"
+                card_view:cardElevation="3dp"
+                android:transitionName="@string/mCardTransition"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                card_view:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Media ipotetica"
+                        android:textSize="20dp"
+                        android:background="@color/colorPrimaryGreen"
+                        android:textColor="#fff"
+                        android:layout_marginBottom="10dp"
+                        android:elevation="7dp"
+                        android:textStyle="bold"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:padding="10dp">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_marginRight="30dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="Voto ipotetico"
+                                android:layout_marginBottom="10dp"
+                                android:textSize="15dp" />
+
+                            <TextView
+                                android:id="@+id/txt_votoIpotetico"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:text="10"
+                                android:textSize="25dp"
+                                android:textColor="#6a6a6a" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_marginLeft="30dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="Media finale"
+                                android:layout_marginBottom="10dp"
+                                android:textSize="15dp" />
+
+                            <TextView
+                                android:id="@+id/txt_mediaFinale"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:text="10"
+                                android:textSize="25dp"
+                                android:textColor="#6a6a6a" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu"
+        android:layout_gravity="bottom|right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:id="@+id/fab_addObjective"
-        app:backgroundTint="@color/colorPrimaryDarkGreen"
-        android:src="@drawable/ic_add_location_white_24dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        app:menu_colorPressed="@color/colorPrimaryGreen"
+        app:menu_colorNormal="@color/colorPrimaryGreen"
+        app:menu_fab_size="normal"
+        app:menu_showShadow="true"
+        app:menu_animationDelayPerItem="50"
+        app:menu_icon="@drawable/fab_add"
+        app:menu_openDirection="up"
+        app:menu_backgroundColor="@android:color/transparent">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_addObjective"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_location_white_24dp"
+            app:fab_colorNormal="@color/colorPrimaryGreen"
+            app:fab_colorPressed="@color/colorPrimaryGreen"
+            app:fab_size="mini"
+            app:fab_label="Aggiungi obbiettivo" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_ipoteticAverage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_location_white_24dp"
+            android:background="@color/colorPrimaryGreen"
+            app:fab_colorNormal="@color/colorPrimaryGreen"
+            app:fab_colorPressed="@color/colorPrimaryGreen"
+            app:fab_size="mini"
+            app:fab_label="Media ipotetica" />
+
+    </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

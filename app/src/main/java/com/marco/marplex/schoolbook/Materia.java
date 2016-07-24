@@ -4,14 +4,12 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,9 +22,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.marco.marplex.schoolbook.models.Obiettivo;
 import com.marco.marplex.schoolbook.models.Voto;
 import com.marco.marplex.schoolbook.utilities.ObjectiveUtil;
+import com.marco.marplex.schoolbook.utilities.SharedPreferences;
 import com.marco.marplex.schoolbook.utilities.Votes;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
@@ -52,6 +53,9 @@ public class Materia extends AppCompatActivity{
     @Bind(R.id.card_view) CardView mCardView;
 
     @Bind(R.id.card_objective) CardView mObjectiveCard;
+    @Bind(R.id.ipoteticCard) CardView mIpoteticCard;
+    @Bind(R.id.txt_votoIpotetico) TextView mIpoteticVote;
+    @Bind(R.id.txt_mediaFinale) TextView mFinalAverage;
     @Bind(R.id.txt_currentAverage) TextView mCurrentAverageText;
     @Bind(R.id.txt_objective) TextView mObjecivetiveText;
     @Bind(R.id.txt_objectiveTitle) TextView mObjectiveTitleText;
@@ -59,6 +63,7 @@ public class Materia extends AppCompatActivity{
 
     @Bind(R.id.pbar_materiaPrimo) CircularProgressBar progress;
     @Bind(R.id.fab_addObjective) FloatingActionButton mAddObjective;
+    @Bind(R.id.fab_menu) FloatingActionMenu fabMenu;
     @Bind(R.id.chart) LineChartView chart;
     @Bind(R.id.nested) NestedScrollView scrollView;
 
@@ -87,22 +92,23 @@ public class Materia extends AppCompatActivity{
         scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                Log.d("TEST", "onScrollChange: "+scrollX+", "+scrollY+", "+oldScrollX+", "+oldScrollY);
                 if(oldScrollY-scrollY > 0 && !isNormal){
-                    mAddObjective.animate()
-                            .yBy(-130)
+                    fabMenu.animate()
+                            .alpha(1f)
                             .setDuration(400)
                             .start();
                     isNormal = true;
                 }else if(oldScrollY-scrollY < 0 && isNormal){
-                    mAddObjective.animate()
-                            .yBy(130)
+                    fabMenu.animate()
+                            .alpha(0f)
                             .setDuration(400)
                             .start();
                     isNormal = false;
                 }
             }
         });
+
+        mIpoteticCard.setVisibility(View.GONE);
 
         mAddObjective.setAlpha(0f);
         mAddObjective.setScaleX(0f);
@@ -178,14 +184,16 @@ public class Materia extends AppCompatActivity{
             System.out.println(Votes.getNumericalVoteByString(materiaVoti.get(i).voto));
         }
 
-        totalAverage = sum/materiaVoti.size();
+        totalAverage = sum/nOfVotes;
         if(Double.isNaN(totalAverage)) chart.setVisibility(View.GONE);
         double scrittoAverage = sumScritto/scrittoTimes;
         double oraleAverage = sumOrale/oraleTimes;
 
-        String scrittoText = Double.isNaN(arrotondaRint(scrittoAverage, 2)) ? "-" : arrotondaRint(scrittoAverage, 2)+"";
-        String oraleText = Double.isNaN(arrotondaRint(oraleAverage, 2)) ? "-" : arrotondaRint(oraleAverage, 2)+"";
-        String mediaText = Double.isNaN(arrotondaRint(totalAverage, 2)) ? "-" : arrotondaRint(totalAverage, 2)+"";
+        int decimalDigits = Integer.parseInt(SharedPreferences.loadString(this, "pref", "setting_digits"));
+
+        String scrittoText = Double.isNaN(arrotondaRint(scrittoAverage, decimalDigits)) ? "-" : arrotondaRint(scrittoAverage, decimalDigits)+"";
+        String oraleText = Double.isNaN(arrotondaRint(oraleAverage, decimalDigits)) ? "-" : arrotondaRint(oraleAverage, decimalDigits)+"";
+        String mediaText = Double.isNaN(arrotondaRint(totalAverage, decimalDigits)) ? "-" : arrotondaRint(totalAverage, decimalDigits)+"";
         scritto.setText(scrittoText);
         orale.setText(oraleText);
         media.setText(mediaText);
@@ -221,12 +229,49 @@ public class Materia extends AppCompatActivity{
 
     }
 
+    @OnClick(R.id.fab_ipoteticAverage)
+    public void selectIpoteticVotes(View view){
+        View thisView = LayoutInflater.from(this).inflate(R.layout.ordina, null, false);
+        final Dialog mBottomSheetDialog = new Dialog (this, R.style.MaterialDialogSheet);
+
+        setLayoutForDialog(mBottomSheetDialog, thisView, "Quale voto pensi di aver preso?");
+        ListView numberList = (ListView)view.findViewById( R.id.materie);
+
+        final String[] choices = new String[10];
+        for(int index = 1; index <= 10; index++) choices[index-1] = index+"";
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, choices);
+
+        ListView numberLis = (ListView)thisView.findViewById( R.id.materie);
+        numberLis.setAdapter(arrayAdapter);
+        numberLis.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                mBottomSheetDialog.cancel();
+
+                mIpoteticVote.setText(choices[i]);
+                int ipoteticVote = Integer.parseInt(choices[i]);
+                int decimalDigits = Integer.parseInt(SharedPreferences.loadString(Materia.this, "pref", "setting_digits"));
+                double finalAverage = arrotondaRint((sum+ipoteticVote)/(nOfVotes+1), decimalDigits);
+
+                mFinalAverage.setText(finalAverage+"");
+
+                mIpoteticCard.setVisibility(View.VISIBLE);
+                mIpoteticCard.setAlpha(0f);
+                mIpoteticCard.animate().alpha(1f).setDuration(300).start();
+
+                fabMenu.close(true);
+
+            }
+        });
+    }
+
     @OnClick(R.id.fab_addObjective)
     public void showObjectives(View myView){
         View view = LayoutInflater.from(this).inflate(R.layout.ordina, null, false);
         final Dialog mBottomSheetDialog = new Dialog (this, R.style.MaterialDialogSheet);
 
-        setLayoutForDialog(mBottomSheetDialog, view);
+        setLayoutForDialog(mBottomSheetDialog, view, "A quale voto desideri arrivare?");
         ListView numberList = (ListView)view.findViewById( R.id.materie);
 
         mObjecivesArray = new String[10-(int)totalAverage];
@@ -243,6 +288,7 @@ public class Materia extends AppCompatActivity{
                 mBottomSheetDialog.cancel();
                 showAndConfigureObjective(Integer.parseInt(mObjecivesArray[i]));
                 ObjectiveUtil.setObiettivo(Materia.this, title, periodo, new Obiettivo(Integer.parseInt(mObjecivesArray[i])));
+                fabMenu.close(true);
             }
         });
     }
@@ -311,8 +357,9 @@ public class Materia extends AppCompatActivity{
         }
     }
 
-    private void setLayoutForDialog(Dialog dialog, View view){
+    private void setLayoutForDialog(Dialog dialog, View view, String customText){
         view.findViewById(R.id.dialog_title).setVisibility(View.VISIBLE);
+        ((TextView)view.findViewById(R.id.dialog_title)).setText(customText);
         dialog.setContentView(view);
         dialog.setCancelable(true);
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
