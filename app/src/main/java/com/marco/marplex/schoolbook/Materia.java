@@ -1,5 +1,6 @@
 package com.marco.marplex.schoolbook;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
@@ -221,6 +222,14 @@ public class Materia extends AppCompatActivity{
         mObjectiveCard.animate()
                 .alpha(0f)
                 .setDuration(300)
+                .setListener(new Animator.AnimatorListener() {
+                    @Override public void onAnimationStart(Animator animation) {}
+                    @Override public void onAnimationEnd(Animator animation) {
+                        mObjectiveCard.setVisibility(View.GONE);
+                    }
+                    @Override public void onAnimationCancel(Animator animation) {}
+                    @Override public void onAnimationRepeat(Animator animation) {}
+                })
                 .start();
 
         Snackbar.make(view, "Obiettivo eliminato", Snackbar.LENGTH_SHORT).show();

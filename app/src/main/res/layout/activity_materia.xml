@@ -386,8 +386,8 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        app:menu_colorPressed="@color/colorPrimaryGreen"
-        app:menu_colorNormal="@color/colorPrimaryGreen"
+        app:menu_colorPressed="@color/deepPurple"
+        app:menu_colorNormal="@color/deepPurple"
         app:menu_fab_size="normal"
         app:menu_showShadow="true"
         app:menu_animationDelayPerItem="50"
@@ -400,8 +400,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_location_white_24dp"
-            app:fab_colorNormal="@color/colorPrimaryGreen"
-            app:fab_colorPressed="@color/colorPrimaryGreen"
+            app:fab_colorNormal="@color/deepPurple"
+            app:fab_colorPressed="@color/deepPurple"
             app:fab_size="mini"
             app:fab_label="Aggiungi obbiettivo" />
 
@@ -409,10 +409,9 @@
             android:id="@+id/fab_ipoteticAverage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_location_white_24dp"
-            android:background="@color/colorPrimaryGreen"
-            app:fab_colorNormal="@color/colorPrimaryGreen"
-            app:fab_colorPressed="@color/colorPrimaryGreen"
+            android:src="@drawable/ic_redo_white"
+            app:fab_colorNormal="@color/deepPurple"
+            app:fab_colorPressed="@color/deepPurple"
             app:fab_size="mini"
             app:fab_label="Media ipotetica" />
 
