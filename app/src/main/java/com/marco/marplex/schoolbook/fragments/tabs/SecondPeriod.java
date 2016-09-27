@@ -30,19 +30,25 @@ public class SecondPeriod extends VoteFragment {
 
     @Override
     public void onResponse(final ArrayList<Voto> list) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(list==null) refreshContent();
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (list == null || list.size() == 0) return;
 
-                /**
-                 * @see Votes
-                 */
-                Votes.saveVotes(getActivity(), list);
-                mSwipe.setRefreshing(false);
+                        Votes.saveVotes(getActivity(), list);
+                        mSwipe.setRefreshing(false);
 
-                populateRecyclerView(Votes.getVotesByPeriod(list, mPeriod));
-            }
-        });
+                        hideEmptyState();
+                        populateRecyclerView(Votes.getVotesByPeriod(list, mPeriod));
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

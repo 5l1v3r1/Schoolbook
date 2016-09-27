@@ -65,6 +65,7 @@ public class ArgumentsFragment extends DrawerFragment {
             argumentList.add(argument);
         }
 
+        if(subjects.size() != 0) rootView.findViewById(R.id.nothingHere).setVisibility(View.GONE);
         mList.setAdapter(new ArgumentsAdapter(argumentList, getContext(), getActivity()));
 
         return rootView;

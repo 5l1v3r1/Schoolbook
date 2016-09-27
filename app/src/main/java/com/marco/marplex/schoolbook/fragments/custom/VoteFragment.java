@@ -36,6 +36,8 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.view.View.GONE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -74,18 +76,22 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
 
         init();
 
-        if(!isDataSaved()){
-            mApi = new ClassevivaCaller(this, getContext());
-            mApi.getVotes();
-            mSwipe.post(new Runnable() {
-                @Override
-                public void run() {
-                    mSwipe.setRefreshing(true);
-                }
-            });
-        }else{
-            final ArrayList<Voto> voti = getData();
-            populateRecyclerView(voti);
+        try {
+            if (!isDataSaved()) {
+                mApi = new ClassevivaCaller(this, getContext());
+                mApi.getVotes();
+                mSwipe.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipe.setRefreshing(true);
+                    }
+                });
+            } else {
+                final ArrayList<Voto> voti = getData();
+                populateRecyclerView(voti);
+            }
+        }catch(NullPointerException e) {
+            e.printStackTrace();
         }
 
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -98,7 +104,9 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
         return mRootView;
     }
 
-
+    public void hideEmptyState() {
+        mRootView.findViewById(R.id.nothingHere).setVisibility(GONE);
+    }
 
     public ArrayList<Voto> getData(){
         return Votes.getVotesByPeriod(getContext(), mPeriod);
@@ -217,7 +225,7 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
                             }
                         });
 
-                        majorView.findViewById(R.id.dialog_title).setVisibility(View.GONE);
+                        majorView.findViewById(R.id.dialog_title).setVisibility(GONE);
                         majorThanDialog.setContentView(majorView);
                         majorThanDialog.setCancelable(true);
                         majorThanDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -246,7 +254,7 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
                             }
                         });
 
-                        equalsToView.findViewById(R.id.dialog_title).setVisibility(View.GONE);
+                        equalsToView.findViewById(R.id.dialog_title).setVisibility(GONE);
                         equalsToDialog.setContentView(equalsToView);
                         equalsToDialog.setCancelable(true);
                         equalsToDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -276,7 +284,7 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
     }
 
     public boolean isDataSaved(){
-        return !( SharedPreferences.loadString(getContext(), "datas", "voti") == null );
+        return Votes.isThereAnyVotes(getContext());
     }
 
 }

@@ -124,7 +124,7 @@ public class Reminds extends PagerFragment implements RecognitionListener{
         ArrayList<Suggest> suggests = new ArrayList();
         suggests.add(new Suggest(R.drawable.exam, "Fammi vedere i miei voti"));
         suggests.add(new Suggest(R.drawable.abacus, "Che media ho in inglese?"));
-        suggests.add(new Suggest(R.drawable.target, "Obiettivo inglese 9"));
+        suggests.add(new Suggest(R.drawable.target, "Obbiettivo inglese 9"));
         suggests.add(new Suggest(R.drawable.calendar, "Eventi di oggi"));
         suggests.add(new Suggest(R.drawable.list, "Quanti 7 ho?"));
 

@@ -82,11 +82,15 @@ public abstract class MateriaFragment extends PagerFragment {
         double defSum = 0;
         int NaNNumbers = 0;
         for (Materia item : mList){
-            if(item.mediaMateria>0) {
+            if(item.mediaMateria > 0) {
                 defSum += item.mediaMateria;
             }else NaNNumbers ++;
         }
-        mediaTotaleMaterie.setText("Media totale: " + MathUtils.rintRound( defSum / ( mList.size() - NaNNumbers ), 2));
+
+        double totalAverage = MathUtils.rintRound( defSum / ( mList.size() - NaNNumbers ), 2);
+        if(Double.isNaN(totalAverage)) mediaTotaleMaterie.setText("Medie non disponibili");
+        else mediaTotaleMaterie.setText("Media totale: " + totalAverage);
+
     }
 
     private void setScrollListener(){

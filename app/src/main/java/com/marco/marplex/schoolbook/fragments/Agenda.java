@@ -94,16 +94,20 @@ public class Agenda extends DrawerFragment implements ClassevivaCallback<Evento>
 
     private void populateCalendar(final ArrayList<Evento> events){
         mEvents = events;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Collection<CalendarDay> collection = new ArrayList<>();
-                for (Evento event: events){
-                    collection.add(new CalendarDay(event.date));
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Collection<CalendarDay> collection = new ArrayList<>();
+                    for (Evento event : events) {
+                        collection.add(new CalendarDay(event.date));
+                    }
+                    mCalendar.addDecorator(new CalendarDecorator(ContextCompat.getColor(getContext(), R.color.colorPrimaryTeal), collection));
                 }
-                mCalendar.addDecorator(new CalendarDecorator(ContextCompat.getColor(getContext(), R.color.colorPrimaryTeal), collection));
-            }
-        });
+            });
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

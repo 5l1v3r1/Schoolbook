@@ -74,6 +74,7 @@ public class NoteFragment extends DrawerFragment implements ClassevivaCallback<N
         if(Notes.isNotesSaved(getContext())){
             populateRecyclerView(Notes.getSavedNotes(getContext()));
         }else caller.getNotes();
+
         return rootView;
     }
 
@@ -83,14 +84,20 @@ public class NoteFragment extends DrawerFragment implements ClassevivaCallback<N
 
     @Override
     public void onResponse(final ArrayList<Note> list) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mSwipe.setRefreshing(false);
-                populateRecyclerView(list);
-                Notes.saveNotes(getContext(), list);
-            }
-        });
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (list != null && list.size() != 0) {
+                        populateRecyclerView(list);
+                        Notes.saveNotes(getContext(), list);
+                    }
+                    mSwipe.setRefreshing(false);
+                }
+            });
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

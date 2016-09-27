@@ -106,14 +106,20 @@ public class Circolari extends DrawerFragment implements ClassevivaCallback<Comu
 
     @Override
     public void onResponse(final ArrayList<Comunication> list) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                populateRecyclerView(list);
-                Comunications.saveComunications(getContext(), list);
-                mSwipe.setRefreshing(false);
-            }
-        });
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (list != null && list.size() != 0) {
+                        populateRecyclerView(list);
+                        Comunications.saveComunications(getContext(), list);
+                    }
+                    mSwipe.setRefreshing(false);
+                }
+            });
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private class DownloadFile extends AsyncTask<String, Integer, String> implements Updateable {

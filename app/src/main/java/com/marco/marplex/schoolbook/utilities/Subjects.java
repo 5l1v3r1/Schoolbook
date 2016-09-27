@@ -21,18 +21,20 @@ public class Subjects {
         Type type = new TypeToken<ArrayList<String>>(){}.getType();
         final ArrayList<String> materie = new Gson().fromJson(SharedPreferences.loadString(context, "materie", "materie"), type);
 
-        for(String materia : materie){
-            ArrayList<Voto> materiaVoti = Votes.getNumericalVotesByMateria(context, materia, period);
+        if(materie != null && materie.size() != 0) {
+            for (String materia : materie) {
+                ArrayList<Voto> materiaVoti = Votes.getNumericalVotesByMateria(context, materia, period);
 
-            double sum = 0;
+                double sum = 0;
 
-            for(Voto voto : materiaVoti) {
-                sum += Votes.getNumericalVoteByString(voto.voto);
+                for (Voto voto : materiaVoti) {
+                    sum += Votes.getNumericalVoteByString(voto.voto);
+                }
+
+                double totalAverage = MathUtils.rintRound(sum / materiaVoti.size(), 2);
+                Materia mMateria = new Materia(totalAverage, materia);
+                materieList.add(mMateria);
             }
-
-            double totalAverage = MathUtils.rintRound(sum/materiaVoti.size(), 2);
-            Materia mMateria = new Materia(totalAverage, materia);
-            materieList.add(mMateria);
         }
 
         return materieList;

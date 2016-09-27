@@ -50,9 +50,11 @@ public class Voti extends DrawerFragment {
                     case R.id.ordina:
                         ((SectionPagerAdapter) pager.getAdapter())
                                 .getRegisteredFragment(pager.getCurrentItem()).ordina();
+                        break;
                     case R.id.elimina_filtro:
                         ((SectionPagerAdapter) pager.getAdapter())
                                 .getRegisteredFragment(pager.getCurrentItem()).eliminaOrdine();
+                        break;
                 }
                 return false;
             }

@@ -13,7 +13,7 @@ public class AppIntroActivity extends IntroActivity {
         super.onCreate(savedInstanceState);
 
         setButtonBackVisible(false);
-        setButtonNextVisible(true);
+        setButtonNextVisible(false);
         setButtonCtaVisible(false);
         setButtonCtaTintMode(BUTTON_CTA_TINT_MODE_TEXT);
 

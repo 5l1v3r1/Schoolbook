@@ -205,9 +205,11 @@ public class Votes {
         ArrayList<Voto> datas = new Gson().fromJson(SharedPreferences.loadString(c, "datas", "voti"), type);
 
         ArrayList<Voto> votoArrayList = new ArrayList<>();
-        for(Voto voto : datas){
-            if(voto.periodo==period) votoArrayList.add(voto);
-            else continue;
+        if(datas != null) {
+            for (Voto voto : datas) {
+                if (voto.periodo == period) votoArrayList.add(voto);
+                else continue;
+            }
         }
         return votoArrayList;
     }

@@ -235,7 +235,7 @@ public class DashboardActivity extends AppCompatActivity{
                         DashboardActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Votes.saveVotes(DashboardActivity.this, list);
+                                if(list != null && list.size() != 0) Votes.saveVotes(DashboardActivity.this, list);
                                 mCanSelect = true;
                             }
                         });
@@ -265,13 +265,12 @@ public class DashboardActivity extends AppCompatActivity{
                         DashboardActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Comunications.saveComunications(DashboardActivity.this, list);
+                                if(list != null && list.size() != 0) Comunications.saveComunications(DashboardActivity.this, list);
                                 mCanSelect = true;
                             }
                         });
                     }
                 }, this);
-
                 callerComunication.getSchoolComunication();
 
                 //Start downloading notes from Classeviva
@@ -281,7 +280,7 @@ public class DashboardActivity extends AppCompatActivity{
                         DashboardActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Notes.saveNotes(DashboardActivity.this, list);
+                                if(list != null && list.size() != 0) Notes.saveNotes(DashboardActivity.this, list);
                                 mCanSelect = true;
 
                                 Snackbar.make(navigationView, "Finito", Snackbar.LENGTH_SHORT).show();
@@ -364,7 +363,7 @@ public class DashboardActivity extends AppCompatActivity{
 
     public void shareApp(View view){
         String message = "Che ne dici di dare un'occhiata a Schoolbook? Un nuovo registro elettronico non ufficiale per Classeviva, in Material Design, Open Source e con tante funzionalità."
-                + "\n Scaricalo qui schbook.x10.mx";
+                + "\n Scaricalo qui https://goo.gl/E9A0KL";
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
         share.putExtra(Intent.EXTRA_TEXT, message);
@@ -383,7 +382,6 @@ public class DashboardActivity extends AppCompatActivity{
         }
         return false;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
