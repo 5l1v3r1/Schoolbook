@@ -69,6 +69,11 @@ public class ArgumentActivity extends AppCompatActivity {
 
         if(i.getIntExtra("color", 0) == 0x000000) subject.setTextColor(Color.WHITE);
 
+        if(Arguments.isArgumentSaved(this, i.getStringExtra("argument"))){
+            ArrayList<Argument> list = Arguments.getSavedArguments(this, i.getStringExtra("argument"));
+            populateList(list);
+        }
+
         //Start retrieving data
         if(Connection.isNetworkAvailable(this)){
             ClassevivaCallback<Argument> callback = new ClassevivaCallback<Argument>() {
@@ -96,11 +101,6 @@ public class ArgumentActivity extends AppCompatActivity {
                     swipe.setRefreshing(true);
                 }
             });
-        }else{
-            if(Arguments.isArgumentSaved(this, i.getStringExtra("argument"))){
-                ArrayList<Argument> list = Arguments.getSavedArguments(this, i.getStringExtra("argument"));
-                populateList(list);
-            }
         }
     }
 

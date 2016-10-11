@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
@@ -62,9 +63,9 @@ public class ArgumentsAdapter extends RecyclerView.Adapter<ArgumentsAdapter.View
         final int[] color = new int[1];
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette p) {
-                color[0] = p.getVibrantColor(0x000000);
+                color[0] = p.getVibrantColor(ContextCompat.getColor(context, R.color.colorPrimary));
                 holder.card.setCardBackgroundColor(color[0]);
-                holder.subject.setTextColor(color[0] == 0x000000 ? Color.BLACK : Color.WHITE);
+                holder.subject.setTextColor(Color.WHITE);
             }
         });
 

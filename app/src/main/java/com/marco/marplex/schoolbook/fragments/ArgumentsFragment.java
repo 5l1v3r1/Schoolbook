@@ -42,27 +42,29 @@ public class ArgumentsFragment extends DrawerFragment {
 
         List<String> subjects = Subjects.getSubjects(getContext());
         ArrayList<Argument> argumentList = new ArrayList();
-        for(String subject : subjects){
-            int icon;
+        if(subjects != null) {
+            for (String subject : subjects) {
+                int icon;
 
-            //It can be improved a lot
-            if(subject.equals("Chimica")) icon = R.drawable.flask;
-            else if(subject.equals("Fisica")) icon = R.drawable.magnet;
-            else if(subject.equals("Scienze")) icon = R.drawable.science;
-            else if(subject.equals("Diritto")) icon = R.drawable.justice;
-            else if(subject.equals("Italiano")) icon = R.drawable.books;
-            else if(subject.equals("Inglese")) icon = R.drawable.big_ben;
-            else if(subject.equals("Matematica")) icon = R.drawable.calculator;
-            else if(subject.equals("Religione")) icon = R.drawable.bible;
-            else if(subject.equals("Scienze Applicate")) icon = R.drawable.microscope;
-            else if(subject.equals("Ginnastica")) icon = R.drawable.strength;
-            else if(subject.equals("Storia")) icon = R.drawable.history;
-            else if(subject.equals("Tecnica")) icon = R.drawable.compass;
-            else if(subject.equals("Informatica")) icon = R.drawable.laptop;
-            else icon = R.drawable.notebook;
+                //It can be improved a lot
+                if (subject.equals("Chimica")) icon = R.drawable.flask;
+                else if (subject.equals("Fisica")) icon = R.drawable.magnet;
+                else if (subject.equals("Scienze")) icon = R.drawable.science;
+                else if (subject.equals("Diritto")) icon = R.drawable.justice;
+                else if (subject.equals("Italiano")) icon = R.drawable.books;
+                else if (subject.equals("Inglese")) icon = R.drawable.big_ben;
+                else if (subject.equals("Matematica")) icon = R.drawable.calculator;
+                else if (subject.equals("Religione")) icon = R.drawable.bible;
+                else if (subject.equals("Scienze Applicate")) icon = R.drawable.microscope;
+                else if (subject.equals("Ginnastica")) icon = R.drawable.strength;
+                else if (subject.equals("Storia")) icon = R.drawable.history;
+                else if (subject.equals("Tecnica")) icon = R.drawable.compass;
+                else if (subject.equals("Informatica")) icon = R.drawable.laptop;
+                else icon = R.drawable.notebook;
 
-            Argument argument = new Argument(icon, subject);
-            argumentList.add(argument);
+                Argument argument = new Argument(icon, subject);
+                argumentList.add(argument);
+            }
         }
 
         if(subjects.size() != 0) rootView.findViewById(R.id.nothingHere).setVisibility(View.GONE);

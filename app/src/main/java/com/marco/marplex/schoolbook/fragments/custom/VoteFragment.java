@@ -88,6 +88,7 @@ public abstract class VoteFragment extends PagerFragment implements ClassevivaCa
                 });
             } else {
                 final ArrayList<Voto> voti = getData();
+                hideEmptyState();
                 populateRecyclerView(voti);
             }
         }catch(NullPointerException e) {

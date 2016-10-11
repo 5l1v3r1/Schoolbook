@@ -40,28 +40,6 @@
                         android:theme="@style/FloatingEditText"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/custcode"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true">
-
-                        <EditText
-                            android:id="@+id/input_codice_scuola"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:hint="Codice scuola"
-                            android:textColor="@color/white"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:textSize="30dp">
-
-                        </EditText>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:theme="@style/FloatingEditText"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
                         android:id="@+id/name"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true">

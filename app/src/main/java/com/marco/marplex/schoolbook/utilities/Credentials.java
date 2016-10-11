@@ -19,19 +19,14 @@ public class Credentials {
         return SharedPreferences.loadString(c, "user", "sessionID");
     }
 
-    public static String getCustcode(Context c) {
-        return SharedPreferences.loadString(c, "user", "custcode");
-    }
-
     public static void saveSession(Context c, String session){
         SharedPreferences.saveString(c, "user", "sessionID", session);
     }
 
-    public static void saveCredentials(Context c, String name, String password, String custcode,  String session) {
+    public static void saveCredentials(Context c, String name, String password,  String session) {
         SharedPreferences.saveString(c, "user", "user", name);
         SharedPreferences.saveString(c, "user", "password", Cripter.criptString(password) );
         SharedPreferences.saveString(c, "user", "sessionID", session);
-        SharedPreferences.saveString(c, "user", "custcode", custcode);
     }
 
 }

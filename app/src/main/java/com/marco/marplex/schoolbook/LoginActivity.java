@@ -29,7 +29,6 @@ import io.codetail.animation.ViewAnimationUtils;
 public class LoginActivity extends AppCompatActivity {
 
     @Bind(R.id.input_codice_utente) EditText mUtente;
-    @Bind(R.id.input_codice_scuola) EditText mSchoolCode;
     @Bind(R.id.input_password) EditText mPassword;
     @Bind(R.id.fabLogin) FloatingActionButton mFabLogin;
     @Bind(R.id.login_title) TextView mTitle;
@@ -37,8 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.txt_loading) TextView mLoadingTextView;
     @Bind(R.id.progress) DilatingDotsProgressBar mProgress;
 
-    String mUser,mPass, mCustcode, mSession;
-    String mName, mPw, mCust;
+    String mUser,mPass, mSession;
+    String mName, mPw;
 
     ClassevivaLoginCallback mCallback;
     ClassevivaCaller mLogin;
@@ -62,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
         // Load user's credentials with SharedPreferences help class
         mUser = Credentials.getName(this);
         mPass = Credentials.getPassword(this);
-        mCustcode = Credentials.getCustcode(this);
         mSession = Credentials.getSession(this);
 
         //Create the callback for ClassevivaCaller class
@@ -77,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                             animateReverseFab();
                         }
                     });
+                    mFabLogin.setClickable(true);
                 }else {
 
                     //Settings enabled by default
@@ -94,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         //Check if the user already has saved his credentials
-        if(mUser!=null && mPass!=null && mCustcode!=null && mSession !=null){
+        if(mUser!=null && mPass!=null && mSession !=null){
 
             //First of all, get a new session if it's possible
             if(Connection.isNetworkAvailable(this)){
@@ -117,16 +116,17 @@ public class LoginActivity extends AppCompatActivity {
 
         mFabLogin.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
+                view.setClickable(false);
+
                 //Animations
                 animateFab();
 
                 //Name and pw now have the relative edittexts values
                 mName = mUtente.getText().toString().toUpperCase();
                 mPw = mPassword.getText().toString();
-                mCust = mSchoolCode.getText().toString();
 
                 //Create an instance of ClassevivaCaller
-                mLogin = new ClassevivaCaller(mName, mPw, mCust, mCallback, LoginActivity.this);
+                mLogin = new ClassevivaCaller(mName, mPw, mCallback, LoginActivity.this);
                 //Perform login which return its  value in the callback
                 mLogin.doLogin();
 

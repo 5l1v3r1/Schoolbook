@@ -56,13 +56,15 @@ public class ClassevivaCaller {
         "http://schoolbook3.altervista.org/"
     };
 
+    private final String LOGIN_URL = "https://web.spaggiari.eu/home/app/default/login.php?custcode=";
+
     protected final String TAG = "Classeviva Login";
     private final String userAgent = "Mozilla/5.0 (compatible;  MSIE 7.01; Windows NT 5.0)";
 
     ClassevivaLoginCallback mClassevivaLoginCallback;
     ClassevivaCallback mCallback;
 
-    String mUser, mPassword, mCustcode;
+    String mUser, mPassword;
     Context c;
 
     OkHttpClient client;
@@ -74,15 +76,13 @@ public class ClassevivaCaller {
      *
      * @param username  User's username
      * @param password  User's password
-     * @param custcode  User's custcode
      * @param classevivaLoginCallback  Interface which return the requested html string
      * @param c  Activity context
      *
      */
-    public ClassevivaCaller(String username, String password, String custcode,  ClassevivaLoginCallback classevivaLoginCallback, Context c){
+    public ClassevivaCaller(String username, String password,  ClassevivaLoginCallback classevivaLoginCallback, Context c){
         this.mUser = username;
         this.mPassword = password;
-        this.mCustcode = custcode;
         this.c = c;
         this.mClassevivaLoginCallback = classevivaLoginCallback;
         this.client = new OkHttpClient();
@@ -92,7 +92,6 @@ public class ClassevivaCaller {
         this.mCallback = callback;
         this.mUser = Credentials.getName(context);
         this.mPassword = Credentials.getPassword(context);
-        this.mCustcode = Credentials.getCustcode(context);
         this.client = new OkHttpClient();
         this.c = context;
     }
@@ -169,7 +168,6 @@ public class ClassevivaCaller {
             HashMap<String, String> parameters = new HashMap<>();
             parameters.put("usercode", mUser);
             parameters.put("password", mPassword);
-            parameters.put("custcode", mCustcode);
             parameters.put("login", "true");
             run(parameters,
                     new EndpointsCallback() {
@@ -181,14 +179,13 @@ public class ClassevivaCaller {
                         success = object.getString("status").equals("OK");
 
                         if(json.contains("false")) success = false;
-                        if(success) Credentials.saveCredentials(c, mUser, mPassword, mCustcode,
+                        if(success) Credentials.saveCredentials(c, mUser, mPassword,
                                 object.getString("sessionId"));
 
                     }catch (JSONException e){
                         //Value cannot be converted to a JSONObject
                         success = false;
                     }
-
                     mClassevivaLoginCallback.onLoginDone(success);
                 }
             });
@@ -282,7 +279,7 @@ public class ClassevivaCaller {
                         ClassevivaCaller.this.mUser = Credentials.getName(c);
                         ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
                         //Get a new session re-performing login
-                        newSession(ClassevivaCaller.class.getMethod("getLocalParsedVotes", null));
+                        newSession(ClassevivaCaller.class.getMethod("getLocalParsedVotes"));
                         } catch (NoSuchMethodException e) {e.printStackTrace();}
                         return;
                     }
@@ -357,7 +354,7 @@ public class ClassevivaCaller {
 
                         ArrayList<Evento> events = new ArrayList<>();
 
-                        JSONArray jsonArray = new JSONArray(json);
+                        JSONArray jsonArray = new JSONObject(json).getJSONArray("agenda");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String start = jsonObject.getString("start");
@@ -569,7 +566,6 @@ public class ClassevivaCaller {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("usercode", mUser);
         parameters.put("password", mPassword);
-        parameters.put("custcode", mCustcode);
         parameters.put("login", "true");
         try {
             run(parameters,
@@ -579,8 +575,8 @@ public class ClassevivaCaller {
                     try {
                         JSONObject object = new JSONObject(json);
 
-                        boolean success = object.getString("status").equals("OK") ? true : false;
-                        if (success) Credentials.saveCredentials(c, mUser, mPassword, mCustcode, object.getString("sessionId"));
+                        boolean success = object.getString("status").equals("OK");
+                        if (success) Credentials.saveCredentials(c, mUser, mPassword, object.getString("sessionId"));
 
                         method.invoke(ClassevivaCaller.this);
                     }catch (JSONException e) { e.printStackTrace();  }
@@ -600,7 +596,6 @@ public class ClassevivaCaller {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("usercode", mUser);
         parameters.put("password", mPassword);
-        parameters.put("custcode", mCustcode);
         parameters.put("login", "true");
         try {
             run(parameters,
@@ -611,7 +606,7 @@ public class ClassevivaCaller {
                                 JSONObject object = new JSONObject(json);
 
                                 boolean success = object.getString("status").equals("OK") ? true : false;
-                                if (success) Credentials.saveCredentials(c, mUser, mPassword, mCustcode, object.getString("sessionId"));
+                                if (success) Credentials.saveCredentials(c, mUser, mPassword, object.getString("sessionId"));
 
                                 mCallback.onResponse(null);
                             }catch (JSONException e) { e.printStackTrace();  }
@@ -630,11 +625,9 @@ public class ClassevivaCaller {
      */
     private boolean checkStatus(String body, Method method){
         if(body.equals("{\"status\":\"error\"}")){
-            System.out.println("NEW SESSION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             //Set credentials from storage
             ClassevivaCaller.this.mUser = Credentials.getName(c);
             ClassevivaCaller.this.mPassword = Cripter.decriptString(getPassword(c));
-            ClassevivaCaller.this.mCustcode = Credentials.getCustcode(c);
 
             //Get a new session re-performing login
             newSession(method);

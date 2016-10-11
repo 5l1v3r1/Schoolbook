@@ -35,7 +35,7 @@ public class FirstPeriod extends VoteFragment {
                 @Override
                 public void run() {
                     try {
-                        if (list == null || list.size() == 0) return;
+                        if (list.size() == 0) return;
 
                         Votes.saveVotes(getActivity(), list);
                         mSwipe.setRefreshing(false);
